@@ -5,6 +5,7 @@ import { Toaster } from '@/components/ui/toaster'
 import { fontSans } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
 import Header from '@/components/header'
+import SessionProvider from './SessionProvider'
 
 export const metadata: Metadata = {
   title: 'Templo App',
@@ -19,23 +20,28 @@ export default function RootLayout({
   return (
     <html lang='es'>
       <body
+        suppressHydrationWarning
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
           fontSans.variable,
         )}
       >
-        <ThemeProvider
-          attribute='class'
-          defaultTheme='system'
-          enableSystem
-          disableTransitionOnChange
-        >
-          <main className='flex min-h-screen flex-col items-center'>
-            <Header />
-            <div className='flex w-full max-w-7xl flex-col px-5 py-8'>{children}</div>
-          </main>
+        <SessionProvider>
+          <ThemeProvider
+            attribute='class'
+            defaultTheme='system'
+            enableSystem
+            disableTransitionOnChange
+          >
+            <main className='flex min-h-screen flex-col items-center'>
+              <Header />
+              <div className='flex w-full max-w-7xl flex-col px-5 py-8'>
+                {children}
+              </div>
+            </main>
+          </ThemeProvider>
           <Toaster />
-        </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   )

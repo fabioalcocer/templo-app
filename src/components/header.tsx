@@ -12,7 +12,7 @@ function Header() {
         </Link>
         <div className='flex items-center gap-3'>
           <ModeToggle />
-          <Link href='/admin'>
+          <Link href='/login'>
             <Button variant='outline' size='icon'>
               <UserIcon className='h-5 w-5' />
             </Button>
