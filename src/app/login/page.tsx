@@ -1,5 +1,4 @@
 'use client'
-import AddButton from '@/components/add-button'
 import { Button } from '@/components/ui/button'
 import {
   Form,
@@ -13,7 +12,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { signIn } from 'next-auth/react'
+import { signIn, useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -30,6 +29,11 @@ const FormSchema = z.object({
 })
 
 function LoginPage() {
+  const session = useSession()
+  if (session.status === 'authenticated') {
+    redirect('/admin')
+  }
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   })
@@ -40,9 +44,6 @@ function LoginPage() {
       password: data.password,
       redirect: true,
       callbackUrl: '/admin',
-    }).catch((err) => {
-      console.log(err)
-      redirect('/login')
     })
 
     toast({
@@ -56,7 +57,7 @@ function LoginPage() {
   }
 
   return (
-    <div>
+    <div suppressHydrationWarning>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
           <FormField

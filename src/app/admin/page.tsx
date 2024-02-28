@@ -7,17 +7,21 @@ export default function AdminPage() {
   const session = useSession({
     required: true,
     onUnauthenticated() {
-      redirect('/')
+      redirect('/login')
     },
   })
 
+  if (!session) {
+    return null
+  }
+
   return (
-    <div>
+    <div className='flex flex-col gap-4'>
       <h2 className='mb-8 text-center text-3xl font-semibold'>
         Admin Dashboard
       </h2>
       <p>Bienvenido: {session?.data?.user?.email}</p>
-      <Button onClick={() => signOut()}>Sign out</Button>
+      <Button className='w-40' onClick={() => signOut()}>Sign out</Button>
     </div>
   )
 }
