@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
 import { fontSans } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
+import Header from '@/components/header'
 
 export const metadata: Metadata = {
   title: 'Templo App',
@@ -16,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="es">
+    <html lang='es'>
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
@@ -24,12 +25,15 @@ export default function RootLayout({
         )}
       >
         <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
+          attribute='class'
+          defaultTheme='system'
           enableSystem
           disableTransitionOnChange
         >
-          {children}
+          <main className='flex min-h-screen flex-col items-center'>
+            <Header />
+            <div className='flex w-full max-w-7xl flex-col px-5 py-8'>{children}</div>
+          </main>
           <Toaster />
         </ThemeProvider>
       </body>
