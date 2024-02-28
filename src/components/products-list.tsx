@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
-import AddButton from './add-button'
+import DrawerConfirm from './drawer-confirm'
 
 async function ProductsList() {
   const products = await getProducts()
@@ -18,7 +18,7 @@ async function ProductsList() {
     <div className='w-full'>
       <div>
         <h2 className='text-3xl font-semibold'>Productos Disponibles</h2>
-        <p className='text-lg'>Elige el producto que deseas adquirir.</p>
+        <p className=''>Elige el producto que deseas adquirir.</p>
       </div>
       <section className='my-10 flex flex-wrap items-center gap-10'>
         {productSortByHighPrice?.map((product) => (
@@ -56,7 +56,7 @@ export function ProductCard({ product }: { product: Product }) {
         />
       </CardContent>
       <CardFooter>
-        <AddButton />
+        <DrawerConfirm product={product} />
       </CardFooter>
     </Card>
   )

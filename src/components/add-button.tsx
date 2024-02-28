@@ -1,7 +1,8 @@
 'use client'
 import { Button } from '@/components/ui/button'
-import { useToast } from '@/components/ui/use-toast'
-import { Loader2 } from 'lucide-react'
+import { toast } from '@/components/ui/use-toast'
+import { ShoppingCartIcon } from 'lucide-react'
+import { ToastAction } from '@/components/ui/toast'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,11 +16,9 @@ import {
 } from '@/components/ui/alert-dialog'
 
 function AddButton() {
-  const { toast } = useToast()
-
   return (
     <div className='flex items-center gap-4'>
-      <AlertDialog>
+      {/* <AlertDialog>
         <AlertDialogTrigger asChild>
           <Button variant='outline'>Eliminar</Button>
         </AlertDialogTrigger>
@@ -46,19 +45,24 @@ function AddButton() {
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
-      </AlertDialog>
+      </AlertDialog> */}
 
       <Button
         onClick={() => {
           toast({
             title: 'Producto agregado con éxito',
             description: 'Puedes verlo en tu inventario',
+            action: (
+              <ToastAction altText='Goto schedule to undo'>
+                Deshacer
+              </ToastAction>
+            ),
           })
         }}
       >
-        Agregar
+        <ShoppingCartIcon className='mr-2 h-4 w-4' /> Agregar
       </Button>
-{/* 
+      {/* 
       <Button disabled>
         <Loader2 className='mr-2 h-4 w-4 animate-spin' />
         Please wait
