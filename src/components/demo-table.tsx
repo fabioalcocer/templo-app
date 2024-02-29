@@ -77,8 +77,8 @@ export function TableDemo() {
       </TableBody>
       <TableFooter>
         <TableRow>
-          <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className='text-right'>
+          <TableCell colSpan={3} className='font-semibold'>Total</TableCell>
+          <TableCell className='text-right font-semibold'>
             {calculateTotalFromSales(sales)}
           </TableCell>
         </TableRow>
