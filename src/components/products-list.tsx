@@ -15,7 +15,7 @@ function ProductsList({ products }: { products: Product[] }) {
   const productSortByHighPrice = products?.sort((a, b) => a.price - b.price)
 
   return (
-    <div className='w-full'>
+    <div className='w-full max-w-7xl mx-auto px-5'>
       <div className='flex items-center gap-5 md:gap-6'>
         <Link href='/'>
           <ArrowLeftIcon className='h-8 w-8 md:h-10 md:w-10' />
@@ -62,7 +62,7 @@ export function ProductCard({ product }: { product: Product }) {
       <CardHeader>
         <div className='flex justify-center flex-col gap-1'>
           <CardTitle>{product?.name}</CardTitle>
-          <CardTitle className='text-emerald-500 text-xl'>{formattedPrice}</CardTitle>
+          <CardTitle className='text-primary text-xl'>{formattedPrice}</CardTitle>
         </div>
         <CardDescription>{`Quedan ${product?.stock} unidades disponibles.`}</CardDescription>
       </CardHeader>
