@@ -21,7 +21,7 @@ function Header() {
           <ModeToggle />
           {isLogin ? (
             <>
-              <Link href='/login'>
+              <Link href='/admin'>
                 <Button variant='outline' size='icon'>
                   <UserCog2Icon className='h-5 w-5' />
                 </Button>
