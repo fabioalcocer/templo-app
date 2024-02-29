@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-import { getProducts } from '@/api'
 import {
   Card,
   CardContent,
@@ -9,18 +8,28 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import DrawerConfirm from './drawer-confirm'
+import { ArrowLeftIcon } from 'lucide-react'
+import Link from 'next/link'
 
-async function ProductsList() {
-  const products = await getProducts()
+function ProductsList({ products }: { products: Product[] }) {
   const productSortByHighPrice = products?.sort((a, b) => a.price - b.price)
 
   return (
     <div className='w-full'>
-      <div>
-        <h2 className='text-3xl font-semibold'>Productos Disponibles</h2>
-        <p className=''>Elige el producto que deseas adquirir.</p>
+      <div className='flex items-center gap-5 md:gap-6'>
+        <Link href='/'>
+          <ArrowLeftIcon className='h-8 w-8 md:h-10 md:w-10' />
+        </Link>
+        <div>
+          <h2 className='text-xl font-semibold md:text-3xl'>
+            Productos Disponibles
+          </h2>
+          <p className='text-sm md:text-base'>
+            Elige el producto que deseas adquirir.
+          </p>
+        </div>
       </div>
-      <section className='my-10 flex flex-wrap items-center gap-10'>
+      <section className='my-7 flex flex-wrap items-center justify-center gap-10 md:my-10 md:justify-start'>
         {productSortByHighPrice?.map((product) => (
           <ProductCard product={product} key={product?.id} />
         ))}
@@ -42,20 +51,14 @@ export function ProductCard({ product }: { product: Product }) {
       <CardHeader>
         <div className='flex items-center justify-between'>
           <CardTitle>{product?.name}</CardTitle>
-          <CardTitle>{formattedPrice}</CardTitle>
+          <CardTitle className='text-emerald-600'>{formattedPrice}</CardTitle>
         </div>
         <CardDescription>{`Quedan ${product?.stock} unidades disponibles.`}</CardDescription>
       </CardHeader>
       <CardContent>
-        <img
-          width={300}
-          height={300}
-          src={product?.img}
-          alt=''
-          className='rounded-md'
-        />
+        <img width={280} src={product?.img} alt='' className='rounded-md' />
       </CardContent>
-      <CardFooter>
+      <CardFooter className='flex w-full'>
         <DrawerConfirm product={product} />
       </CardFooter>
     </Card>

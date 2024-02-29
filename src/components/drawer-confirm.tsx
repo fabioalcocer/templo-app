@@ -22,9 +22,9 @@ function DrawerConfirm({ product }: { product: Product }) {
   }
 
   return (
-    <div>
+    <div className='w-full'>
       <Drawer>
-        <DrawerTrigger asChild>
+        <DrawerTrigger asChild className='flex w-full'>
           <Button>
             <ShoppingCartIcon className='mr-2 h-4 w-4' /> Agregar
           </Button>
@@ -53,8 +53,8 @@ function DrawerConfirm({ product }: { product: Product }) {
                   <div className='text-7xl font-bold tracking-tighter'>
                     {quantity}
                   </div>
-                  <div className='text-[0.70rem] uppercase text-muted-foreground'>
-                    productos
+                  <div className='text-[0.90rem] mt-1 uppercase text-muted-foreground'>
+                    {product?.name}
                   </div>
                 </div>
                 <Button

@@ -1,3 +1,5 @@
+'use client'
+import { getSales } from '@/api'
 import {
   Table,
   TableBody,
@@ -8,78 +10,77 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-
-const invoices = [
-  {
-    invoice: 'INV001',
-    paymentStatus: 'Paid',
-    totalAmount: '$250.00',
-    paymentMethod: 'Credit Card',
-  },
-  {
-    invoice: 'INV002',
-    paymentStatus: 'Pending',
-    totalAmount: '$150.00',
-    paymentMethod: 'PayPal',
-  },
-  {
-    invoice: 'INV003',
-    paymentStatus: 'Unpaid',
-    totalAmount: '$350.00',
-    paymentMethod: 'Bank Transfer',
-  },
-  {
-    invoice: 'INV004',
-    paymentStatus: 'Paid',
-    totalAmount: '$450.00',
-    paymentMethod: 'Credit Card',
-  },
-  {
-    invoice: 'INV005',
-    paymentStatus: 'Paid',
-    totalAmount: '$550.00',
-    paymentMethod: 'PayPal',
-  },
-  {
-    invoice: 'INV006',
-    paymentStatus: 'Pending',
-    totalAmount: '$200.00',
-    paymentMethod: 'Bank Transfer',
-  },
-  {
-    invoice: 'INV007',
-    paymentStatus: 'Unpaid',
-    totalAmount: '$300.00',
-    paymentMethod: 'Credit Card',
-  },
-]
+import { useEffect, useState } from 'react'
 
 export function TableDemo() {
+  const [sales, setSales] = useState<Sale[]>([])
+
+  const fetchSales = async () => {
+    const sales = await getSales()
+    return setSales(sales)
+  }
+
+  const parsePaymentType = (paymentType: string) => {
+    type Payments = keyof typeof paymentTypes
+    const paymentTypes = {
+      qr: 'QR',
+      cash: 'Efectivo',
+      card: 'Tarjeta de débito',
+    } as const
+
+    return paymentTypes[paymentType as Payments] ?? ''
+  }
+
+  const parsedPriceFromNumber = (price: number) => {
+    const formattedPrice = new Intl.NumberFormat('es-BO', {
+      style: 'currency',
+      currency: 'BOB',
+    }).format(price)
+
+    return formattedPrice
+  }
+
+  const calculateTotalFromSales = (sales: Sale[]) => {
+    const total = sales.reduce((total, sale) => {
+      return total + sale?.total
+    }, 0)
+
+    return parsedPriceFromNumber(total)
+  }
+
+  useEffect(() => {
+    fetchSales()
+  }, [])
+
   return (
     <Table>
-      <TableCaption>A list of your recent invoices.</TableCaption>
+      <TableCaption>A list of your recent sales.</TableCaption>
       <TableHeader>
         <TableRow>
-          <TableHead className='w-[100px]'>Invoice</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Method</TableHead>
-          <TableHead className='text-right'>Amount</TableHead>
+          <TableHead className='w-[100px]'>ID</TableHead>
+          <TableHead>Producto</TableHead>
+          <TableHead>Método</TableHead>
+          <TableHead className='text-right'>Monto</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {invoices.map((invoice) => (
-          <TableRow key={invoice.invoice}>
-            <TableCell className='font-medium'>{invoice.invoice}</TableCell>
-            <TableCell>{invoice.paymentStatus}</TableCell>
-            <TableCell>{invoice.paymentMethod}</TableCell>
-            <TableCell className='text-right'>{invoice.totalAmount}</TableCell>
+        {sales?.map((sale) => (
+          <TableRow key={sale?.id}>
+            <TableCell className='font-medium'>{sale?.id}</TableCell>
+            <TableCell>{sale?.name}</TableCell>
+            <TableCell>{parsePaymentType(sale?.paymentType)}</TableCell>
+            <TableCell className='text-right'>
+              {parsedPriceFromNumber(sale?.total)}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
       <TableFooter>
         <TableRow>
           <TableCell colSpan={3}>Total</TableCell>
-          <TableCell className='text-right'>$2,500.00</TableCell>
+          <TableCell className='text-right'>
+            {calculateTotalFromSales(sales)}
+          </TableCell>
         </TableRow>
       </TableFooter>
     </Table>

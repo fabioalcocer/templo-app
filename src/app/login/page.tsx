@@ -12,6 +12,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { User2Icon, UserIcon } from 'lucide-react'
 import { signIn, useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
 import { useForm } from 'react-hook-form'
@@ -22,9 +23,11 @@ const FormSchema = z.object({
     .string({
       required_error: 'Please select an email to display.',
     })
-    .email(),
+    .email({
+      message: 'Por favor ingresa un correo válido.',
+    }),
   password: z.string().min(5, {
-    message: 'Password must be at least 5 characters.',
+    message: 'La contraseña debe tener más de 5 caracteres.',
   }),
 })
 
@@ -45,31 +48,39 @@ function LoginPage() {
       redirect: true,
       callbackUrl: '/admin',
     })
-
-    toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-          <code className='text-white'>{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
+    // toast({
+    //   title: 'You submitted the following values:',
+    //   description: (
+    //     <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
+    //       <code className='text-white'>{JSON.stringify(data, null, 2)}</code>
+    //     </pre>
+    //   ),
+    // })
   }
 
   return (
     <div suppressHydrationWarning>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-8'>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className='mx-auto w-full max-w-lg space-y-7  rounded-md border-2 border-secondary p-8'
+        >
+          <div className='flex items-center gap-3'>
+            <User2Icon />
+            <h2 className='text-center text-2xl font-semibold'>
+              Iniciar sesión
+            </h2>
+          </div>
           <FormField
             control={form.control}
             name='email'
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Username</FormLabel>
+                <FormLabel>Correo electrónico</FormLabel>
                 <FormControl>
                   <Input placeholder='admin@gmail.com' {...field} />
                 </FormControl>
-                <FormDescription>This is your public email.</FormDescription>
+                {/* <FormDescription>This is your public email.</FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
@@ -83,12 +94,15 @@ function LoginPage() {
                 <FormControl>
                   <Input placeholder='*****' {...field} type='password' />
                 </FormControl>
-                <FormDescription>This is your password.</FormDescription>
+                {/* <FormDescription>This is your password.</FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button type='submit'>Submit</Button>
+
+          <Button type='submit'>
+            <UserIcon className='mr-2 h-4 w-4' /> Ingresar
+          </Button>
         </form>
       </Form>
     </div>
