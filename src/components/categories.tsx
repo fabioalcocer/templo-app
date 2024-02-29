@@ -16,21 +16,21 @@ async function Categories() {
   const categories = await getCategories()
   return (
     <main className='flex flex-col gap-16 py-4'>
-      <div className='flex items-center justify-center gap-6 text-center'>
-        <StoreIcon width={50} height={50} />
-        <h2 className='text-center text-3xl font-semibold '>
+      <div className='flex items-center justify-center gap-3 text-center md:gap-6'>
+        <StoreIcon className='h-10 w-10 md:h-12 md:w-12' />
+        <h2 className='text-center text-xl font-semibold md:text-3xl'>
           Categorías disponibles
         </h2>
       </div>
 
-      <section>
+      <section className='flex flex-wrap items-center justify-center gap-10'>
         {categories?.map((category) => (
           <Link
             href={`/products/${category.id}`}
             key={category.id}
-            className='flex w-max'
+            className='flex w-max max-w-xs md:max-w-sm'
           >
-            <Card className='max-w-sm transition-shadow duration-200 hover:shadow-md'>
+            <Card className='h-auto w-full transition-shadow duration-200 hover:shadow-md'>
               <CardHeader>
                 <div className='mb-1 flex items-center justify-between'>
                   <CardTitle className=''>
@@ -39,11 +39,11 @@ async function Categories() {
                 </div>
                 <CardDescription>{category?.description}</CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className='mt-auto self-end'>
                 <img
                   src={category?.img}
                   alt=''
-                  className='mx-auto w-full max-w-xs rounded-md'
+                  className='mx-auto mt-auto w-full max-w-xs self-end rounded-md'
                 />
               </CardContent>
               {/* <CardFooter>

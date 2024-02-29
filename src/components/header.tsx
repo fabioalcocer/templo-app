@@ -10,7 +10,7 @@ function Header() {
   const isLogin = session.status === 'authenticated'
 
   return (
-    <header className='sticky top-0 flex w-full bg-background p-5 shadow-md'>
+    <header className='sticky top-0 flex w-full bg-background md:p-5 py-3 px-0 shadow-md'>
       <div className='mx-auto flex w-full max-w-7xl items-center justify-between px-5'>
         <Link href='/' className='flex items-center gap-3'>
           <DnaIcon className='h-8 w-8' />

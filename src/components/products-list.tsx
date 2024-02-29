@@ -8,7 +8,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import DrawerConfirm from './drawer-confirm'
-import { ArrowLeftIcon } from 'lucide-react'
+import { ArrowLeftIcon, MehIcon } from 'lucide-react'
 import Link from 'next/link'
 
 function ProductsList({ products }: { products: Product[] }) {
@@ -29,10 +29,21 @@ function ProductsList({ products }: { products: Product[] }) {
           </p>
         </div>
       </div>
-      <section className='my-7 flex flex-wrap items-center justify-center gap-10 md:my-10 md:justify-start'>
-        {productSortByHighPrice?.map((product) => (
-          <ProductCard product={product} key={product?.id} />
-        ))}
+      <section className='my-7 flex flex-wrap items-center justify-center gap-10 md:my-12 md:justify-start'>
+        {productSortByHighPrice?.length > 0 ? (
+          <>
+            {productSortByHighPrice?.map((product) => (
+              <ProductCard product={product} key={product?.id} />
+            ))}
+          </>
+        ) : (
+          <div className='flex w-full md:flex-row flex-col items-center justify-center gap-5 mt-12'>
+            <MehIcon className='h-10 w-10' />
+            <p className='font-mono text-2xl font-semibold text-center'>
+              No hay productos disponibles
+            </p>
+          </div>
+        )}
       </section>
     </div>
   )
@@ -49,14 +60,14 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Card className='max-w-sm'>
       <CardHeader>
-        <div className='flex items-center justify-between'>
+        <div className='flex justify-center flex-col gap-1'>
           <CardTitle>{product?.name}</CardTitle>
-          <CardTitle className='text-emerald-600'>{formattedPrice}</CardTitle>
+          <CardTitle className='text-emerald-500 text-xl'>{formattedPrice}</CardTitle>
         </div>
         <CardDescription>{`Quedan ${product?.stock} unidades disponibles.`}</CardDescription>
       </CardHeader>
       <CardContent>
-        <img width={280} src={product?.img} alt='' className='rounded-md' />
+        <img width={280} src={product?.img} alt='' className='rounded-md mx-auto' />
       </CardContent>
       <CardFooter className='flex w-full'>
         <DrawerConfirm product={product} />

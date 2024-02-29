@@ -53,36 +53,40 @@ export function TableDemo() {
   }, [])
 
   return (
-    <Table>
-      <TableCaption>A list of your recent sales.</TableCaption>
-      <TableHeader>
-        <TableRow>
-          <TableHead className='w-[100px]'>ID</TableHead>
-          <TableHead>Producto</TableHead>
-          <TableHead>Método</TableHead>
-          <TableHead className='text-right'>Monto</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {sales?.map((sale) => (
-          <TableRow key={sale?.id}>
-            <TableCell className='font-medium'>{sale?.id}</TableCell>
-            <TableCell>{sale?.name}</TableCell>
-            <TableCell>{parsePaymentType(sale?.paymentType)}</TableCell>
-            <TableCell className='text-right'>
-              {parsedPriceFromNumber(sale?.total)}
+    <div className=''>
+      <Table>
+        <TableCaption>A list of your recent sales.</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead className='w-[100px]'>ID</TableHead>
+            <TableHead>Producto</TableHead>
+            <TableHead>Método</TableHead>
+            <TableHead className='text-right'>Monto</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {sales?.map((sale) => (
+            <TableRow key={sale?.id}>
+              <TableCell className='font-medium'>{sale?.id}</TableCell>
+              <TableCell>{sale?.name}</TableCell>
+              <TableCell>{parsePaymentType(sale?.paymentType)}</TableCell>
+              <TableCell className='text-right'>
+                {parsedPriceFromNumber(sale?.total)}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TableCell colSpan={3} className='font-semibold'>
+              Total
+            </TableCell>
+            <TableCell className='text-right font-semibold'>
+              {calculateTotalFromSales(sales)}
             </TableCell>
           </TableRow>
-        ))}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell colSpan={3} className='font-semibold'>Total</TableCell>
-          <TableCell className='text-right font-semibold'>
-            {calculateTotalFromSales(sales)}
-          </TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+        </TableFooter>
+      </Table>
+    </div>
   )
 }
