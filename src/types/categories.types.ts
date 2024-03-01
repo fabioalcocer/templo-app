@@ -7,3 +7,8 @@ interface Category {
   type: string
   img: string
 }
+
+interface OptionCategory {
+  label: string
+  value: string
+}

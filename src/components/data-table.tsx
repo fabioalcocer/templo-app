@@ -37,6 +37,7 @@ import {
 } from '@/components/ui/table'
 import { getAllProducts } from '@/api'
 import { CATEGORIES } from '@/lib/constants'
+import { CreateProductForm } from './add-product-form'
 
 export function getCategoryNameById(id: string): string | undefined {
   const category = CATEGORIES.find((category) => category.id === id)
@@ -141,7 +142,7 @@ export const columns: ColumnDef<Product>[] = [
         <Button
           asChild
           variant='ghost'
-          className='ml-auto justify-end p-0 text-right w-full'
+          className='ml-auto w-full justify-end p-0 text-right'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           <div className='text-right'>
@@ -153,9 +154,9 @@ export const columns: ColumnDef<Product>[] = [
     },
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue('price'))
-      const formatted = new Intl.NumberFormat('en-US', {
+      const formatted = new Intl.NumberFormat('es-BO', {
         style: 'currency',
-        currency: 'USD',
+        currency: 'BOB',
       }).format(amount)
 
       return <div className='text-right font-medium'>{formatted}</div>
@@ -223,7 +224,6 @@ export function DataTableDemo() {
 
   const fetchProducts = async () => {
     const products = await getAllProducts()
-    console.log(products)
     return setProducts(products)
   }
 
@@ -233,7 +233,7 @@ export function DataTableDemo() {
 
   return (
     <div className='w-full'>
-      <div className='flex items-center py-4'>
+      <div className='flex items-center justify-between py-4'>
         <Input
           placeholder='Filter products...'
           value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
@@ -242,32 +242,35 @@ export function DataTableDemo() {
           }
           className='max-w-sm'
         />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant='outline' className='ml-auto'>
-              Columns <ChevronDown className='ml-2 h-4 w-4' />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align='end'>
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className='capitalize'
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) =>
-                      column.toggleVisibility(!!value)
-                    }
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        <div className='flex items-center gap-4'>
+          <CreateProductForm />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant='outline' className='ml-auto'>
+                Columnas <ChevronDown className='ml-2 h-4 w-4' />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align='end'>
+              {table
+                .getAllColumns()
+                .filter((column) => column.getCanHide())
+                .map((column) => {
+                  return (
+                    <DropdownMenuCheckboxItem
+                      key={column.id}
+                      className='capitalize'
+                      checked={column.getIsVisible()}
+                      onCheckedChange={(value) =>
+                        column.toggleVisibility(!!value)
+                      }
+                    >
+                      {column.id}
+                    </DropdownMenuCheckboxItem>
+                  )
+                })}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
       <div className='rounded-md border'>
         <Table>
