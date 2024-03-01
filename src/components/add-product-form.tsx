@@ -106,7 +106,7 @@ export function CreateProductForm() {
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2'>
+          <form onSubmit={form.handleSubmit(onSubmit)} className=''>
             <FormField
               control={form.control}
               name='name'
@@ -124,11 +124,11 @@ export function CreateProductForm() {
               control={form.control}
               name='cost'
               render={({ field }) => (
-                <FormItem>
+                <FormItem className='mt-2'>
                   <FormLabel>Costo</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder='50 Bs.'
+                      placeholder='Bs 50'
                       {...field}
                       type='number'
                       defaultValue='0'
@@ -145,7 +145,7 @@ export function CreateProductForm() {
               control={form.control}
               name='categoryId'
               render={({ field }) => (
-                <FormItem>
+                <FormItem className='mt-2'>
                   <FormLabel>Categoría:</FormLabel>
                   <Select
                     onValueChange={field.onChange}
@@ -171,7 +171,7 @@ export function CreateProductForm() {
                 </FormItem>
               )}
             />
-            <DialogFooter>
+            <DialogFooter className='mt-5'>
               <DialogClose asChild>
                 <Button type='button' variant='secondary'>
                   Cancelar
