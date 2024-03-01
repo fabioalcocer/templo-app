@@ -19,6 +19,16 @@ export async function getCategories(): Promise<Category[]> {
   }
 }
 
+export async function getAllProducts(): Promise<Product[]> {
+  try {
+    const querySnapshot = await getDocs(collection(database, 'products'))
+    const categoriesData = querySnapshot.docs.map((doc) => doc.data())
+    return categoriesData as Product[]
+  } catch (err) {
+    console.error(err)
+    return []
+  }
+}
 export async function getProductsByCategoryId(
   categoryId: string,
 ): Promise<Product[]> {

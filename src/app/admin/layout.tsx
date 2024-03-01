@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <Suspense fallback={<Loading />}>
-      <div className='grid-cols-[200px_1fr] grid gap-10'>
+      <div className='grid-cols-[250px_1fr] grid gap-10'>
         <AdminSidebar />
         <div>{children}</div>
       </div>

@@ -35,48 +35,15 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { getAllProducts } from '@/api'
+import { CATEGORIES } from '@/lib/constants'
 
-const data: Payment[] = [
-  {
-    id: 'm5gr84i9',
-    amount: 316,
-    status: 'success',
-    email: 'ken99@yahoo.com',
-  },
-  {
-    id: '3u1reuv4',
-    amount: 242,
-    status: 'success',
-    email: 'Abe45@gmail.com',
-  },
-  {
-    id: 'derv1ws0',
-    amount: 837,
-    status: 'processing',
-    email: 'Monserrat44@gmail.com',
-  },
-  {
-    id: '5kma53ae',
-    amount: 874,
-    status: 'success',
-    email: 'Silas22@gmail.com',
-  },
-  {
-    id: 'bhqecj4p',
-    amount: 721,
-    status: 'failed',
-    email: 'carmella@hotmail.com',
-  },
-]
-
-export type Payment = {
-  id: string
-  amount: number
-  status: 'pending' | 'processing' | 'success' | 'failed'
-  email: string
+export function getCategoryNameById(id: string): string | undefined {
+  const category = CATEGORIES.find((category) => category.id === id)
+  return category ? category.name : ''
 }
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<Product>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -102,44 +69,90 @@ export const columns: ColumnDef<Payment>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'status',
+    accessorKey: 'id',
     header: ({ column }) => {
       return (
         <Button
           variant='ghost'
+          className='p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Status
+          Id
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className='capitalize'>{row.getValue('id')}</div>,
+  },
+  {
+    accessorKey: 'name',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          className='p-0'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Nombre
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className=''>{row.getValue('name')}</div>,
+  },
+  {
+    accessorKey: 'categoryId',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          className='p-0'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Categoría
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       )
     },
     cell: ({ row }) => (
-      <div className='capitalize'>{row.getValue('status')}</div>
+      <div className=''>{getCategoryNameById(row.getValue('categoryId'))}</div>
     ),
   },
   {
-    accessorKey: 'email',
+    accessorKey: 'stock',
     header: ({ column }) => {
       return (
         <Button
           variant='ghost'
+          className='p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Email
+          Stock
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       )
     },
-    cell: ({ row }) => <div className='lowercase'>{row.getValue('email')}</div>,
+    cell: ({ row }) => <div className=''>{row.getValue('stock')}</div>,
   },
   {
-    accessorKey: 'amount',
-    header: () => <div className='text-right'>Amount</div>,
+    accessorKey: 'price',
+    header: ({ column }) => {
+      return (
+        <Button
+          asChild
+          variant='ghost'
+          className='ml-auto justify-end p-0 text-right w-full'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          <div className='text-right'>
+            Precio
+            <ArrowUpDown className='ml-2 h-4 w-4' />
+          </div>
+        </Button>
+      )
+    },
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('amount'))
-
-      // Format the amount as a dollar amount
+      const amount = parseFloat(row.getValue('price'))
       const formatted = new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',
@@ -152,7 +165,7 @@ export const columns: ColumnDef<Payment>[] = [
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const payment = row.original
+      const product = row.original
 
       return (
         <DropdownMenu>
@@ -163,15 +176,15 @@ export const columns: ColumnDef<Payment>[] = [
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
+            <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(payment.id)}
+              onClick={() => navigator.clipboard.writeText(product.id)}
             >
-              Copy payment ID
+              Copiar ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>View customer</DropdownMenuItem>
-            <DropdownMenuItem>View payment details</DropdownMenuItem>
+            <DropdownMenuItem>Editar producto</DropdownMenuItem>
+            <DropdownMenuItem>Ver detalles del producto</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -180,6 +193,7 @@ export const columns: ColumnDef<Payment>[] = [
 ]
 
 export function DataTableDemo() {
+  const [products, setProducts] = React.useState<Product[]>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -189,7 +203,7 @@ export function DataTableDemo() {
   const [rowSelection, setRowSelection] = React.useState({})
 
   const table = useReactTable({
-    data,
+    data: products,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -207,14 +221,24 @@ export function DataTableDemo() {
     },
   })
 
+  const fetchProducts = async () => {
+    const products = await getAllProducts()
+    console.log(products)
+    return setProducts(products)
+  }
+
+  React.useEffect(() => {
+    fetchProducts()
+  }, [])
+
   return (
     <div className='w-full'>
       <div className='flex items-center py-4'>
         <Input
-          placeholder='Filter emails...'
-          value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
+          placeholder='Filter products...'
+          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
-            table.getColumn('email')?.setFilterValue(event.target.value)
+            table.getColumn('name')?.setFilterValue(event.target.value)
           }
           className='max-w-sm'
         />

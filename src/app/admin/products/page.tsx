@@ -1,7 +1,8 @@
 'use client'
+import { DataTableDemo } from '@/components/data-table'
+import { UserCogIcon } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
-import { UserCogIcon } from 'lucide-react'
 import { Suspense } from 'react'
 import Loading from './loading'
 
@@ -24,6 +25,8 @@ export default function ProductsPage() {
           <UserCogIcon width={36} height={36} />
           Products
         </h2>
+
+        <DataTableDemo />
       </div>
     </Suspense>
   )
