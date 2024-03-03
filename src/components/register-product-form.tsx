@@ -18,7 +18,7 @@ import {
 import { ToastAction } from '@/components/ui/toast'
 import { toast } from '@/components/ui/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Check, Loader2 } from 'lucide-react'
+import { Check, Loader2, Minus, Plus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
@@ -34,21 +34,12 @@ const FormSchema = z.object({
   }),
 })
 
-function RegisterProductForm({
-  quantity,
-  productId,
-  name,
-  total,
-  categoryId,
-}: {
-  quantity: number
-  categoryId: string
-  productId: string
-  name: string
-  total: number
-}) {
+function RegisterProductForm({ product }: { product: Product }) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [quantity, setQuantity] = useState(1)
+
+  const total = product?.price * quantity
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -58,11 +49,11 @@ function RegisterProductForm({
     setLoading(true)
 
     const productData = {
-      productId,
-      name,
+      productId: product?.id,
+      name: product?.name,
+      categoryId: product?.categoryId,
       quantity,
       total,
-      categoryId,
       ...data,
     }
 
@@ -88,12 +79,19 @@ function RegisterProductForm({
     })
   }
 
-  console.log(form.watch('paymentType'))
+  function onClick(adjustment: number) {
+    setQuantity(quantity + adjustment)
+  }
 
   return (
     <div className='w-full p-4'>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6'>
+          {form.watch('paymentType') === 'qr' && (
+            <div className='mx-auto flex justify-center'>
+              <Image src={QR} width={200} height={200} alt='qr' />
+            </div>
+          )}
           <FormField
             control={form.control}
             name='paymentType'
@@ -115,19 +113,45 @@ function RegisterProductForm({
                     <SelectItem value='card'>Tarjeta de débito</SelectItem>
                   </SelectContent>
                 </Select>
-                {/* <FormDescription>
-                Selecciona un método de pago.
-              </FormDescription> */}
                 <FormMessage />
               </FormItem>
             )}
           />
 
-          {form.watch('paymentType') === 'qr' && (
-            <div className='mx-auto flex justify-center'>
-              <Image src={QR} width={220} height={220} alt='qr' />
+          <div className='p-4 pb-0'>
+            <div className='flex items-center justify-center space-x-2'>
+              <Button
+                variant='outline'
+                size='icon'
+                className='h-8 w-8 shrink-0 rounded-full'
+                type='button'
+                onClick={() => onClick(-1)}
+                disabled={quantity <= 1}
+              >
+                <Minus className='h-4 w-4' />
+                <span className='sr-only'>Decrease</span>
+              </Button>
+              <div className='flex-1 text-center'>
+                <div className='text-7xl font-bold tracking-tighter'>
+                  {quantity}
+                </div>
+                <div className='mt-1 text-[0.90rem] uppercase text-muted-foreground'>
+                  {product?.name}
+                </div>
+              </div>
+              <Button
+                variant='outline'
+                size='icon'
+                className='h-8 w-8 shrink-0 rounded-full'
+                type='button'
+                onClick={() => onClick(1)}
+                disabled={quantity >= product.stock}
+              >
+                <Plus className='h-4 w-4' />
+                <span className='sr-only'>Increase</span>
+              </Button>
             </div>
-          )}
+          </div>
 
           <DrawerFooter>
             <Button disabled={loading} type='submit'>

@@ -330,7 +330,7 @@ export function DataTableDemo() {
                   colSpan={columns.length}
                   className='h-24 text-center'
                 >
-                  No results.
+                  No hay resultados.
                 </TableCell>
               </TableRow>
             )}

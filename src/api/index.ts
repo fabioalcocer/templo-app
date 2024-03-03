@@ -10,6 +10,9 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore'
+import { cache } from 'react'
+
+export const revalidate = 20
 
 export async function getCategories(): Promise<Category[]> {
   try {
@@ -32,21 +35,21 @@ export async function getAllProducts(): Promise<Product[]> {
     return []
   }
 }
-export async function getProductsByCategoryId(
-  categoryId: string,
-): Promise<Product[]> {
-  const colRef = collection(database, 'products')
-  const queryRef = query(colRef, where('categoryId', '==', categoryId))
+export const getProductsByCategoryId = cache(
+  async (categoryId: string): Promise<Product[]> => {
+    const colRef = collection(database, 'products')
+    const queryRef = query(colRef, where('categoryId', '==', categoryId))
 
-  try {
-    const querySnapshot = await getDocs(queryRef)
-    const productsData = querySnapshot.docs.map((doc) => doc.data())
-    return productsData as Product[]
-  } catch (err) {
-    console.error(err)
-    return []
-  }
-}
+    try {
+      const querySnapshot = await getDocs(queryRef)
+      const productsData = querySnapshot.docs.map((doc) => doc.data())
+      return productsData as Product[]
+    } catch (err) {
+      console.error(err)
+      return []
+    }
+  },
+)
 
 export async function registerProductSale({ productData }: any) {
   try {
