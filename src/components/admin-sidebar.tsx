@@ -1,22 +1,22 @@
 'use client'
 import Link from 'next/link'
 import { Button } from './ui/button'
-import { DollarSign, TagIcon } from 'lucide-react'
+import { DollarSign, UserCogIcon } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 
 function AdminSidebar() {
   const ROUTES = [
     {
-      label: 'Productos',
-      path: '/admin/products',
+      label: 'Registro de ventas',
+      path: '/admin/sales',
       icon: <DollarSign className='mr-3 h-5 w-5' />,
     },
     {
-      label: 'Registro de ventas',
-      path: '/admin/sales',
-      icon: <TagIcon className='mr-3 h-5 w-5' />,
-    },
+      label: 'Registro de compras',
+      path: '/admin/products',
+      icon: <UserCogIcon className='mr-3 h-5 w-5' />,
+    }
   ]
 
   const path = usePathname()

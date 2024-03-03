@@ -22,7 +22,7 @@ function Header() {
   }, [resolvedTheme])
 
   return (
-    <header className='sticky top-0 flex w-full bg-background px-0 py-3 shadow-md md:p-5'>
+    <header className='sticky top-0 flex w-full bg-background px-0 py-3 shadow-md md:p-5 z-50'>
       <div className='mx-auto flex w-full max-w-7xl items-center justify-between px-3 md:px-5'>
         <Link href='/' className='flex items-center gap-3'>
           <Image
@@ -38,7 +38,7 @@ function Header() {
           <ModeToggle />
           {isLogin ? (
             <>
-              <Link href='/admin/products'>
+              <Link href='/admin/sales'>
                 <Avatar>
                   <AvatarImage
                     src='https://avatars.githubusercontent.com/u/88163765?v=4'

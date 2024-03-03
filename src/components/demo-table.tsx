@@ -61,6 +61,7 @@ export function TableDemo() {
             <TableHead className='w-[100px]'>ID</TableHead>
             <TableHead>Producto</TableHead>
             <TableHead>Método</TableHead>
+            <TableHead className='text-right'>Precio U.</TableHead>
             <TableHead className='text-right'>Monto</TableHead>
           </TableRow>
         </TableHeader>
@@ -71,6 +72,9 @@ export function TableDemo() {
               <TableCell>{sale?.name}</TableCell>
               <TableCell>{parsePaymentType(sale?.paymentType)}</TableCell>
               <TableCell className='text-right'>
+                {parsedPriceFromNumber(sale?.total / sale?.quantity)}
+              </TableCell>
+              <TableCell className='text-right'>
                 {parsedPriceFromNumber(sale?.total)}
               </TableCell>
             </TableRow>
@@ -78,7 +82,7 @@ export function TableDemo() {
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={3} className='font-semibold'>
+            <TableCell colSpan={4} className='font-semibold'>
               Total
             </TableCell>
             <TableCell className='text-right font-semibold'>

@@ -15,7 +15,7 @@ function ProductsList({ products }: { products: Product[] }) {
   const productSortByHighPrice = products?.sort((a, b) => a.price - b.price)
 
   return (
-    <div className='w-full max-w-7xl mx-auto px-5'>
+    <div className='mx-auto w-full max-w-7xl px-5'>
       <div className='flex items-center gap-5 md:gap-6'>
         <Link href='/'>
           <ArrowLeftIcon className='h-8 w-8 md:h-10 md:w-10' />
@@ -29,7 +29,7 @@ function ProductsList({ products }: { products: Product[] }) {
           </p>
         </div>
       </div>
-      <section className='my-7 flex flex-wrap items-center justify-center gap-10 md:my-12 md:justify-start'>
+      <section className='mx-auto my-7 flex w-full flex-wrap items-center justify-center gap-10 md:my-12'>
         {productSortByHighPrice?.length > 0 ? (
           <>
             {productSortByHighPrice?.map((product) => (
@@ -37,9 +37,9 @@ function ProductsList({ products }: { products: Product[] }) {
             ))}
           </>
         ) : (
-          <div className='flex w-full md:flex-row flex-col items-center justify-center gap-5 mt-12'>
+          <div className='mt-12 flex w-full flex-col items-center justify-center gap-5 md:flex-row'>
             <MehIcon className='h-10 w-10' />
-            <p className='font-mono text-2xl font-semibold text-center'>
+            <p className='text-center font-mono text-2xl font-semibold'>
               No hay productos disponibles
             </p>
           </div>
@@ -60,14 +60,21 @@ export function ProductCard({ product }: { product: Product }) {
   return (
     <Card className='max-w-sm'>
       <CardHeader>
-        <div className='flex justify-center flex-col gap-1'>
+        <div className='flex flex-col justify-center gap-1'>
           <CardTitle>{product?.name}</CardTitle>
-          <CardTitle className='text-primary text-xl'>{formattedPrice}</CardTitle>
+          <CardTitle className='text-xl text-primary'>
+            {formattedPrice}
+          </CardTitle>
         </div>
         <CardDescription>{`Quedan ${product?.stock} unidades disponibles.`}</CardDescription>
       </CardHeader>
       <CardContent>
-        <img width={280} src={product?.img} alt='' className='rounded-md mx-auto' />
+        <img
+          width={280}
+          src={product?.img}
+          alt=''
+          className='mx-auto rounded-md'
+        />
       </CardContent>
       <CardFooter className='flex w-full'>
         <DrawerConfirm product={product} />

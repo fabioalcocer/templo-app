@@ -1,5 +1,5 @@
 'use client'
-import { registerSaleProduct } from '@/api'
+import { registerProductSale } from '@/api'
 import {
   Form,
   FormControl,
@@ -61,7 +61,7 @@ function RegisterProductForm({
       ...data,
     }
 
-    await registerSaleProduct({ productData })
+    await registerProductSale({ productData })
     setLoading(false)
 
     toast({
@@ -71,10 +71,10 @@ function RegisterProductForm({
           <Check />
         </div>
       ),
-      description: 'Puedes ver el registro en tu inventario',
+      description: 'Puedes ver el registro de la venta en tu inventario',
       action: (
         <ToastAction
-          onClick={() => router.push('/admin')}
+          onClick={() => router.push('/admin/sales')}
           altText='Go to admin dashboard'
         >
           Ver

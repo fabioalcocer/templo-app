@@ -34,7 +34,7 @@ const FormSchema = z.object({
 function LoginPage() {
   const session = useSession()
   if (session.status === 'authenticated') {
-    redirect('/admin/products')
+    redirect('/admin/sales')
   }
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -46,7 +46,7 @@ function LoginPage() {
       email: data.email,
       password: data.password,
       redirect: true,
-      callbackUrl: '/admin/products',
+      callbackUrl: '/admin/sales',
     })
     // toast({
     //   title: 'You submitted the following values:',

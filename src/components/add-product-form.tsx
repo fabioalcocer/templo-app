@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,8 +18,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { Divide, PlusIcon } from 'lucide-react'
+import { Divide, PlusIcon, Loader2, Check } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -32,8 +30,9 @@ import {
   SelectValue,
 } from './ui/select'
 import { toast } from '@/components/ui/use-toast'
-import { getCategories } from '@/api'
+import { getCategories, registerProductPurchase } from '@/api'
 import { useEffect, useState } from 'react'
+import { DEFAULT_VALUES } from '@/lib/constants'
 
 const FormSchema = z.object({
   name: z
@@ -53,28 +52,57 @@ const FormSchema = z.object({
     .min(1, {
       message: 'Por favor, ingresa un monto mayor a 0.',
     }),
+  price: z
+    .number({
+      required_error: 'Por favor, ingresa un monto.',
+    })
+    .min(1, {
+      message: 'Por favor, ingresa un monto mayor a 0.',
+    }),
   categoryId: z.string({
     required_error: 'Por favor, selecciona un categoría.',
   }),
+  stock: z
+    .number({
+      required_error: 'Por favor, ingresa un monto.',
+    })
+    .min(1, {
+      message: 'Por favor, ingresa un monto mayor a 0.',
+    }),
+  img: z
+    .string({
+      required_error: 'Por favor, ingresa una imagen.',
+    })
+    .url({
+      message: 'Por favor, ingresa una URL válida.',
+    }),
 })
 
 export function CreateProductForm() {
+  const [loading, setLoading] = useState(false)
   const [categoriesOptions, setCategoriesOptions] = useState<OptionCategory[]>(
     [],
   )
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
+    defaultValues: DEFAULT_VALUES,
   })
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
+  async function onSubmit(data: z.infer<typeof FormSchema>) {
+    setLoading(true)
+    form.reset(DEFAULT_VALUES)
+    await registerProductPurchase({ data })
+
     toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-          <code className='text-white'>{JSON.stringify(data, null, 2)}</code>
-        </pre>
+      title: (
+        <div className='flex w-full items-center gap-2'>
+          La compra se registró exitosamente
+          <Check />
+        </div>
       ),
+      description: 'Puedes ver el registro de la compra en tu inventario',
     })
+    setLoading(false)
   }
 
   const fetchProducts = async () => {
@@ -95,14 +123,14 @@ export function CreateProductForm() {
       <DialogTrigger asChild>
         <Button variant='default'>
           <PlusIcon className='mr-2 h-5 w-5' />
-          Agregar producto
+          Registrar compra
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
         <DialogHeader>
-          <DialogTitle className='text-xl'>Crear producto</DialogTitle>
+          <DialogTitle className='text-xl'>Registrar producto</DialogTitle>
           <DialogDescription>
-            Crea un nuevo producto para almacenarlo en tu inventario.
+            Registra un nuevo producto para almacenarlo en tu inventario.
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
@@ -120,27 +148,74 @@ export function CreateProductForm() {
                 </FormItem>
               )}
             />
-            <FormField
-              control={form.control}
-              name='cost'
-              render={({ field }) => (
-                <FormItem className='mt-2'>
-                  <FormLabel>Costo</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Bs 50'
-                      {...field}
-                      type='number'
-                      defaultValue='0'
-                      onChange={(event) =>
-                        field.onChange(parseInt(event.target.value))
-                      }
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className='flex items-center gap-3'>
+              <FormField
+                control={form.control}
+                name='cost'
+                render={({ field }) => (
+                  <FormItem className='mt-2'>
+                    <FormLabel>Costo</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Bs 50'
+                        {...field}
+                        type='number'
+                        defaultValue='0'
+                        onChange={(event) =>
+                          field.onChange(parseInt(event.target.value))
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='stock'
+                render={({ field }) => (
+                  <FormItem className='mt-2'>
+                    <FormLabel>Cantidad</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Bs 50'
+                        {...field}
+                        type='number'
+                        defaultValue='0'
+                        onChange={(event) =>
+                          field.onChange(parseInt(event.target.value))
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name='price'
+                render={({ field }) => (
+                  <FormItem className='mt-2'>
+                    <FormLabel>Precio unitario</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Bs 50'
+                        {...field}
+                        type='number'
+                        defaultValue='0'
+                        onChange={(event) =>
+                          field.onChange(parseInt(event.target.value))
+                        }
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <FormField
               control={form.control}
               name='categoryId'
@@ -164,20 +239,40 @@ export function CreateProductForm() {
                       ))}
                     </SelectContent>
                   </Select>
-                  {/* <FormDescription>
-                Selecciona un método de pago.
-              </FormDescription> */}
                   <FormMessage />
                 </FormItem>
               )}
             />
+
+            <div className='mt-2'>
+              <FormField
+                control={form.control}
+                name='img'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Imagen del producto</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='https://fsa.bo/productos/14959-01.jpg'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
             <DialogFooter className='mt-5'>
               <DialogClose asChild>
                 <Button type='button' variant='secondary'>
                   Cancelar
                 </Button>
               </DialogClose>
-              <Button type='submit'>Crear producto</Button>
+              <Button disabled={loading} type='submit'>
+                {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+                Registrar compra
+              </Button>
             </DialogFooter>
           </form>
         </Form>

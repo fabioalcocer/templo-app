@@ -163,6 +163,33 @@ export const columns: ColumnDef<Product>[] = [
     },
   },
   {
+    accessorKey: 'cost',
+    header: ({ column }) => {
+      return (
+        <Button
+          asChild
+          variant='ghost'
+          className='ml-auto w-full justify-end p-0 text-right'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          <div className='text-right'>
+            Costo
+            <ArrowUpDown className='ml-2 h-4 w-4' />
+          </div>
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const amount = parseFloat(row.getValue('cost'))
+      const formatted = new Intl.NumberFormat('es-BO', {
+        style: 'currency',
+        currency: 'BOB',
+      }).format(amount || 0)
+
+      return <div className='text-right font-medium'>{formatted}</div>
+    },
+  },
+  {
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
@@ -235,7 +262,7 @@ export function DataTableDemo() {
     <div className='w-full'>
       <div className='flex items-center justify-between py-4'>
         <Input
-          placeholder='Filter products...'
+          placeholder='Buscar producto...'
           value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('name')?.setFilterValue(event.target.value)
