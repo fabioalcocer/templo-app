@@ -30,7 +30,7 @@ async function Categories() {
             key={category.id}
             className='flex w-max max-w-xs md:max-w-sm'
           >
-            <Card className='h-auto w-full transition-shadow duration-200 hover:shadow-md'>
+            <Card className='h-auto w-full transition-all duration-200 hover:shadow-md hover:scale-105'>
               <CardHeader>
                 <div className='mb-1 flex items-center justify-between'>
                   <CardTitle className=''>

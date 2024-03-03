@@ -10,6 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import { calculateTotalFromSales, getCategoryNameById } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 
 export function TableDemo() {
@@ -40,14 +41,6 @@ export function TableDemo() {
     return formattedPrice
   }
 
-  const calculateTotalFromSales = (sales: Sale[]) => {
-    const total = sales.reduce((total, sale) => {
-      return total + sale?.total
-    }, 0)
-
-    return parsedPriceFromNumber(total)
-  }
-
   useEffect(() => {
     fetchSales()
   }, [])
@@ -58,22 +51,26 @@ export function TableDemo() {
         <TableCaption>A list of your recent sales.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className='w-[100px]'>ID</TableHead>
+            {/* <TableHead className='w-[100px]'>ID</TableHead> */}
+            <TableHead>Categoría</TableHead>
             <TableHead>Producto</TableHead>
             <TableHead>Método</TableHead>
             <TableHead className='text-right'>Precio U.</TableHead>
+            <TableHead className='text-right'>Cantidad</TableHead>
             <TableHead className='text-right'>Monto</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {sales?.map((sale) => (
             <TableRow key={sale?.id}>
-              <TableCell className='font-medium'>{sale?.id}</TableCell>
+              {/* <TableCell className='font-medium'>{`${sale?.id.slice(0, 7)}...`}</TableCell> */}
+              <TableCell>{getCategoryNameById(sale?.categoryId)}</TableCell>
               <TableCell>{sale?.name}</TableCell>
               <TableCell>{parsePaymentType(sale?.paymentType)}</TableCell>
               <TableCell className='text-right'>
                 {parsedPriceFromNumber(sale?.total / sale?.quantity)}
               </TableCell>
+              <TableCell className='text-right'>{sale?.quantity}</TableCell>
               <TableCell className='text-right'>
                 {parsedPriceFromNumber(sale?.total)}
               </TableCell>
@@ -82,7 +79,7 @@ export function TableDemo() {
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={4} className='font-semibold'>
+            <TableCell colSpan={5} className='font-semibold'>
               Total
             </TableCell>
             <TableCell className='text-right font-semibold'>

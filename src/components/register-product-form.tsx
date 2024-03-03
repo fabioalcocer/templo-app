@@ -25,6 +25,8 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Button } from './ui/button'
 import { DrawerClose, DrawerFooter } from './ui/drawer'
+import Image from 'next/image'
+import QR from '@/assets/qr.jpg'
 
 const FormSchema = z.object({
   paymentType: z.string({
@@ -37,8 +39,10 @@ function RegisterProductForm({
   productId,
   name,
   total,
+  categoryId,
 }: {
   quantity: number
+  categoryId: string
   productId: string
   name: string
   total: number
@@ -58,6 +62,7 @@ function RegisterProductForm({
       name,
       quantity,
       total,
+      categoryId,
       ...data,
     }
 
@@ -82,6 +87,8 @@ function RegisterProductForm({
       ),
     })
   }
+
+  console.log(form.watch('paymentType'))
 
   return (
     <div className='w-full p-4'>
@@ -115,6 +122,13 @@ function RegisterProductForm({
               </FormItem>
             )}
           />
+
+          {form.watch('paymentType') === 'qr' && (
+            <div className='mx-auto flex justify-center'>
+              <Image src={QR} width={220} height={220} alt='qr' />
+            </div>
+          )}
+
           <DrawerFooter>
             <Button disabled={loading} type='submit'>
               {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}

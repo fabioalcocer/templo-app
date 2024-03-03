@@ -31,18 +31,14 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
 import { getAllProducts } from '@/api'
-import { CATEGORIES } from '@/lib/constants'
 import { CreateProductForm } from './add-product-form'
-
-export function getCategoryNameById(id: string): string | undefined {
-  const category = CATEGORIES.find((category) => category.id === id)
-  return category ? category.name : ''
-}
+import { calculateTotalFromPurchases, getCategoryNameById, parsedPriceFromNumber } from '@/lib/utils'
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -154,11 +150,7 @@ export const columns: ColumnDef<Product>[] = [
     },
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue('price'))
-      const formatted = new Intl.NumberFormat('es-BO', {
-        style: 'currency',
-        currency: 'BOB',
-      }).format(amount)
-
+      const formatted = parsedPriceFromNumber(amount)
       return <div className='text-right font-medium'>{formatted}</div>
     },
   },
@@ -181,11 +173,7 @@ export const columns: ColumnDef<Product>[] = [
     },
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue('cost'))
-      const formatted = new Intl.NumberFormat('es-BO', {
-        style: 'currency',
-        currency: 'BOB',
-      }).format(amount || 0)
-
+      const formatted = parsedPriceFromNumber(amount || 0)
       return <div className='text-right font-medium'>{formatted}</div>
     },
   },
@@ -347,6 +335,15 @@ export function DataTableDemo() {
               </TableRow>
             )}
           </TableBody>
+          <TableFooter className='bg-inherit'>
+            <TableRow>
+              <TableCell colSpan={5}></TableCell>
+              <TableCell className='text-right font-semibold'>Total</TableCell>
+              <TableCell className='text-right font-semibold'>
+                {calculateTotalFromPurchases(products)}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
       </div>
       <div className='flex items-center justify-end space-x-2 py-4'>

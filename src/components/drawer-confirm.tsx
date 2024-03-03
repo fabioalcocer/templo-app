@@ -53,7 +53,7 @@ function DrawerConfirm({ product }: { product: Product }) {
                   <div className='text-7xl font-bold tracking-tighter'>
                     {quantity}
                   </div>
-                  <div className='text-[0.90rem] mt-1 uppercase text-muted-foreground'>
+                  <div className='mt-1 text-[0.90rem] uppercase text-muted-foreground'>
                     {product?.name}
                   </div>
                 </div>
@@ -74,6 +74,7 @@ function DrawerConfirm({ product }: { product: Product }) {
               quantity={quantity}
               productId={product.id}
               name={product.name}
+              categoryId={product.categoryId}
               total={total}
             />
           </div>
