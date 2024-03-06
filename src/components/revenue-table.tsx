@@ -56,8 +56,8 @@ export function RevenueTable() {
         <TableCaption>A list of your revenues.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead>Gastos</TableHead>
             <TableHead>Ventas</TableHead>
+            <TableHead>Gastos</TableHead>
             <TableHead>Ingresos</TableHead>
           </TableRow>
         </TableHeader>
