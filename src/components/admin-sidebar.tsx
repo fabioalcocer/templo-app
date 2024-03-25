@@ -61,7 +61,7 @@ function AdminSidebar({
                 <UserIcon className='h-6 w-6' />
                 <p>Panel de Control</p>
               </div>
-              <span className='sr-only'>Acme Inc</span>
+              <span className='sr-only'>Templo Gym</span>
             </div>
           </div>
           <div className='flex-1'>
@@ -100,7 +100,7 @@ function AdminSidebar({
             </SheetTrigger>
             <SheetContent side='left' className='flex flex-col'>
               <nav className='grid gap-2 text-lg font-medium'>
-                <div className='flex items-center gap-2 text-lg font-semibold'>
+                <div className='flex items-center gap-2 text-lg pt-8 pb-4 font-semibold'>
                   <div className='flex items-center gap-3'>
                     <UserIcon className='h-6 w-6' />
                     <p>Panel de Control</p>
