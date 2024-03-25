@@ -18,7 +18,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
-import { Divide, PlusIcon, Loader2, Check } from 'lucide-react'
+import { PlusIcon, Loader2, Check } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -78,7 +78,7 @@ const FormSchema = z.object({
     }),
 })
 
-export function CreateProductForm() {
+export function RegisterPurchaseProductForm() {
   const [loading, setLoading] = useState(false)
   const [categoriesOptions, setCategoriesOptions] = useState<OptionCategory[]>(
     [],
@@ -106,8 +106,8 @@ export function CreateProductForm() {
   }
 
   const fetchProducts = async () => {
-    const categories = await getCategories()
-    const options = categories?.map((option) => ({
+    const products = await getCategories()
+    const options = products?.map((option) => ({
       value: option.id,
       label: option.name,
     }))

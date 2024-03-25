@@ -48,7 +48,7 @@ export function TableDemo() {
   return (
     <div className=''>
       <Table>
-        <TableCaption>A list of your recent sales.</TableCaption>
+        <TableCaption>Lista de tus ventas recientes.</TableCaption>
         <TableHeader>
           <TableRow>
             {/* <TableHead className='w-[100px]'>ID</TableHead> */}

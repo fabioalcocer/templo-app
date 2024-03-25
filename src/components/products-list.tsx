@@ -15,7 +15,7 @@ function ProductsList({ products }: { products: Product[] }) {
   const productSortByHighPrice = products?.sort((a, b) => a.price - b.price)
 
   return (
-    <div className='mx-auto w-full max-w-7xl px-5'>
+    <div className='mx-auto w-full max-w-7xl px-5 py-8'>
       <div className='flex items-center gap-5 md:gap-6'>
         <Link href='/'>
           <ArrowLeftIcon className='h-8 w-8 md:h-10 md:w-10' />

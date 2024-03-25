@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import * as React from 'react'
@@ -13,7 +14,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from 'lucide-react'
+import {
+  ArrowUpDown,
+  ChevronDown,
+  ImageIcon,
+  MoreHorizontal,
+} from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -37,8 +43,12 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { getAllProducts } from '@/api'
-import { CreateProductForm } from './add-product-form'
-import { calculateTotalFromPurchases, getCategoryNameById, parsedPriceFromNumber } from '@/lib/utils'
+import { RegisterPurchaseProductForm } from './add-product-form'
+import {
+  calculateTotalFromPurchases,
+  getCategoryNameById,
+  parsedPriceFromNumber,
+} from '@/lib/utils'
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -65,21 +75,44 @@ export const columns: ColumnDef<Product>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+  // {
+  //   accessorKey: 'id',
+  //   header: ({ column }) => {
+  //     return (
+  //       <Button
+  //         variant='ghost'
+  //         className='p-0'
+  //         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+  //       >
+  //         Id
+  //         <ArrowUpDown className='ml-2 h-4 w-4' />
+  //       </Button>
+  //     )
+  //   },
+  //   cell: ({ row }) => <div className='capitalize'>{row.getValue('id')}</div>,
+  // },
   {
-    accessorKey: 'id',
-    header: ({ column }) => {
+    accessorKey: 'img',
+    header: () => {
       return (
-        <Button
-          variant='ghost'
-          className='p-0'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Id
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
+        <div className='ml-4'>
+          <ImageIcon />
+        </div>
       )
     },
-    cell: ({ row }) => <div className='capitalize'>{row.getValue('id')}</div>,
+    cell: ({ row }) => (
+      <div className=''>
+        <img
+          className='h-14 w-14 rounded-md'
+          src={row.getValue('img')}
+          onError={(e: any) =>
+            (e.currentTarget.src =
+              'https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png')
+          }
+          alt='imagen del producto'
+        />
+      </div>
+    ),
   },
   {
     accessorKey: 'name',
@@ -258,7 +291,7 @@ export function DataTableDemo() {
           className='max-w-sm'
         />
         <div className='flex items-center gap-4'>
-          <CreateProductForm />
+          <RegisterPurchaseProductForm />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='ml-auto'>

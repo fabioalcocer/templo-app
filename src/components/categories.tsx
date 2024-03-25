@@ -15,7 +15,7 @@ import {
 async function Categories() {
   const categories = await getCategories()
   return (
-    <main className='flex flex-col gap-12 py-4'>
+    <main className='flex flex-col gap-12 py-8'>
       <div className='flex items-center justify-center gap-3 text-center md:gap-6'>
         <StoreIcon className='h-10 w-10 md:h-11 md:w-11' />
         <h2 className='text-center font-mono text-xl font-bold uppercase md:text-4xl'>

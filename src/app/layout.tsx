@@ -35,7 +35,7 @@ export default function RootLayout({
           >
             <main className='flex min-h-screen flex-col items-center'>
               <Header />
-              <div className='flex w-full container flex-col px-5 py-8'>
+              <div className='flex w-full container flex-col px-0'>
                 {children}
               </div>
             </main>

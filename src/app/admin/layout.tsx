@@ -1,7 +1,7 @@
+import AdminSidebar from '@/components/admin-sidebar'
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import Loading from './loading'
-import AdminSidebar from '@/components/admin-sidebar'
 
 export const metadata: Metadata = {
   title: 'Templo Admin',
@@ -15,10 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <Suspense fallback={<Loading />}>
-      <div className='grid-cols-[250px_1fr] grid gap-10'>
-        <AdminSidebar />
-        <div>{children}</div>
-      </div>
+      <AdminSidebar>{children}</AdminSidebar>
     </Suspense>
   )
 }

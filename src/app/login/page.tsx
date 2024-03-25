@@ -59,7 +59,7 @@ function LoginPage() {
   }
 
   return (
-    <div suppressHydrationWarning>
+    <div suppressHydrationWarning className='py-12'>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
