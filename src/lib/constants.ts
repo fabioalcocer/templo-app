@@ -7,7 +7,19 @@ export const CATEGORIES = [
     name: 'Powerade',
     id: 'Z6C1qNbeHT7RazSxXQ5f',
   },
+  {
+    name: 'Energizantes',
+    id: 'pTWkEmsf1ye6r78vUpS2',
+  },
 ] as const
+
+export const CATEGORY_DEFAULT_VALUES = {
+  id: '',
+  name: '',
+  description: '',
+  available: false,
+  img: '',
+}
 
 export const DEFAULT_VALUES = {
   id: '',
@@ -17,5 +29,5 @@ export const DEFAULT_VALUES = {
   cost: 0,
   stock: 0,
   img: '',
-  categoryId: ''
+  categoryId: '',
 }

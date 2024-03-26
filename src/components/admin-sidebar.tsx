@@ -1,6 +1,6 @@
 'use client'
 
-import { BadgeDollarSign, BoxIcon, DollarSign, UserCogIcon } from 'lucide-react'
+import { BoxIcon, DollarSign, UserCogIcon } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -21,7 +21,11 @@ function AdminSidebar({
       path: '/admin/dashboards',
       icon: <Home className='h-5 w-5' />,
     },
-
+    {
+      label: 'Inventario',
+      path: '/admin/inventory',
+      icon: <BoxIcon className='h-5 w-5' />,
+    },
     {
       label: 'Registro de ventas',
       path: '/admin/sales',
@@ -32,16 +36,7 @@ function AdminSidebar({
       path: '/admin/products',
       icon: <UserCogIcon className='h-5 w-5' />,
     },
-    {
-      label: 'Resumen',
-      path: '/admin/revenues',
-      icon: <BadgeDollarSign className='h-5 w-5' />,
-    },
-    {
-      label: 'Inventario',
-      path: '/admin/inventory',
-      icon: <BoxIcon className='h-5 w-5' />,
-    },
+
     {
       label: 'Analíticas',
       path: '/admin/analytics',
@@ -100,7 +95,7 @@ function AdminSidebar({
             </SheetTrigger>
             <SheetContent side='left' className='flex flex-col'>
               <nav className='grid gap-2 text-lg font-medium'>
-                <div className='flex items-center gap-2 text-lg pt-8 pb-4 font-semibold'>
+                <div className='flex items-center gap-2 pb-4 pt-8 text-lg font-semibold'>
                   <div className='flex items-center gap-3'>
                     <UserIcon className='h-6 w-6' />
                     <p>Panel de Control</p>
@@ -121,7 +116,7 @@ function AdminSidebar({
             </SheetContent>
           </Sheet>
         </header>
-        <main className='flex h-full flex-1 flex-col p-4 lg:gap-6 lg:p-6 overflow-y-hidden'>
+        <main className='flex h-full flex-1 flex-col overflow-y-hidden p-4 lg:gap-6 lg:p-6'>
           {children}
         </main>
       </div>

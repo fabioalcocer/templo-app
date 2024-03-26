@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/table'
 import { calculateTotalFromSales, getCategoryNameById } from '@/lib/utils'
 import { useEffect, useState } from 'react'
+import { format } from 'date-fns'
 
 export function TableDemo() {
   const [sales, setSales] = useState<Sale[]>([])
@@ -52,21 +53,24 @@ export function TableDemo() {
         <TableHeader>
           <TableRow>
             {/* <TableHead className='w-[100px]'>ID</TableHead> */}
-            <TableHead>Categoría</TableHead>
+            <TableHead>Fecha de venta</TableHead>
             <TableHead>Producto</TableHead>
-            <TableHead>Método</TableHead>
             <TableHead className='text-right'>Precio U.</TableHead>
             <TableHead className='text-right'>Cantidad</TableHead>
-            <TableHead className='text-right'>Monto</TableHead>
+            <TableHead className='text-right'>Monto Total</TableHead>
+            <TableHead>Método</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {sales?.map((sale) => (
             <TableRow key={sale?.id}>
               {/* <TableCell className='font-medium'>{`${sale?.id.slice(0, 7)}...`}</TableCell> */}
-              <TableCell>{getCategoryNameById(sale?.categoryId)}</TableCell>
+              <TableCell>
+                {sale?.createdAt
+                  ? format(sale?.createdAt, 'PPP')
+                  : 'March 27th, 2024'}
+              </TableCell>
               <TableCell>{sale?.name}</TableCell>
-              <TableCell>{parsePaymentType(sale?.paymentType)}</TableCell>
               <TableCell className='text-right'>
                 {parsedPriceFromNumber(sale?.total / sale?.quantity)}
               </TableCell>
@@ -74,17 +78,17 @@ export function TableDemo() {
               <TableCell className='text-right'>
                 {parsedPriceFromNumber(sale?.total)}
               </TableCell>
+              <TableCell>{parsePaymentType(sale?.paymentType)}</TableCell>
             </TableRow>
           ))}
         </TableBody>
         <TableFooter>
           <TableRow>
-            <TableCell colSpan={5} className='font-semibold'>
-              Total
-            </TableCell>
+            <TableCell colSpan={4} className='font-semibold'></TableCell>
             <TableCell className='text-right font-semibold'>
               {calculateTotalFromSales(sales)}
             </TableCell>
+            <TableCell className='font-semibold'>Total</TableCell>
           </TableRow>
         </TableFooter>
       </Table>

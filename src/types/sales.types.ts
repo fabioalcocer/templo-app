@@ -6,4 +6,5 @@ interface Sale {
   productId: string
   quantity: number
   total: number
+  createdAt: Date
 }

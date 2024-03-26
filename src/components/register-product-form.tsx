@@ -54,6 +54,7 @@ function RegisterProductForm({ product }: { product: Product }) {
       categoryId: product?.categoryId,
       quantity,
       total,
+      createdAt: Date.now(),
       ...data,
     }
 
@@ -70,7 +71,7 @@ function RegisterProductForm({ product }: { product: Product }) {
       description: 'Puedes ver el registro de la venta en tu inventario',
       action: (
         <ToastAction
-          onClick={() => router.push('/admin/sales')}
+          onClick={() => router.push('/admin/dashboards')}
           altText='Go to admin dashboard'
         >
           Ver

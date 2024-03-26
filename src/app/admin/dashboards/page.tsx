@@ -1,13 +1,10 @@
+'use client'
 import Link from 'next/link'
 import {
   Activity,
   ArrowUpRight,
-  CircleUser,
   CreditCard,
   DollarSign,
-  Menu,
-  Package2,
-  Search,
   Users,
 } from 'lucide-react'
 
@@ -22,16 +19,6 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
-import {
   Table,
   TableBody,
   TableCell,
@@ -39,8 +26,46 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
+import {
+  calculateTotalFromPurchases,
+  calculateTotalFromSales,
+  parsedPriceFromNumber,
+} from '@/lib/utils'
+import { getAllProducts, getSales } from '@/api'
+import { useEffect, useState } from 'react'
 
 function DashboardsPage() {
+  const [products, setProducts] = useState<Product[]>([])
+  const [sales, setSales] = useState<Sale[]>([])
+
+  const calculateTotalRevenues = () => {
+    const salesTotal = calculateTotalFromSales(sales)
+    const purchasesTotal = calculateTotalFromPurchases(products)
+    const integerSalesValue = parseInt(salesTotal.replace(/\D/g, ''), 10)
+    const integerPurchasesValue = parseInt(
+      purchasesTotal.replace(/\D/g, ''),
+      10,
+    )
+
+    const totalRenevues = (integerSalesValue - integerPurchasesValue) / 100
+    return parsedPriceFromNumber(totalRenevues)
+  }
+
+  const fetchSales = async () => {
+    const sales = await getSales()
+    return setSales(sales)
+  }
+
+  const fetchProducts = async () => {
+    const products = await getAllProducts()
+    return setProducts(products)
+  }
+
+  useEffect(() => {
+    fetchSales()
+    fetchProducts()
+  }, [])
+
   return (
     <div className='flex min-h-[calc(100vh_-_80px)] w-full flex-col'>
       <main className='flex flex-1 flex-col gap-4 md:gap-8'>
@@ -53,23 +78,11 @@ function DashboardsPage() {
               <DollarSign className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold'>$45,231.89</div>
+              <div className='text-2xl font-bold'>
+                + {calculateTotalRevenues()}
+              </div>
               <p className='text-xs text-muted-foreground'>
                 +20.1% from last month
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>
-                Subscriptions
-              </CardTitle>
-              <Users className='h-4 w-4 text-muted-foreground' />
-            </CardHeader>
-            <CardContent>
-              <div className='text-2xl font-bold'>+2350</div>
-              <p className='text-xs text-muted-foreground'>
-                +180.1% from last month
               </p>
             </CardContent>
           </Card>
@@ -79,9 +92,27 @@ function DashboardsPage() {
               <CreditCard className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold'>+12,234</div>
+              <div className='text-2xl font-bold'>
+                + {calculateTotalFromSales(sales)}
+              </div>
               <p className='text-xs text-muted-foreground'>
                 +19% from last month
+              </p>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
+              <CardTitle className='text-sm font-medium'>
+                Purchases
+              </CardTitle>
+              <Users className='h-4 w-4 text-muted-foreground' />
+            </CardHeader>
+            <CardContent>
+              <div className='text-2xl font-bold'>
+                - {calculateTotalFromPurchases(products)}
+              </div>
+              <p className='text-xs text-muted-foreground'>
+                +180.1% from last month
               </p>
             </CardContent>
           </Card>

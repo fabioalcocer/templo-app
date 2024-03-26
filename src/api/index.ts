@@ -51,6 +51,18 @@ export const getProductsByCategoryId = cache(
   },
 )
 
+export async function createCategory({ data }: any) {
+  try {
+    const docRef = await addDoc(collection(database, 'categories'), {
+      ...data,
+    })
+    console.log('Document written with ID: ', docRef.id)
+    return setDoc(docRef, { id: docRef.id }, { merge: true })
+  } catch (e) {
+    console.error('Error adding document: ', e)
+  }
+}
+
 export async function registerProductSale({ productData }: any) {
   try {
     const docRef = await addDoc(collection(database, 'sales'), {

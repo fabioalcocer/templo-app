@@ -42,16 +42,11 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { getAllProducts } from '@/api'
-import {
-  calculateTotalFromPurchases,
-  getCategoryNameById,
-  parsedPriceFromNumber,
-} from '@/lib/utils'
+import { getCategories } from '@/api'
 import { DataTablePagination } from './table-pagination'
-import { RegisterPurchaseProductForm } from './add-product-form'
+import { CreateCategoryForm } from './create-category-form'
 
-export const columns: ColumnDef<Product>[] = [
+export const columns: ColumnDef<Category>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -76,22 +71,22 @@ export const columns: ColumnDef<Product>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  // {
-  //   accessorKey: 'id',
-  //   header: ({ column }) => {
-  //     return (
-  //       <Button
-  //         variant='ghost'
-  //         className='p-0'
-  //         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-  //       >
-  //         Id
-  //         <ArrowUpDown className='ml-2 h-4 w-4' />
-  //       </Button>
-  //     )
-  //   },
-  //   cell: ({ row }) => <div className='capitalize'>{row.getValue('id')}</div>,
-  // },
+  {
+    accessorKey: 'id',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          className='p-0'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Id
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className='capitalize'>{row.getValue('id')}</div>,
+  },
   {
     accessorKey: 'img',
     header: () => {
@@ -132,7 +127,7 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => <div className=''>{row.getValue('name')}</div>,
   },
   {
-    accessorKey: 'categoryId',
+    accessorKey: 'productsLength',
     header: ({ column }) => {
       return (
         <Button
@@ -140,76 +135,12 @@ export const columns: ColumnDef<Product>[] = [
           className='p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Categoría
+          Productos
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       )
     },
-    cell: ({ row }) => (
-      <div className=''>{getCategoryNameById(row.getValue('categoryId'))}</div>
-    ),
-  },
-  {
-    accessorKey: 'stock',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          className='p-0'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Stock
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className=''>{row.getValue('stock')}</div>,
-  },
-  {
-    accessorKey: 'price',
-    header: ({ column }) => {
-      return (
-        <Button
-          asChild
-          variant='ghost'
-          className='ml-auto w-full justify-end p-0 text-right'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          <div className='text-right'>
-            Precio
-            <ArrowUpDown className='ml-2 h-4 w-4' />
-          </div>
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('price'))
-      const formatted = parsedPriceFromNumber(amount)
-      return <div className='text-right font-medium'>{formatted}</div>
-    },
-  },
-  {
-    accessorKey: 'cost',
-    header: ({ column }) => {
-      return (
-        <Button
-          asChild
-          variant='ghost'
-          className='ml-auto w-full justify-end p-0 text-right'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          <div className='text-right'>
-            Costo
-            <ArrowUpDown className='ml-2 h-4 w-4' />
-          </div>
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('cost'))
-      const formatted = parsedPriceFromNumber(amount || 0)
-      return <div className='text-right font-medium'>{formatted}</div>
-    },
+    cell: ({ row }) => <div className=''>{row.getValue('productsLength')}</div>,
   },
   {
     id: 'actions',
@@ -233,8 +164,7 @@ export const columns: ColumnDef<Product>[] = [
               Copiar ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Editar producto</DropdownMenuItem>
-            <DropdownMenuItem>Ver detalles del producto</DropdownMenuItem>
+            <DropdownMenuItem>Editar categoría</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -242,8 +172,8 @@ export const columns: ColumnDef<Product>[] = [
   },
 ]
 
-export function DataTableDemo() {
-  const [products, setProducts] = React.useState<Product[]>([])
+export function CategoriesTable() {
+  const [categories, setCategories] = React.useState<Category[]>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -253,7 +183,7 @@ export function DataTableDemo() {
   const [rowSelection, setRowSelection] = React.useState({})
 
   const table = useReactTable({
-    data: products,
+    data: categories,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -271,20 +201,20 @@ export function DataTableDemo() {
     },
   })
 
-  const fetchProducts = async () => {
-    const products = await getAllProducts()
-    return setProducts(products)
+  const fetchCategories = async () => {
+    const categories = await getCategories()
+    return setCategories(categories)
   }
 
   React.useEffect(() => {
-    fetchProducts()
+    fetchCategories()
   }, [])
 
   return (
     <div className='w-full'>
       <div className='flex items-center justify-between py-4'>
         <Input
-          placeholder='Buscar producto...'
+          placeholder='Buscar categoría...'
           value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('name')?.setFilterValue(event.target.value)
@@ -292,7 +222,7 @@ export function DataTableDemo() {
           className='max-w-sm'
         />
         <div className='flex items-center gap-4'>
-          <RegisterPurchaseProductForm />
+          <CreateCategoryForm />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='ml-auto'>
@@ -369,15 +299,6 @@ export function DataTableDemo() {
               </TableRow>
             )}
           </TableBody>
-          <TableFooter className='bg-inherit'>
-            <TableRow>
-              <TableCell colSpan={5}></TableCell>
-              <TableCell className='text-right font-semibold'>Total</TableCell>
-              <TableCell className='text-right font-semibold'>
-                {calculateTotalFromPurchases(products)}
-              </TableCell>
-            </TableRow>
-          </TableFooter>
         </Table>
       </div>
       <div className='flex items-center justify-end space-x-2 py-4'>

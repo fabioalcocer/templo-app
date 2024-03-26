@@ -38,7 +38,7 @@ function Header() {
           <ModeToggle />
           {isLogin ? (
             <>
-              <Link href='/admin/sales'>
+              <Link href='/admin/dashboards'>
                 <Avatar>
                   <AvatarImage
                     src='https://avatars.githubusercontent.com/u/88163765?v=4'
