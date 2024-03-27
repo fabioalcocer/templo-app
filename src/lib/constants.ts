@@ -11,6 +11,10 @@ export const CATEGORIES = [
     name: 'Energizantes',
     id: 'pTWkEmsf1ye6r78vUpS2',
   },
+  {
+    name: 'Desayuno Fit',
+    id: 'qkViBkm7HAGTz97H1X2r',
+  },
 ] as const
 
 export const CATEGORY_DEFAULT_VALUES = {

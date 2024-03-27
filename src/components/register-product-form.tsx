@@ -67,16 +67,7 @@ function RegisterProductForm({ product }: { product: Product }) {
           La venta se registró exitosamente
           <Check />
         </div>
-      ),
-      description: 'Puedes ver el registro de la venta en tu inventario',
-      action: (
-        <ToastAction
-          onClick={() => router.push('/admin/dashboards')}
-          altText='Go to admin dashboard'
-        >
-          Ver
-        </ToastAction>
-      ),
+      )
     })
   }
 

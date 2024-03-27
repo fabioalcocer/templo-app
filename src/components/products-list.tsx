@@ -10,6 +10,7 @@ import {
 import DrawerConfirm from './drawer-confirm'
 import { ArrowLeftIcon, MehIcon } from 'lucide-react'
 import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 
 function ProductsList({ products }: { products: Product[] }) {
   const productSortByHighPrice = products?.sort((a, b) => a.price - b.price)
@@ -76,9 +77,19 @@ export function ProductCard({ product }: { product: Product }) {
           className='mx-auto rounded-md'
         />
       </CardContent>
-      <CardFooter className='flex w-full'>
-        <DrawerConfirm product={product} />
-      </CardFooter>
+
+      {product?.stock > 0 ? (
+        <CardFooter className='flex w-full'>
+          <DrawerConfirm product={product} />
+        </CardFooter>
+      ) : (
+        <CardFooter className='flex w-full'>
+          <Button className='w-full pointer-events-none' variant='secondary'>
+            <MehIcon className='mr-2 h-4 w-4' />
+            No quedan unidades
+          </Button>
+        </CardFooter>
+      )}
     </Card>
   )
 }

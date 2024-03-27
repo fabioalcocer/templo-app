@@ -15,23 +15,23 @@ import {
 async function Categories() {
   const categories = await getCategories()
   return (
-    <main className='flex flex-col gap-12 py-8'>
+    <main className='flex flex-col gap-12 p-8'>
       <div className='flex items-center justify-center gap-3 text-center md:gap-6'>
         <StoreIcon className='h-10 w-10 md:h-11 md:w-11' />
-        <h2 className='text-center font-mono text-xl font-bold uppercase md:text-4xl'>
+        <h2 className='text-center text-xl font-bold md:text-4xl'>
           Categorías
         </h2>
       </div>
 
-      <section className='flex flex-wrap items-center justify-center gap-10'>
+      <section className='flex flex-wrap justify-center gap-10'>
         {categories?.map((category) => (
           <Link
             href={`/products/${category.id}`}
             key={category.id}
             className='flex w-max max-w-xs md:max-w-sm'
           >
-            <Card className='h-auto w-full transition-all duration-200 hover:scale-105 hover:shadow-md'>
-              <CardHeader>
+            <Card className='flex flex-col h-full w-full transition-all duration-200 hover:scale-105 hover:shadow-md'>
+              <CardHeader className='mb-auto'>
                 <div className='mb-1 flex items-center justify-between'>
                   <CardTitle className=''>
                     {`${category?.name} (${category?.productsLength} productos)`}
@@ -43,7 +43,7 @@ async function Categories() {
                 <img
                   src={category?.img}
                   alt=''
-                  className='mx-auto mt-auto w-full max-w-xs self-end rounded-md'
+                  className='mx-auto mt-auto w-full max-w-xs self-end rounded-md object-cover'
                 />
               </CardContent>
               {/* <CardFooter>

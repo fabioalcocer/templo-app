@@ -33,6 +33,8 @@ import {
 } from '@/lib/utils'
 import { getAllProducts, getSales } from '@/api'
 import { useEffect, useState } from 'react'
+import { useSession } from 'next-auth/react'
+import { redirect } from 'next/navigation'
 
 function DashboardsPage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -65,6 +67,17 @@ function DashboardsPage() {
     fetchSales()
     fetchProducts()
   }, [])
+
+  const session = useSession({
+    required: true,
+    onUnauthenticated() {
+      redirect('/login')
+    },
+  })
+
+  if (!session) {
+    return null
+  }
 
   return (
     <div className='flex min-h-[calc(100vh_-_80px)] w-full flex-col'>
@@ -102,9 +115,7 @@ function DashboardsPage() {
           </Card>
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>
-                Purchases
-              </CardTitle>
+              <CardTitle className='text-sm font-medium'>Purchases</CardTitle>
               <Users className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>

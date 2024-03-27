@@ -1,10 +1,10 @@
 'use client'
-import { DataTableDemo } from '@/components/data-table'
 import { UserCogIcon } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import Loading from './loading'
+import { DataProductsTable } from '@/components/data-table'
 
 export default function ProductsPage() {
   const session = useSession({
@@ -17,7 +17,7 @@ export default function ProductsPage() {
   if (!session) {
     return null
   }
-  
+
   return (
     <Suspense fallback={<Loading />}>
       <div className='flex flex-col gap-4'>
@@ -26,7 +26,7 @@ export default function ProductsPage() {
           Registro de compras
         </h2>
 
-        <DataTableDemo />
+        <DataProductsTable />
       </div>
     </Suspense>
   )

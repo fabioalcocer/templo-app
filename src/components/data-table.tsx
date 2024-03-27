@@ -234,7 +234,7 @@ export const columns: ColumnDef<Product>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem>Editar producto</DropdownMenuItem>
-            <DropdownMenuItem>Ver detalles del producto</DropdownMenuItem>
+            <DropdownMenuItem>Aumentar stock</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -242,7 +242,7 @@ export const columns: ColumnDef<Product>[] = [
   },
 ]
 
-export function DataTableDemo() {
+export function DataProductsTable() {
   const [products, setProducts] = React.useState<Product[]>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(

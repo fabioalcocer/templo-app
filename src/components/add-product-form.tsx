@@ -100,7 +100,7 @@ export function RegisterPurchaseProductForm() {
           <Check />
         </div>
       ),
-      description: 'Puedes ver el registro de la compra en tu inventario',
+      description: 'Puedes ver el registro del producto en tu inventario',
     })
     setLoading(false)
   }
@@ -123,7 +123,7 @@ export function RegisterPurchaseProductForm() {
       <DialogTrigger asChild>
         <Button variant='default'>
           <PlusIcon className='mr-2 h-5 w-5' />
-          Registrar compra
+          Añadir producto
         </Button>
       </DialogTrigger>
       <DialogContent className='sm:max-w-[425px]'>
@@ -151,13 +151,13 @@ export function RegisterPurchaseProductForm() {
             <div className='flex items-center gap-3'>
               <FormField
                 control={form.control}
-                name='cost'
+                name='stock'
                 render={({ field }) => (
                   <FormItem className='mt-2'>
-                    <FormLabel>Costo</FormLabel>
+                    <FormLabel>Cantidad</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='Bs 50'
+                        placeholder='8'
                         {...field}
                         type='number'
                         defaultValue='0'
@@ -173,10 +173,10 @@ export function RegisterPurchaseProductForm() {
 
               <FormField
                 control={form.control}
-                name='stock'
+                name='cost'
                 render={({ field }) => (
                   <FormItem className='mt-2'>
-                    <FormLabel>Cantidad</FormLabel>
+                    <FormLabel>Costo</FormLabel>
                     <FormControl>
                       <Input
                         placeholder='Bs 50'
@@ -201,7 +201,7 @@ export function RegisterPurchaseProductForm() {
                     <FormLabel>Precio unitario</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='Bs 50'
+                        placeholder='Bs 53'
                         {...field}
                         type='number'
                         defaultValue='0'
@@ -271,7 +271,7 @@ export function RegisterPurchaseProductForm() {
               </DialogClose>
               <Button disabled={loading} type='submit'>
                 {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-                Registrar compra
+                Añadir producto
               </Button>
             </DialogFooter>
           </form>
