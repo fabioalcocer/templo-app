@@ -32,22 +32,27 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
   TableCell,
+  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { getAllProducts } from '@/api'
-import { getCategoryNameById, parsedPriceFromNumber } from '@/lib/utils'
+import { getAllPurchases } from '@/api'
+import { calculateTotalFromPurchases, parsedPriceFromNumber } from '@/lib/utils'
 import { DataTablePagination } from './table-pagination'
 import { AddProductForm } from './add-product-form'
 import { AlertDialogConfirm } from './dialog-confirm'
+import { DatePickerWithRange } from './date-range-picker'
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale/es'
+import { Timestamp } from 'firebase/firestore'
+import { Badge } from './ui/badge'
 
-export const columns: ColumnDef<Product>[] = [
+export const columns: ColumnDef<Purchase>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -73,30 +78,7 @@ export const columns: ColumnDef<Product>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'img',
-    header: () => {
-      return (
-        <div className='ml-4'>
-          <ImageIcon />
-        </div>
-      )
-    },
-    cell: ({ row }) => (
-      <div className=''>
-        <img
-          className='h-14 w-14 rounded-md'
-          src={row.getValue('img')}
-          onError={(e: any) =>
-            (e.currentTarget.src =
-              'https://nayemdevs.com/wp-content/uploads/2020/03/default-product-image.png')
-          }
-          alt='imagen del producto'
-        />
-      </div>
-    ),
-  },
-  {
-    accessorKey: 'name',
+    accessorKey: 'productName',
     header: ({ column }) => {
       return (
         <Button
@@ -109,10 +91,10 @@ export const columns: ColumnDef<Product>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className=''>{row.getValue('name')}</div>,
+    cell: ({ row }) => <div className=''>{row.getValue('productName')}</div>,
   },
   {
-    accessorKey: 'categoryId',
+    accessorKey: 'createdAt',
     header: ({ column }) => {
       return (
         <Button
@@ -120,36 +102,47 @@ export const columns: ColumnDef<Product>[] = [
           className='p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Categoría
+          Fecha
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       )
     },
-    cell: ({ row }) => (
-      <div className=''>{getCategoryNameById(row.getValue('categoryId'))}</div>
-    ),
+    cell: ({ row }) => {
+      const date = row.getValue('createdAt') as Date
+      return (
+        <div>
+          {date
+            ? format(date, 'PPP', {
+                locale: es,
+              })
+            : 'Sin fecha'}
+        </div>
+      )
+    },
   },
   {
-    accessorKey: 'totalSales',
+    accessorKey: 'reStock',
     header: ({ column }) => {
       return (
         <Button
-          asChild
           variant='ghost'
-          className='ml-auto w-full justify-end p-0 text-right'
+          className='p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          <div className='text-right'>
-            Total ventas
-            <ArrowUpDown className='ml-2 h-4 w-4' />
-          </div>
+          Re-stock
+          <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       )
     },
     cell: ({ row }) => {
+      const reStock = row.getValue('reStock')
       return (
-        <div className='text-center font-medium'>
-          {row.getValue('totalSales') || 0}
+        <div>
+          {reStock ? (
+            <Badge>Re-stock</Badge>
+          ) : (
+            <Badge variant='outline'>No</Badge>
+          )}
         </div>
       )
     },
@@ -168,13 +161,10 @@ export const columns: ColumnDef<Product>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => (
-      <div className='text-center'>{row.getValue('stock')}</div>
-    ),
+    cell: ({ row }) => <div>{row.getValue('stock')}</div>,
   },
-
   {
-    accessorKey: 'price',
+    accessorKey: 'cost',
     header: ({ column }) => {
       return (
         <Button
@@ -184,15 +174,39 @@ export const columns: ColumnDef<Product>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
           <div className='text-right'>
-            Precio
+            Costo
             <ArrowUpDown className='ml-2 h-4 w-4' />
           </div>
         </Button>
       )
     },
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('price'))
+      const amount = parseFloat(row.getValue('cost'))
       const formatted = parsedPriceFromNumber(amount)
+      return <div className='text-right font-medium'>{formatted}</div>
+    },
+  },
+  {
+    accessorKey: 'total',
+    header: ({ column }) => {
+      return (
+        <Button
+          asChild
+          variant='ghost'
+          className='ml-auto w-full justify-end p-0 text-right'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          <div className='text-right'>
+            Total
+            <ArrowUpDown className='ml-2 h-4 w-4' />
+          </div>
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const stock = parseFloat(row.getValue('stock'))
+      const amount = parseFloat(row.getValue('cost'))
+      const formatted = parsedPriceFromNumber(stock * amount)
       return <div className='text-right font-medium'>{formatted}</div>
     },
   },
@@ -233,8 +247,8 @@ export const columns: ColumnDef<Product>[] = [
   },
 ]
 
-export function DataProductsTable() {
-  const [products, setProducts] = React.useState<Product[]>([])
+export function PurchasesTable() {
+  const [purchases, setPurchases] = React.useState<Purchase[]>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -244,7 +258,7 @@ export function DataProductsTable() {
   const [rowSelection, setRowSelection] = React.useState({})
 
   const table = useReactTable({
-    data: products,
+    data: purchases,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -262,26 +276,19 @@ export function DataProductsTable() {
     },
   })
 
-  const fetchProducts = async () => {
-    const products = await getAllProducts()
-    return setProducts(products)
-  }
-
   React.useEffect(() => {
-    fetchProducts()
+    const fetchPurchases = async () => {
+      const purchases = await getAllPurchases()
+      return setPurchases(purchases)
+    }
+
+    fetchPurchases()
   }, [])
 
   return (
     <div className='w-full'>
       <div className='flex items-center justify-between py-4'>
-        <Input
-          placeholder='Buscar producto...'
-          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('name')?.setFilterValue(event.target.value)
-          }
-          className='max-w-sm'
-        />
+        <DatePickerWithRange numberOfMonths={1} />
         <div className='flex items-center gap-4'>
           <AddProductForm />
           <DropdownMenu>
@@ -360,6 +367,15 @@ export function DataProductsTable() {
               </TableRow>
             )}
           </TableBody>
+          <TableFooter className='bg-inherit'>
+            <TableRow>
+              <TableCell colSpan={5}></TableCell>
+              <TableCell className='text-right font-semibold'>Total</TableCell>
+              <TableCell className='text-right font-semibold'>
+                {calculateTotalFromPurchases(purchases)}
+              </TableCell>
+            </TableRow>
+          </TableFooter>
         </Table>
       </div>
       <div className='flex items-center justify-end space-x-2 py-4'>

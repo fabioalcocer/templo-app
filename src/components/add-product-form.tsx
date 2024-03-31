@@ -10,9 +10,8 @@ import {
 
 import {
   getCategories,
-  getCategoryById,
   getProductById,
-  registerProductPurchase,
+  createProduct,
   updateInventoryItem,
 } from '@/api'
 import { Input } from '@/components/ui/input'
@@ -106,7 +105,7 @@ export function AddProductForm({ isEditing, productId }: Props) {
 
     isEditing
       ? await updateInventoryItem({ ...data, id: productId }, 'products')
-      : await registerProductPurchase({ data })
+      : await createProduct({ data })
 
     toast({
       title: (
@@ -165,7 +164,7 @@ export function AddProductForm({ isEditing, productId }: Props) {
           </Button>
         </SheetTrigger>
       )}
-      <SheetContent className='sm:max-w-[425px]'>
+      <SheetContent className='sm:max-w-[425px]' side='right'>
         <SheetHeader>
           <SheetTitle className='text-xl'>
             {isEditing ? 'Editar' : 'Agregar'} producto
@@ -203,6 +202,7 @@ export function AddProductForm({ isEditing, productId }: Props) {
                           {...field}
                           type='number'
                           defaultValue='0'
+                          disabled={isEditing}
                           onChange={(event) =>
                             field.onChange(parseInt(event.target.value))
                           }
@@ -225,6 +225,7 @@ export function AddProductForm({ isEditing, productId }: Props) {
                           {...field}
                           type='number'
                           defaultValue='0'
+                          disabled={isEditing}
                           onChange={(event) =>
                             field.onChange(parseInt(event.target.value))
                           }

@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
 import { Suspense } from 'react'
 import Loading from './loading'
-import { DataProductsTable } from '@/components/products-data-table'
+import { PurchasesTable } from '@/components/purchases-data-table'
 
 export default function ProductsPage() {
   const session = useSession({
@@ -26,7 +26,7 @@ export default function ProductsPage() {
           Registro de compras
         </h2>
 
-        <DataProductsTable />
+        <PurchasesTable />
       </div>
     </Suspense>
   )

@@ -33,7 +33,7 @@ function AdminSidebar({
     },
     {
       label: 'Registro de compras',
-      path: '/admin/products',
+      path: '/admin/purchases',
       icon: <UserCogIcon className='h-5 w-5' />,
     },
 

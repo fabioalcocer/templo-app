@@ -5,6 +5,7 @@ import {
   ArrowUpRight,
   CreditCard,
   DollarSign,
+  Download,
   Users,
 } from 'lucide-react'
 
@@ -37,6 +38,7 @@ import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
+import { DatePickerWithRange } from '@/components/date-range-picker'
 
 function DashboardsPage() {
   const [products, setProducts] = useState<Product[]>([])
@@ -88,6 +90,15 @@ function DashboardsPage() {
   return (
     <div className='flex min-h-[calc(100vh_-_80px)] w-full flex-col'>
       <main className='flex flex-1 flex-col gap-4 md:gap-8'>
+        <header className='flex items-center justify-between'>
+          <h1 className='text-3xl font-bold'>Dashboard</h1>
+          <div className='flex items-center gap-4'>
+            <DatePickerWithRange />
+            <Button>
+              <Download className='mr-2 h-4 w-4' /> Download
+            </Button>
+          </div>
+        </header>
         <div className='grid gap-4 md:grid-cols-2 md:gap-8 lg:grid-cols-4'>
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>

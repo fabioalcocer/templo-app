@@ -66,13 +66,25 @@ export async function updateInventoryItem(data: any, collectionName: string) {
 export async function getAllProducts(): Promise<Product[]> {
   try {
     const querySnapshot = await getDocs(collection(database, 'products'))
-    const categoriesData = querySnapshot.docs.map((doc) => doc.data())
-    return categoriesData as Product[]
+    const productsData = querySnapshot.docs.map((doc) => doc.data())
+    return productsData as Product[]
   } catch (err) {
     console.error(err)
     return []
   }
 }
+
+export async function getAllPurchases(): Promise<Purchase[]> {
+  try {
+    const querySnapshot = await getDocs(collection(database, 'purchases'))
+    const purchasesData = querySnapshot.docs.map((doc) => doc.data())
+    return purchasesData as Purchase[]
+  } catch (err) {
+    console.error(err)
+    return []
+  }
+}
+
 export const getProductsByCategoryId = cache(
   async (categoryId: string): Promise<Product[]> => {
     const colRef = collection(database, 'products')
@@ -119,10 +131,27 @@ export async function registerProductSale({ productData }: any) {
   }
 }
 
-export async function registerProductPurchase({ data }: any) {
+export async function createProduct({ data }: any) {
   try {
     const docRef = await addDoc(collection(database, 'products'), {
       ...data,
+      createdAt: Date.now(),
+    })
+    console.log('Document written with ID: ', docRef.id)
+    setDoc(docRef, { id: docRef.id }, { merge: true })
+    return registerProductPurchase({ data, productId: docRef.id })
+  } catch (e) {
+    console.error('Error adding document: ', e)
+  }
+}
+
+export async function registerProductPurchase({ data, productId }: any) {
+  try {
+    const docRef = await addDoc(collection(database, 'purchases'), {
+      productName: data?.name,
+      cost: data?.cost,
+      stock: data?.stock,
+      productId,
       createdAt: Date.now(),
     })
     console.log('Document written with ID: ', docRef.id)
@@ -132,6 +161,18 @@ export async function registerProductPurchase({ data }: any) {
   }
 }
 
+export async function getSales(): Promise<Sale[]> {
+  try {
+    const querySnapshot = await getDocs(collection(database, 'sales'))
+    const salesData = querySnapshot.docs.map((doc) => doc.data())
+    return salesData as Sale[]
+  } catch (err) {
+    console.error(err)
+    return []
+  }
+}
+
+// Actions
 export async function discountProductStock(
   productId: string,
   quantity: number,
@@ -147,16 +188,5 @@ export async function discountProductStock(
     })
   } catch (e) {
     console.error('Error adding document: ', e)
-  }
-}
-
-export async function getSales(): Promise<Sale[]> {
-  try {
-    const querySnapshot = await getDocs(collection(database, 'sales'))
-    const salesData = querySnapshot.docs.map((doc) => doc.data())
-    return salesData as Sale[]
-  } catch (err) {
-    console.error(err)
-    return []
   }
 }
