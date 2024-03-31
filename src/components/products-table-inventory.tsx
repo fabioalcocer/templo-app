@@ -1,5 +1,5 @@
-import { RegisterPurchaseProductForm } from './add-product-form'
-import { DataProductsTable } from './data-table'
+import { AddProductForm } from './add-product-form'
+import { DataProductsTable } from './products-data-table'
 import { Button } from './ui/button'
 
 function ProductsTableInventory({ products }: { products: Product[] }) {
@@ -17,7 +17,7 @@ function ProductsTableInventory({ products }: { products: Product[] }) {
               Empieza agregando un nuevo producto a tu inventario
             </p>
             <div className='mt-4'>
-              <RegisterPurchaseProductForm />
+              <AddProductForm />
             </div>
           </div>
         </div>

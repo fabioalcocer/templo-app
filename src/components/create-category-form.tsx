@@ -7,16 +7,6 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { PlusIcon, Loader2, Check } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -24,10 +14,27 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { toast } from '@/components/ui/use-toast'
-import { createCategory } from '@/api'
-import { useState } from 'react'
+import { createCategory, getCategoryById, updateInventoryItem } from '@/api'
+import { useEffect, useState } from 'react'
 import { CATEGORY_DEFAULT_VALUES } from '@/lib/constants'
 import { Switch } from './ui/switch'
+
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
+import { Textarea } from './ui/textarea'
+
+interface Props {
+  isEditing?: boolean
+  categoryId?: string
+}
 
 const FormSchema = z.object({
   name: z
@@ -47,8 +54,8 @@ const FormSchema = z.object({
     .min(8, {
       message: 'La descripción debe tener al menos 8 caracteres.',
     })
-    .max(48, {
-      message: 'El nombre debe tener como máximo 48 caracteres.',
+    .max(75, {
+      message: 'El nombre debe tener como máximo 75 caracteres.',
     }),
   img: z
     .string({
@@ -60,7 +67,7 @@ const FormSchema = z.object({
   available: z.boolean().default(false).optional(),
 })
 
-export function CreateCategoryForm() {
+export function CreateCategoryForm({ categoryId, isEditing }: Props) {
   const [loading, setLoading] = useState(false)
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -69,10 +76,10 @@ export function CreateCategoryForm() {
   })
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log('goood')
     setLoading(true)
-    form.reset(CATEGORY_DEFAULT_VALUES)
-    await createCategory({ data })
+    isEditing
+      ? await updateInventoryItem({ ...data, id: categoryId }, 'categories')
+      : await createCategory({ data })
 
     toast({
       title: (
@@ -83,107 +90,133 @@ export function CreateCategoryForm() {
       ),
       description: 'Puedes ver la nueva categoría en tu inventario',
     })
+
+    form.reset(CATEGORY_DEFAULT_VALUES)
     setLoading(false)
   }
 
+  useEffect(() => {
+    if (!categoryId) return
+    const fetchCategory = async () => {
+      try {
+        const category = await getCategoryById(categoryId)
+        form.reset(category as Category)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    fetchCategory()
+  }, [form, categoryId])
+
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant='default'>
-          <PlusIcon className='mr-2 h-5 w-5' />
-          Añadir categoría
-        </Button>
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
-        <DialogHeader>
-          <DialogTitle className='text-xl'>Agregar categoría</DialogTitle>
-          <DialogDescription>
+    <Sheet>
+      {isEditing ? (
+        <SheetTrigger className='relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-secondary focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50'>
+          Editar categoría
+        </SheetTrigger>
+      ) : (
+        <SheetTrigger asChild>
+          <Button variant='default'>
+            <PlusIcon className='mr-2 h-5 w-5' />
+            Agregar categoría
+          </Button>
+        </SheetTrigger>
+      )}
+      <SheetContent className=''>
+        <SheetHeader>
+          <SheetTitle className='text-xl'>
+            {isEditing ? 'Editar' : 'Agregar'} categoría
+          </SheetTitle>
+          <SheetDescription>
             Crea una nueva categoría para registrarla en tu inventario.
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form
-            onSubmit={form.handleSubmit(onSubmit)}
-            className='flex flex-col gap-3'
-          >
-            <FormField
-              control={form.control}
-              name='name'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nombre de la categoría</FormLabel>
-                  <FormControl>
-                    <Input placeholder='Energizantes' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          </SheetDescription>
+        </SheetHeader>
+        <div className='mt-5'>
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className='flex flex-col gap-3'
+            >
+              <FormField
+                control={form.control}
+                name='name'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nombre de la categoría</FormLabel>
+                    <FormControl>
+                      <Input placeholder='Ej: Bebidas' {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name='description'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Descripción de la categoría</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='Bebidas energizantes y refrescos para adultos'
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name='description'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Descripción de la categoría</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder='Ej: Bebidas energizantes y refrescos para adultos'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name='img'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Portada de la categoría</FormLabel>
-                  <FormControl>
-                    <Input
-                      placeholder='https://fsa.bo/productos/14959-01.jpg'
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name='img'
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Portada de la categoría</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder='Ej: https://templo.bo/14959-01.jpg'
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name='available'
-              render={({ field }) => (
-                <FormItem className='mt-1 flex items-center gap-4 space-y-0'>
-                  <FormLabel>Disponible</FormLabel>
-                  <FormControl className='space-y-0'>
-                    <Switch
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+              <FormField
+                control={form.control}
+                name='available'
+                render={({ field }) => (
+                  <FormItem className='mt-1 flex items-center gap-4 space-y-0'>
+                    <FormLabel>Disponible</FormLabel>
+                    <FormControl className='space-y-0'>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
-            <DialogFooter className='mt-5 gap-2'>
-              <DialogClose asChild>
-                <Button type='button' variant='secondary'>
-                  Cancelar
+              <SheetFooter className='mt-5 gap-2'>
+                <SheetClose asChild>
+                  <Button type='button' variant='secondary'>
+                    Cancelar
+                  </Button>
+                </SheetClose>
+                <Button disabled={loading} type='submit'>
+                  {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+                  {isEditing ? 'Editar' : 'Agregar'} categoría
                 </Button>
-              </DialogClose>
-              <Button disabled={loading} type='submit'>
-                {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-                Crear categoría
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+              </SheetFooter>
+            </form>
+          </Form>
+        </div>
+      </SheetContent>
+    </Sheet>
   )
 }

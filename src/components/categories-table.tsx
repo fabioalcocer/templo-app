@@ -45,6 +45,7 @@ import {
 import { getCategories } from '@/api'
 import { DataTablePagination } from './table-pagination'
 import { CreateCategoryForm } from './create-category-form'
+import { AlertDialogConfirm } from './dialog-confirm'
 
 export const columns: ColumnDef<Category>[] = [
   {
@@ -146,7 +147,7 @@ export const columns: ColumnDef<Category>[] = [
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const product = row.original
+      const category = row.original
 
       return (
         <DropdownMenu>
@@ -159,12 +160,17 @@ export const columns: ColumnDef<Category>[] = [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(product.id)}
+              onClick={() => navigator.clipboard.writeText(category.id)}
             >
               Copiar ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Editar categoría</DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <CreateCategoryForm categoryId={category.id} isEditing={true} />
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <AlertDialogConfirm itemId={category.id} itemName='categoría' />
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -222,7 +228,7 @@ export function CategoriesTable() {
           className='max-w-sm'
         />
         <div className='flex items-center gap-4'>
-          <CreateCategoryForm />
+          <CreateCategoryForm isEditing={false} />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='ml-auto'>

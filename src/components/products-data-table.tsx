@@ -49,7 +49,8 @@ import {
   parsedPriceFromNumber,
 } from '@/lib/utils'
 import { DataTablePagination } from './table-pagination'
-import { RegisterPurchaseProductForm } from './add-product-form'
+import { AddProductForm } from './add-product-form'
+import { AlertDialogConfirm } from './dialog-confirm'
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -233,8 +234,14 @@ export const columns: ColumnDef<Product>[] = [
               Copiar ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Editar producto</DropdownMenuItem>
             <DropdownMenuItem>Aumentar stock</DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <AddProductForm productId={product.id} isEditing={true} />
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <AlertDialogConfirm itemId={product.id} itemName='producto' />
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -292,7 +299,7 @@ export function DataProductsTable() {
           className='max-w-sm'
         />
         <div className='flex items-center gap-4'>
-          <RegisterPurchaseProductForm />
+          <AddProductForm />
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='ml-auto'>

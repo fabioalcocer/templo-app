@@ -6,6 +6,7 @@ interface Category {
   productsLength: number
   type: string
   img: string
+  createdAt: Date
 }
 
 interface OptionCategory {

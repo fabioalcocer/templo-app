@@ -7,4 +7,5 @@ interface Product {
   stock: number
   img: string
   categoryId: string
+  createdAt: Date,
 }

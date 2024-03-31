@@ -7,21 +7,32 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
+  getCategories,
+  getCategoryById,
+  getProductById,
+  registerProductPurchase,
+  updateInventoryItem,
+} from '@/api'
 import { Input } from '@/components/ui/input'
-import { PlusIcon, Loader2, Check } from 'lucide-react'
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet'
+import { toast } from '@/components/ui/use-toast'
+import { DEFAULT_VALUES } from '@/lib/constants'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { Check, Loader2, PlusIcon } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { zodResolver } from '@hookform/resolvers/zod'
 import {
   Select,
   SelectContent,
@@ -29,10 +40,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select'
-import { toast } from '@/components/ui/use-toast'
-import { getCategories, registerProductPurchase } from '@/api'
-import { useEffect, useState } from 'react'
-import { DEFAULT_VALUES } from '@/lib/constants'
+import { validateHeaderName } from 'http'
+
+interface Props {
+  isEditing?: boolean
+  productId?: string
+}
 
 const FormSchema = z.object({
   name: z
@@ -78,7 +91,7 @@ const FormSchema = z.object({
     }),
 })
 
-export function RegisterPurchaseProductForm() {
+export function AddProductForm({ isEditing, productId }: Props) {
   const [loading, setLoading] = useState(false)
   const [categoriesOptions, setCategoriesOptions] = useState<OptionCategory[]>(
     [],
@@ -90,22 +103,28 @@ export function RegisterPurchaseProductForm() {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setLoading(true)
-    form.reset(DEFAULT_VALUES)
-    await registerProductPurchase({ data })
+
+    isEditing
+      ? await updateInventoryItem({ ...data, id: productId }, 'products')
+      : await registerProductPurchase({ data })
 
     toast({
       title: (
         <div className='flex w-full items-center gap-2'>
-          La compra se registró exitosamente
+          {isEditing
+            ? 'El producto se editó exitosamente'
+            : 'La compra se registró exitosamente'}
           <Check />
         </div>
       ),
-      description: 'Puedes ver el registro del producto en tu inventario',
+      description: 'Puedes ver los datos en tu inventario',
     })
+
+    form.reset(DEFAULT_VALUES)
     setLoading(false)
   }
 
-  const fetchProducts = async () => {
+  const fetchCategoriesOptions = async () => {
     const products = await getCategories()
     const options = products?.map((option) => ({
       value: option.id,
@@ -115,168 +134,192 @@ export function RegisterPurchaseProductForm() {
   }
 
   useEffect(() => {
-    fetchProducts()
+    if (!productId) return
+    const fetchProduct = async () => {
+      try {
+        const product = await getProductById(productId)
+        form.reset(product as never)
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    fetchProduct()
+  }, [form, productId])
+
+  useEffect(() => {
+    fetchCategoriesOptions()
   }, [])
 
   return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button variant='default'>
-          <PlusIcon className='mr-2 h-5 w-5' />
-          Añadir producto
-        </Button>
-      </DialogTrigger>
-      <DialogContent className='sm:max-w-[425px]'>
-        <DialogHeader>
-          <DialogTitle className='text-xl'>Registrar producto</DialogTitle>
-          <DialogDescription>
+    <Sheet>
+      {isEditing ? (
+        <SheetTrigger className='relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-secondary focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50'>
+          Editar producto
+        </SheetTrigger>
+      ) : (
+        <SheetTrigger asChild>
+          <Button variant='default'>
+            <PlusIcon className='mr-2 h-5 w-5' />
+            Agregar producto
+          </Button>
+        </SheetTrigger>
+      )}
+      <SheetContent className='sm:max-w-[425px]'>
+        <SheetHeader>
+          <SheetTitle className='text-xl'>
+            {isEditing ? 'Editar' : 'Agregar'} producto
+          </SheetTitle>
+          <SheetDescription>
             Registra un nuevo producto para almacenarlo en tu inventario.
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className=''>
-            <FormField
-              control={form.control}
-              name='name'
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Nombre</FormLabel>
-                  <FormControl>
-                    <Input placeholder='Agua Vital 500ml' {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <div className='flex items-center gap-3'>
+          </SheetDescription>
+        </SheetHeader>
+        <div className='mt-5'>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className=''>
               <FormField
                 control={form.control}
-                name='stock'
-                render={({ field }) => (
-                  <FormItem className='mt-2'>
-                    <FormLabel>Cantidad</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='8'
-                        {...field}
-                        type='number'
-                        defaultValue='0'
-                        onChange={(event) =>
-                          field.onChange(parseInt(event.target.value))
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='cost'
-                render={({ field }) => (
-                  <FormItem className='mt-2'>
-                    <FormLabel>Costo</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Bs 50'
-                        {...field}
-                        type='number'
-                        defaultValue='0'
-                        onChange={(event) =>
-                          field.onChange(parseInt(event.target.value))
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name='price'
-                render={({ field }) => (
-                  <FormItem className='mt-2'>
-                    <FormLabel>Precio unitario</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='Bs 53'
-                        {...field}
-                        type='number'
-                        defaultValue='0'
-                        onChange={(event) =>
-                          field.onChange(parseInt(event.target.value))
-                        }
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
-            <FormField
-              control={form.control}
-              name='categoryId'
-              render={({ field }) => (
-                <FormItem className='mt-2'>
-                  <FormLabel>Categoría:</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder='Selecciona una categoría' />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {categoriesOptions?.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className='mt-2'>
-              <FormField
-                control={form.control}
-                name='img'
+                name='name'
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Imagen del producto</FormLabel>
+                    <FormLabel>Nombre</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder='https://fsa.bo/productos/14959-01.jpg'
-                        {...field}
-                      />
+                      <Input placeholder='Agua Vital 500ml' {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
-            </div>
+              <div className='flex items-center gap-3'>
+                <FormField
+                  control={form.control}
+                  name='stock'
+                  render={({ field }) => (
+                    <FormItem className='mt-2'>
+                      <FormLabel>Cantidad</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='8'
+                          {...field}
+                          type='number'
+                          defaultValue='0'
+                          onChange={(event) =>
+                            field.onChange(parseInt(event.target.value))
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
 
-            <DialogFooter className='mt-5'>
-              <DialogClose asChild>
-                <Button type='button' variant='secondary'>
-                  Cancelar
+                <FormField
+                  control={form.control}
+                  name='cost'
+                  render={({ field }) => (
+                    <FormItem className='mt-2'>
+                      <FormLabel>Costo</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Bs 50'
+                          {...field}
+                          type='number'
+                          defaultValue='0'
+                          onChange={(event) =>
+                            field.onChange(parseInt(event.target.value))
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='price'
+                  render={({ field }) => (
+                    <FormItem className='mt-2'>
+                      <FormLabel>Precio unitario</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Bs 53'
+                          {...field}
+                          type='number'
+                          defaultValue='0'
+                          onChange={(event) =>
+                            field.onChange(parseInt(event.target.value))
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <FormField
+                control={form.control}
+                name='categoryId'
+                render={({ field }) => (
+                  <FormItem className='mt-2'>
+                    <FormLabel>Categoría:</FormLabel>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder='Selecciona una categoría' />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categoriesOptions?.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className='mt-2'>
+                <FormField
+                  control={form.control}
+                  name='img'
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Imagen del producto</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='https://fsa.bo/productos/14959-01.jpg'
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <SheetFooter className='mt-5'>
+                <SheetClose asChild>
+                  <Button type='button' variant='secondary'>
+                    Cancelar
+                  </Button>
+                </SheetClose>
+                <Button disabled={loading} type='submit'>
+                  {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
+                  {isEditing ? 'Editar' : 'Registrar'} producto
                 </Button>
-              </DialogClose>
-              <Button disabled={loading} type='submit'>
-                {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-                Añadir producto
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+              </SheetFooter>
+            </form>
+          </Form>
+        </div>
+      </SheetContent>
+    </Sheet>
   )
 }

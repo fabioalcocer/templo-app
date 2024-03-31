@@ -25,6 +25,44 @@ export async function getCategories(): Promise<Category[]> {
   }
 }
 
+export async function getCategoryById(id: string): Promise<Category | null> {
+  if (!id) return null
+
+  try {
+    const docRef = doc(database, 'categories', id)
+    const categoryData = await getDoc(docRef)
+    const category = categoryData.data()
+    return category as Category
+  } catch (err) {
+    console.error(err)
+    return null
+  }
+}
+
+export async function createCategory({ data }: any) {
+  try {
+    const docRef = await addDoc(collection(database, 'categories'), {
+      ...data,
+      createdAt: Date.now(),
+    })
+    console.log('Document written with ID: ', docRef.id)
+    return setDoc(docRef, { id: docRef.id }, { merge: true })
+  } catch (e) {
+    console.error('Error adding document: ', e)
+  }
+}
+
+export async function updateInventoryItem(data: any, collectionName: string) {
+  try {
+    const docRef = doc(database, collectionName, data.id)
+    await updateDoc(docRef, data)
+    console.log('El documento fue actualizado')
+    return
+  } catch (e) {
+    console.error('Error updating document: ', e)
+  }
+}
+
 export async function getAllProducts(): Promise<Product[]> {
   try {
     const querySnapshot = await getDocs(collection(database, 'products'))
@@ -51,15 +89,17 @@ export const getProductsByCategoryId = cache(
   },
 )
 
-export async function createCategory({ data }: any) {
+export async function getProductById(id: string): Promise<Product | null> {
+  if (!id) return null
+
   try {
-    const docRef = await addDoc(collection(database, 'categories'), {
-      ...data,
-    })
-    console.log('Document written with ID: ', docRef.id)
-    return setDoc(docRef, { id: docRef.id }, { merge: true })
-  } catch (e) {
-    console.error('Error adding document: ', e)
+    const docRef = doc(database, 'products', id)
+    const productData = await getDoc(docRef)
+    const product = productData.data()
+    return product as Product
+  } catch (err) {
+    console.error(err)
+    return null
   }
 }
 
@@ -83,6 +123,7 @@ export async function registerProductPurchase({ data }: any) {
   try {
     const docRef = await addDoc(collection(database, 'products'), {
       ...data,
+      createdAt: Date.now(),
     })
     console.log('Document written with ID: ', docRef.id)
     return setDoc(docRef, { id: docRef.id }, { merge: true })
