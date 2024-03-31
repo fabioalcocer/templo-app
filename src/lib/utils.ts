@@ -29,7 +29,7 @@ export const calculateTotalFromSales = (sales: Sale[]) => {
 }
 
 
-export const calculateTotalFromPurchases = (products: Product[] | Purchase[]) => {
+export const calculateTotalFromPurchases = (products: Product[]) => {
   const productsWithCost = products.filter((product) => product?.cost > 0)
   const total = productsWithCost.reduce((total, product) => {
     return total + product?.cost

@@ -372,7 +372,7 @@ export function PurchasesTable() {
               <TableCell colSpan={5}></TableCell>
               <TableCell className='text-right font-semibold'>Total</TableCell>
               <TableCell className='text-right font-semibold'>
-                {calculateTotalFromPurchases(purchases)}
+                {calculateTotalFromPurchases(purchases as never)}
               </TableCell>
             </TableRow>
           </TableFooter>
