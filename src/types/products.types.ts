@@ -6,6 +6,7 @@ interface Product {
   cost: number
   stock: number
   img: string
+  totalSales: number
   categoryId: string
   createdAt: Date,
 }

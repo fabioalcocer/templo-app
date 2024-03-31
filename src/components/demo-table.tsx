@@ -10,7 +10,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { calculateTotalFromSales, getCategoryNameById } from '@/lib/utils'
+import { calculateTotalFromSales, getCategoryNameById, parsedPriceFromNumber } from '@/lib/utils'
 import { useEffect, useState } from 'react'
 import { format } from 'date-fns'
 
@@ -31,15 +31,6 @@ export function TableDemo() {
     } as const
 
     return paymentTypes[paymentType as Payments] ?? ''
-  }
-
-  const parsedPriceFromNumber = (price: number) => {
-    const formattedPrice = new Intl.NumberFormat('es-BO', {
-      style: 'currency',
-      currency: 'BOB',
-    }).format(price)
-
-    return formattedPrice
   }
 
   useEffect(() => {

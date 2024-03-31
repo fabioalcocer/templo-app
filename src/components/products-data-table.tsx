@@ -77,22 +77,6 @@ export const columns: ColumnDef<Product>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  // {
-  //   accessorKey: 'id',
-  //   header: ({ column }) => {
-  //     return (
-  //       <Button
-  //         variant='ghost'
-  //         className='p-0'
-  //         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-  //       >
-  //         Id
-  //         <ArrowUpDown className='ml-2 h-4 w-4' />
-  //       </Button>
-  //     )
-  //   },
-  //   cell: ({ row }) => <div className='capitalize'>{row.getValue('id')}</div>,
-  // },
   {
     accessorKey: 'img',
     header: () => {
@@ -151,6 +135,31 @@ export const columns: ColumnDef<Product>[] = [
     ),
   },
   {
+    accessorKey: 'totalSales',
+    header: ({ column }) => {
+      return (
+        <Button
+          asChild
+          variant='ghost'
+          className='ml-auto w-full justify-end p-0 text-right'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          <div className='text-right'>
+            Total ventas
+            <ArrowUpDown className='ml-2 h-4 w-4' />
+          </div>
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      return (
+        <div className='text-center font-medium'>
+          {row.getValue('totalSales') || 0}
+        </div>
+      )
+    },
+  },
+  {
     accessorKey: 'stock',
     header: ({ column }) => {
       return (
@@ -164,8 +173,11 @@ export const columns: ColumnDef<Product>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className=''>{row.getValue('stock')}</div>,
+    cell: ({ row }) => (
+      <div className='text-center'>{row.getValue('stock')}</div>
+    ),
   },
+
   {
     accessorKey: 'price',
     header: ({ column }) => {
@@ -186,29 +198,6 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       const amount = parseFloat(row.getValue('price'))
       const formatted = parsedPriceFromNumber(amount)
-      return <div className='text-right font-medium'>{formatted}</div>
-    },
-  },
-  {
-    accessorKey: 'cost',
-    header: ({ column }) => {
-      return (
-        <Button
-          asChild
-          variant='ghost'
-          className='ml-auto w-full justify-end p-0 text-right'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          <div className='text-right'>
-            Costo
-            <ArrowUpDown className='ml-2 h-4 w-4' />
-          </div>
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('cost'))
-      const formatted = parsedPriceFromNumber(amount || 0)
       return <div className='text-right font-medium'>{formatted}</div>
     },
   },
