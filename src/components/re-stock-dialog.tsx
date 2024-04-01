@@ -72,7 +72,10 @@ export function ReStockDialog({ productId }: Props) {
       'products',
     )
     await registerProductPurchase({
-      data: productWithNewStock,
+      data: {
+        ...existingProduct,
+        stock: data.stock,
+      },
       productId,
       reStock: true,
     })
