@@ -1,6 +1,6 @@
-import { type ClassValue, clsx } from "clsx"
-import { twMerge } from "tailwind-merge"
-import { CATEGORIES } from "./constants"
+import { type ClassValue, clsx } from 'clsx'
+import { twMerge } from 'tailwind-merge'
+import { CATEGORIES } from './constants'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -28,11 +28,10 @@ export const calculateTotalFromSales = (sales: Sale[]) => {
   return parsedPriceFromNumber(total)
 }
 
-
-export const calculateTotalFromPurchases = (products: Product[]) => {
-  const productsWithCost = products.filter((product) => product?.cost > 0)
-  const total = productsWithCost.reduce((total, product) => {
-    return total + product?.cost
+export const calculateTotalFromPurchases = (purchases: Purchase[]) => {
+  const purchasesWithCost = purchases.filter((purchase) => purchase?.cost > 0)
+  const total = purchasesWithCost.reduce((total, product) => {
+    return total + product?.cost * product?.stock
   }, 0)
 
   return parsedPriceFromNumber(total)

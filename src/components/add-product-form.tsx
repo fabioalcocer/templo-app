@@ -39,7 +39,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from './ui/select'
-import { validateHeaderName } from 'http'
+import { DropdownMenuItem } from './ui/dropdown-menu'
 
 interface Props {
   isEditing?: boolean
@@ -153,8 +153,10 @@ export function AddProductForm({ isEditing, productId }: Props) {
   return (
     <Sheet>
       {isEditing ? (
-        <SheetTrigger className='relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-secondary focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50'>
-          Editar producto
+        <SheetTrigger asChild>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+            Editar producto
+          </DropdownMenuItem>
         </SheetTrigger>
       ) : (
         <SheetTrigger asChild>
@@ -227,7 +229,7 @@ export function AddProductForm({ isEditing, productId }: Props) {
                           defaultValue='0'
                           disabled={isEditing}
                           onChange={(event) =>
-                            field.onChange(parseInt(event.target.value))
+                            field.onChange(parseFloat(event.target.value))
                           }
                         />
                       </FormControl>
@@ -249,7 +251,7 @@ export function AddProductForm({ isEditing, productId }: Props) {
                           type='number'
                           defaultValue='0'
                           onChange={(event) =>
-                            field.onChange(parseInt(event.target.value))
+                            field.onChange(parseFloat(event.target.value))
                           }
                         />
                       </FormControl>

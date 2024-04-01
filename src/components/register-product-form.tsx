@@ -1,5 +1,5 @@
 'use client'
-import { registerProductSale } from '@/api'
+import { registerProductSale, updateInventoryItem } from '@/api'
 import {
   Form,
   FormControl,
@@ -15,11 +15,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { ToastAction } from '@/components/ui/toast'
 import { toast } from '@/components/ui/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Check, Loader2, Minus, Plus } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
@@ -35,7 +33,6 @@ const FormSchema = z.object({
 })
 
 function RegisterProductForm({ product }: { product: Product }) {
-  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [quantity, setQuantity] = useState(1)
 
@@ -58,8 +55,17 @@ function RegisterProductForm({ product }: { product: Product }) {
       ...data,
     }
 
+    const productWithTotalSales = {
+      totalSales: product?.totalSales
+        ? product?.totalSales + quantity
+        : quantity,
+    }
+
     await registerProductSale({ productData })
-    setLoading(false)
+    await updateInventoryItem(
+      { ...productWithTotalSales, id: product?.id },
+      'products',
+    )
 
     toast({
       title: (
@@ -67,8 +73,9 @@ function RegisterProductForm({ product }: { product: Product }) {
           La venta se registró exitosamente
           <Check />
         </div>
-      )
+      ),
     })
+    setLoading(false)
   }
 
   function onClick(adjustment: number) {

@@ -17,7 +17,8 @@ import {
 import {
   ArrowUpDown,
   ChevronDown,
-  ImageIcon,
+  Download,
+  MehIcon,
   MoreHorizontal,
 } from 'lucide-react'
 
@@ -44,13 +45,11 @@ import {
 import { getAllPurchases } from '@/api'
 import { calculateTotalFromPurchases, parsedPriceFromNumber } from '@/lib/utils'
 import { DataTablePagination } from './table-pagination'
-import { AddProductForm } from './add-product-form'
-import { AlertDialogConfirm } from './dialog-confirm'
 import { DatePickerWithRange } from './date-range-picker'
 import { format } from 'date-fns'
-import { es } from 'date-fns/locale/es'
-import { Timestamp } from 'firebase/firestore'
 import { Badge } from './ui/badge'
+import { es } from 'date-fns/locale/es'
+import { toast } from './ui/use-toast'
 
 export const columns: ColumnDef<Purchase>[] = [
   {
@@ -232,14 +231,6 @@ export const columns: ColumnDef<Purchase>[] = [
               Copiar ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Aumentar stock</DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <AddProductForm productId={product.id} isEditing={true} />
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild>
-              <AlertDialogConfirm itemId={product.id} itemName='producto' />
-            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -290,7 +281,20 @@ export function PurchasesTable() {
       <div className='flex items-center justify-between py-4'>
         <DatePickerWithRange numberOfMonths={1} />
         <div className='flex items-center gap-4'>
-          <AddProductForm />
+          <Button
+            onClick={() =>
+              toast({
+                title: (
+                  <div className='flex w-full items-center gap-2'>
+                    Esta función aún no está disponible
+                    <MehIcon />
+                  </div>
+                ),
+              })
+            }
+          >
+            <Download className='mr-2 h-4 w-4' /> Download
+          </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant='outline' className='ml-auto'>
@@ -372,7 +376,7 @@ export function PurchasesTable() {
               <TableCell colSpan={5}></TableCell>
               <TableCell className='text-right font-semibold'>Total</TableCell>
               <TableCell className='text-right font-semibold'>
-                {calculateTotalFromPurchases(purchases as never)}
+                {calculateTotalFromPurchases(purchases)}
               </TableCell>
             </TableRow>
           </TableFooter>

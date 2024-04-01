@@ -2,6 +2,7 @@ import { database } from '@/firebase/config'
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -57,6 +58,17 @@ export async function updateInventoryItem(data: any, collectionName: string) {
     const docRef = doc(database, collectionName, data.id)
     await updateDoc(docRef, data)
     console.log('El documento fue actualizado')
+    return
+  } catch (e) {
+    console.error('Error updating document: ', e)
+  }
+}
+
+export async function deleteInventoryItem(itemId: any, collectionName: string) {
+  try {
+    const docRef = doc(database, collectionName, itemId)
+    await deleteDoc(docRef)
+    console.log('El documento fue eliminado')
     return
   } catch (e) {
     console.error('Error updating document: ', e)
@@ -145,12 +157,17 @@ export async function createProduct({ data }: any) {
   }
 }
 
-export async function registerProductPurchase({ data, productId }: any) {
+export async function registerProductPurchase({
+  data,
+  productId,
+  reStock = false,
+}: any) {
   try {
     const docRef = await addDoc(collection(database, 'purchases'), {
       productName: data?.name,
       cost: data?.cost,
       stock: data?.stock,
+      reStock,
       productId,
       createdAt: Date.now(),
     })

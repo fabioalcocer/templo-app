@@ -29,10 +29,9 @@ import {
 import {
   calculateTotalFromPurchases,
   calculateTotalFromSales,
-  getCategoryNameById,
   parsedPriceFromNumber,
 } from '@/lib/utils'
-import { getAllProducts, getSales } from '@/api'
+import { getAllPurchases, getSales } from '@/api'
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
@@ -41,12 +40,12 @@ import { es } from 'date-fns/locale/es'
 import { DatePickerWithRange } from '@/components/date-range-picker'
 
 function DashboardsPage() {
-  const [products, setProducts] = useState<Product[]>([])
+  const [purchases, setPurchases] = useState<Purchase[]>([])
   const [sales, setSales] = useState<Sale[]>([])
 
   const calculateTotalRevenues = () => {
     const salesTotal = calculateTotalFromSales(sales)
-    const purchasesTotal = calculateTotalFromPurchases(products)
+    const purchasesTotal = calculateTotalFromPurchases(purchases)
     const integerSalesValue = parseInt(salesTotal.replace(/\D/g, ''), 10)
     const integerPurchasesValue = parseInt(
       purchasesTotal.replace(/\D/g, ''),
@@ -67,9 +66,9 @@ function DashboardsPage() {
 
   const fetchData = async () => {
     const sales = await getSales()
-    const products = await getAllProducts()
+    const purchases = await getAllPurchases()
     setSales(sales)
-    setProducts(products)
+    setPurchases(purchases)
   }
 
   useEffect(() => {
@@ -90,9 +89,9 @@ function DashboardsPage() {
   return (
     <div className='flex min-h-[calc(100vh_-_80px)] w-full flex-col'>
       <main className='flex flex-1 flex-col gap-4 md:gap-8'>
-        <header className='flex items-center justify-between'>
+        <header className='flex flex-wrap items-center justify-between gap-4 lg:gap-0'>
           <h1 className='text-3xl font-bold'>Dashboard</h1>
-          <div className='flex items-center gap-4'>
+          <div className='flex items-center gap-4 flex-wrap'>
             <DatePickerWithRange />
             <Button>
               <Download className='mr-2 h-4 w-4' /> Download
@@ -137,7 +136,7 @@ function DashboardsPage() {
             </CardHeader>
             <CardContent>
               <div className='text-2xl font-bold'>
-                - {calculateTotalFromPurchases(products)}
+                - {calculateTotalFromPurchases(purchases)}
               </div>
               <p className='text-xs text-muted-foreground'>
                 +180.1% desde el último mes
@@ -168,7 +167,7 @@ function DashboardsPage() {
               </div>
               <Button asChild size='sm' className='ml-auto gap-1'>
                 <Link href='/admin/sales'>
-                  Ver todos
+                  Ver detalles
                   <ArrowUpRight className='h-4 w-4' />
                 </Link>
               </Button>
@@ -216,18 +215,22 @@ function DashboardsPage() {
               <CardTitle>Compras recientes</CardTitle>
             </CardHeader>
             <CardContent className='grid gap-8'>
-              {products?.slice(0, 5).map((product) => (
-                <div className='flex items-center gap-4' key={product.id}>
+              {purchases?.slice(0, 5).map((purchase) => (
+                <div className='flex items-center gap-4' key={purchase.id}>
                   <div className='grid gap-1'>
                     <p className='text-sm font-medium leading-none'>
-                      {product.name}
+                      {purchase.productName}
                     </p>
                     <p className='text-sm text-muted-foreground'>
-                      {getCategoryNameById(product.categoryId)}
+                      {purchase?.createdAt
+                        ? format(purchase?.createdAt, 'P', {
+                            locale: es,
+                          })
+                        : 'Sin fecha'}
                     </p>
                   </div>
                   <div className='ml-auto font-medium'>
-                    {parsedPriceFromNumber(product.cost)}
+                    {parsedPriceFromNumber(purchase.cost * purchase.stock)}
                   </div>
                 </div>
               ))}

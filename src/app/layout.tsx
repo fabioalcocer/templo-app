@@ -6,6 +6,7 @@ import { fontSans } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
 import Header from '@/components/header'
 import SessionProvider from './SessionProvider'
+import { CommandDialogMenu } from '@/components/command-menu'
 
 export const metadata: Metadata = {
   title: 'Templo App',
@@ -35,8 +36,11 @@ export default function RootLayout({
           >
             <main className='flex min-h-screen flex-col items-center'>
               <Header />
-              <div className='flex w-full container flex-col px-0'>
+              <div className='container flex w-full flex-col px-0'>
                 {children}
+              </div>
+              <div className='mt-auto w-full mx-auto text-center'>
+                <CommandDialogMenu />
               </div>
             </main>
           </ThemeProvider>

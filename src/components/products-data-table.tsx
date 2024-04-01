@@ -46,6 +46,8 @@ import { getCategoryNameById, parsedPriceFromNumber } from '@/lib/utils'
 import { DataTablePagination } from './table-pagination'
 import { AddProductForm } from './add-product-form'
 import { AlertDialogConfirm } from './dialog-confirm'
+import { Dialog, DialogContent, DialogTrigger } from './ui/dialog'
+import { ReStockDialog } from './re-stock-dialog'
 
 export const columns: ColumnDef<Product>[] = [
   {
@@ -218,11 +220,18 @@ export const columns: ColumnDef<Product>[] = [
               Copiar ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>Aumentar stock</DropdownMenuItem>
+            <Dialog>
+              <DialogTrigger asChild>
+                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                  Aumentar stock
+                </DropdownMenuItem>
+              </DialogTrigger>
+              <DialogContent>
+                <ReStockDialog productId={product.id} />
+              </DialogContent>
+            </Dialog>
             <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <AddProductForm productId={product.id} isEditing={true} />
-            </DropdownMenuItem>
+            <AddProductForm productId={product.id} isEditing={true} />
             <DropdownMenuItem asChild>
               <AlertDialogConfirm itemId={product.id} itemName='producto' />
             </DropdownMenuItem>
