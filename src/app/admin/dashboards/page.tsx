@@ -6,6 +6,7 @@ import {
   CreditCard,
   DollarSign,
   Download,
+  MehIcon,
   Users,
 } from 'lucide-react'
 
@@ -38,6 +39,7 @@ import { redirect } from 'next/navigation'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import { DatePickerWithRange } from '@/components/date-range-picker'
+import { toast } from '@/components/ui/use-toast'
 
 function DashboardsPage() {
   const [purchases, setPurchases] = useState<Purchase[]>([])
@@ -91,9 +93,20 @@ function DashboardsPage() {
       <main className='flex flex-1 flex-col gap-4 md:gap-8'>
         <header className='flex flex-wrap items-center justify-between gap-4 lg:gap-0'>
           <h1 className='text-3xl font-bold'>Dashboard</h1>
-          <div className='flex items-center gap-4 flex-wrap'>
+          <div className='flex flex-wrap items-center gap-4'>
             <DatePickerWithRange />
-            <Button>
+            <Button
+              onClick={() =>
+                toast({
+                  title: (
+                    <div className='flex w-full items-center gap-2'>
+                      Esta función aún no está disponible
+                      <MehIcon />
+                    </div>
+                  ),
+                })
+              }
+            >
               <Download className='mr-2 h-4 w-4' /> Download
             </Button>
           </div>
@@ -108,10 +121,10 @@ function DashboardsPage() {
             </CardHeader>
             <CardContent>
               <div className='text-2xl font-bold'>
-                + {calculateTotalRevenues()}
+                {calculateTotalRevenues()}
               </div>
               <p className='text-xs text-muted-foreground'>
-                +20.1% desde el último mes
+                -20.1% desde el último mes
               </p>
             </CardContent>
           </Card>
@@ -122,7 +135,7 @@ function DashboardsPage() {
             </CardHeader>
             <CardContent>
               <div className='text-2xl font-bold'>
-                + {calculateTotalFromSales(sales)}
+                {calculateTotalFromSales(sales)}
               </div>
               <p className='text-xs text-muted-foreground'>
                 +19% desde el último mes
