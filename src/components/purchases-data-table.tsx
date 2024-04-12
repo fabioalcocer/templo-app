@@ -52,6 +52,7 @@ import { es } from 'date-fns/locale/es'
 import { toast } from './ui/use-toast'
 import { DateRange } from 'react-day-picker'
 import { addDays, format } from 'date-fns'
+import { DAY_IN_MILLISECONDS } from '@/lib/constants'
 
 export const columns: ColumnDef<Purchase>[] = [
   {
@@ -293,7 +294,7 @@ export function PurchasesTable() {
       (purchase) =>
         purchase.createdAt >= (date?.from || new Date(2024, 2, 20)).getTime() &&
         purchase.createdAt <=
-          (date?.to || addDays(new Date(2024, 2, 20), 30)).getTime(),
+          (date?.to || addDays(new Date(2024, 2, 20), 30)).getTime() + DAY_IN_MILLISECONDS,
     )
 
     setPurchases(filteredPurchases)

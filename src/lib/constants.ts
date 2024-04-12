@@ -35,3 +35,5 @@ export const DEFAULT_VALUES = {
   img: '',
   categoryId: '',
 }
+
+export const DAY_IN_MILLISECONDS = 86400000

@@ -1,5 +1,5 @@
 'use client'
-import { TableDemo } from '@/components/demo-table'
+import { SalesTable } from '@/components/demo-table'
 import { DollarSign } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
@@ -22,7 +22,7 @@ export default function SalesPage() {
         <DollarSign width={36} height={36} />
         Registro de ventas
       </h2>
-      <TableDemo />
+      <SalesTable />
     </div>
   )
 }
