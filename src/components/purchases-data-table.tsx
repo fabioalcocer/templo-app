@@ -17,6 +17,7 @@ import {
 import {
   ArrowUpDown,
   ChevronDown,
+  CloudFog,
   Download,
   MehIcon,
   MoreHorizontal,
@@ -46,10 +47,11 @@ import { getAllPurchases } from '@/api'
 import { calculateTotalFromPurchases, parsedPriceFromNumber } from '@/lib/utils'
 import { DataTablePagination } from './table-pagination'
 import { DatePickerWithRange } from './date-range-picker'
-import { format } from 'date-fns'
 import { Badge } from './ui/badge'
 import { es } from 'date-fns/locale/es'
 import { toast } from './ui/use-toast'
+import { DateRange } from 'react-day-picker'
+import { addDays, format } from 'date-fns'
 
 export const columns: ColumnDef<Purchase>[] = [
   {
@@ -240,6 +242,7 @@ export const columns: ColumnDef<Purchase>[] = [
 
 export function PurchasesTable() {
   const [purchases, setPurchases] = React.useState<Purchase[]>([])
+  const [initialPurchases, setInitialPurchases] = React.useState<Purchase[]>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -247,6 +250,11 @@ export function PurchasesTable() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
+
+  const [date, setDate] = React.useState<DateRange | undefined>({
+    from: new Date(2024, 2, 20),
+    to: addDays(new Date(2024, 2, 20), 30),
+  })
 
   const table = useReactTable({
     data: purchases,
@@ -270,16 +278,31 @@ export function PurchasesTable() {
   React.useEffect(() => {
     const fetchPurchases = async () => {
       const purchases = await getAllPurchases()
-      return setPurchases(purchases)
+      setPurchases(purchases)
+      setInitialPurchases(purchases)
+      return
     }
 
     fetchPurchases()
   }, [])
 
+  React.useEffect(() => {
+    setPurchases(initialPurchases)
+
+    const filteredPurchases = initialPurchases.filter(
+      (purchase) =>
+        purchase.createdAt >= (date?.from || new Date(2024, 2, 20)).getTime() &&
+        purchase.createdAt <=
+          (date?.to || addDays(new Date(2024, 2, 20), 30)).getTime(),
+    )
+
+    setPurchases(filteredPurchases)
+  }, [date, initialPurchases])
+
   return (
     <div className='w-full'>
       <div className='flex items-center justify-between py-4'>
-        <DatePickerWithRange numberOfMonths={1} />
+        <DatePickerWithRange numberOfMonths={1} setDate={setDate} date={date} />
         <div className='flex items-center gap-4'>
           <Button
             onClick={() =>

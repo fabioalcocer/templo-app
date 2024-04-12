@@ -60,10 +60,7 @@ function DashboardsPage() {
 
   const dashboardSalesData = sales
     ?.filter((sale) => sale.createdAt)
-    .sort(
-      (a, b) =>
-        new Date(b.createdAt)?.getTime() - new Date(a.createdAt)?.getTime(),
-    )
+    .sort((a, b) => b.createdAt - a.createdAt)
     .slice(0, 5)
 
   const fetchData = async () => {

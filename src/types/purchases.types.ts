@@ -1,7 +1,7 @@
 interface Purchase {
   id: string
   reStock: boolean
-  createdAt: Date
+  createdAt: number
   productId: string
   productName: string
   cost: number

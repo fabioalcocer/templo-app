@@ -1,8 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
-import { getCategories } from '@/api'
+import { getCategories, getProductsByCategoryId } from '@/api'
 import { StoreIcon } from 'lucide-react'
 import Link from 'next/link'
-import { Button } from './ui/button'
 import {
   Card,
   CardContent,
@@ -14,6 +13,7 @@ import {
 
 async function Categories() {
   const categories = await getCategories()
+
   return (
     <main className='flex flex-col gap-10 p-8'>
       <div className='flex items-center justify-center gap-3 text-center md:gap-6'>
