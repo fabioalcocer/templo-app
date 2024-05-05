@@ -1,6 +1,6 @@
 'use client'
 
-import { BoxIcon, DollarSign, UserCogIcon } from 'lucide-react'
+import { BoxIcon, DollarSign, UserCogIcon, Users2 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -36,11 +36,15 @@ function AdminSidebar({
       path: '/admin/purchases',
       icon: <UserCogIcon className='h-5 w-5' />,
     },
-
     {
       label: 'Analíticas',
       path: '/admin/analytics',
       icon: <LineChart className='h-5 w-5' />,
+    },
+    {
+      label: 'Usuarios',
+      path: '/admin/users',
+      icon: <Users2 className='h-5 w-5' />,
     },
   ]
 

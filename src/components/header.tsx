@@ -10,6 +10,14 @@ import { ModeToggle } from './mode-toggle'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
 import { useEffect, useState } from 'react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
 function Header() {
   const [isDarkTheme, setIsDarkTheme] = useState(false)
@@ -22,7 +30,7 @@ function Header() {
   }, [resolvedTheme])
 
   return (
-    <header className='sticky top-0 flex w-full bg-background px-0 py-3 shadow-sm md:p-5 z-50'>
+    <header className='sticky top-0 z-50 flex w-full bg-background px-0 py-3 shadow-sm md:p-5'>
       <div className='mx-auto flex w-full max-w-7xl items-center justify-between px-3 md:px-5'>
         <Link href='/' className='flex items-center gap-3'>
           <Image
@@ -38,25 +46,31 @@ function Header() {
           <ModeToggle />
           {isLogin ? (
             <>
-              <Link href='/admin/dashboards'>
-                <Avatar>
-                  <AvatarImage
-                    src='https://avatars.githubusercontent.com/u/88163765?v=4'
-                    alt='@templo_admin'
-                  />
-                  <AvatarFallback>AF</AvatarFallback>
-                </Avatar>
-              </Link>
-              <div className='ml-auto flex w-max flex-col items-end justify-center'>
-                {/* <p className='font-medium'>{session?.data?.user?.email}</p> */}
-                <Button
-                  className='w-20'
-                  variant='secondary'
-                  onClick={() => signOut()}
-                >
-                  Sign out
-                </Button>
-              </div>
+              <DropdownMenu>
+                <DropdownMenuTrigger className='rounded-full'>
+                  <Avatar>
+                    <AvatarImage
+                      src='https://avatars.githubusercontent.com/u/88163765?v=4'
+                      alt='@templo_admin'
+                    />
+                    <AvatarFallback>AF</AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align='end'>
+                  <DropdownMenuLabel>Mi cuenta</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href='/'>Punto de venta</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href='/admin/dashboards'>Dashboard</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => signOut()} className='text-destructive'>
+                    Cerrar sesión
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </>
           ) : (
             <Link href='/login'>

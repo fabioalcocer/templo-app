@@ -14,47 +14,35 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import {
-  ArrowUpDown,
-  ChevronDown,
-  CloudFog,
-  Download,
-  MehIcon,
-  MoreHorizontal,
-} from 'lucide-react'
+import { ArrowUpDown, ImageIcon, MoreHorizontal } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   DropdownMenu,
-  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
 import {
   Table,
   TableBody,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { getAllPurchases } from '@/api'
-import { calculateTotalFromPurchases, parsedPriceFromNumber } from '@/lib/utils'
+import { getCategories } from '@/api'
 import { DataTablePagination } from './table-pagination'
-import { DatePickerWithRange } from './date-range-picker'
-import { Badge } from './ui/badge'
+import { CreateCategoryForm } from './create-category-form'
+import { AlertDialogConfirm } from './dialog-confirm'
+import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
-import { toast } from './ui/use-toast'
-import { DateRange } from 'react-day-picker'
-import { addDays, format } from 'date-fns'
-import { DAY_IN_MILLISECONDS } from '@/lib/constants'
 
-export const columns: ColumnDef<Purchase>[] = [
+export const columns: ColumnDef<User>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -80,7 +68,25 @@ export const columns: ColumnDef<Purchase>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'productName',
+    accessorKey: 'id',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          className='hidden p-0 md:flex'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Id
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
+    cell: ({ row }) => (
+      <div className='hidden capitalize md:flex'>{row.getValue('id')}</div>
+    ),
+  },
+  {
+    accessorKey: 'fullName',
     header: ({ column }) => {
       return (
         <Button
@@ -93,10 +99,10 @@ export const columns: ColumnDef<Purchase>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className=''>{row.getValue('productName')}</div>,
+    cell: ({ row }) => <div className=''>{row.getValue('fullName')}</div>,
   },
   {
-    accessorKey: 'createdAt',
+    accessorKey: 'email',
     header: ({ column }) => {
       return (
         <Button
@@ -104,13 +110,61 @@ export const columns: ColumnDef<Purchase>[] = [
           className='p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Fecha
+          Correo electrónico
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className=''>{row.getValue('email')}</div>,
+  },
+  {
+    accessorKey: 'discipline',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          className='p-0'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Disciplina
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className=''>{row.getValue('discipline')}</div>,
+  },
+  {
+    accessorKey: 'sessions',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          className='p-0'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Sesiones
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className=''>{row.getValue('sessions')}</div>,
+  },
+  {
+    accessorKey: 'admissionDate',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          className='p-0'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Fecha de ingreso
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       )
     },
     cell: ({ row }) => {
-      const date = row.getValue('createdAt') as Date
+      const date = row.getValue('admissionDate') as Date
       return (
         <div>
           {date
@@ -123,100 +177,10 @@ export const columns: ColumnDef<Purchase>[] = [
     },
   },
   {
-    accessorKey: 'reStock',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          className='p-0'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Re-stock
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const reStock = row.getValue('reStock')
-      return (
-        <div>
-          {reStock ? (
-            <Badge>Re-stock</Badge>
-          ) : (
-            <Badge variant='outline'>No</Badge>
-          )}
-        </div>
-      )
-    },
-  },
-  {
-    accessorKey: 'stock',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          className='p-0'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Stock
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div>{row.getValue('stock')}</div>,
-  },
-  {
-    accessorKey: 'cost',
-    header: ({ column }) => {
-      return (
-        <Button
-          asChild
-          variant='ghost'
-          className='ml-auto w-full justify-end p-0 text-right'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          <div className='text-right'>
-            Costo
-            <ArrowUpDown className='ml-2 h-4 w-4' />
-          </div>
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('cost'))
-      const formatted = parsedPriceFromNumber(amount)
-      return <div className='text-right font-medium'>{formatted}</div>
-    },
-  },
-  {
-    accessorKey: 'total',
-    header: ({ column }) => {
-      return (
-        <Button
-          asChild
-          variant='ghost'
-          className='ml-auto w-full justify-end p-0 text-right'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          <div className='text-right'>
-            Total
-            <ArrowUpDown className='ml-2 h-4 w-4' />
-          </div>
-        </Button>
-      )
-    },
-    cell: ({ row }) => {
-      const stock = parseFloat(row.getValue('stock'))
-      const amount = parseFloat(row.getValue('cost'))
-      const formatted = parsedPriceFromNumber(stock * amount)
-      return <div className='text-right font-medium'>{formatted}</div>
-    },
-  },
-  {
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const product = row.original
+      const category = row.original
 
       return (
         <DropdownMenu>
@@ -229,11 +193,17 @@ export const columns: ColumnDef<Purchase>[] = [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(product.id)}
+              onClick={() => navigator.clipboard.writeText(category.id)}
             >
               Copiar ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
+            <DropdownMenuItem asChild>
+              <CreateCategoryForm categoryId={category.id} isEditing={true} />
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <AlertDialogConfirm itemId={category.id} itemName='categoría' />
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       )
@@ -241,9 +211,7 @@ export const columns: ColumnDef<Purchase>[] = [
   },
 ]
 
-export function PurchasesTable() {
-  const [purchases, setPurchases] = React.useState<Purchase[]>([])
-  const [initialPurchases, setInitialPurchases] = React.useState<Purchase[]>([])
+export function UsersTable({ users }: { users: User[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -252,13 +220,8 @@ export function PurchasesTable() {
     React.useState<VisibilityState>({})
   const [rowSelection, setRowSelection] = React.useState({})
 
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2024, 2, 20),
-    to: addDays(new Date(2024, 2, 20), 30),
-  })
-
   const table = useReactTable({
-    data: purchases,
+    data: users,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -276,78 +239,21 @@ export function PurchasesTable() {
     },
   })
 
-  React.useEffect(() => {
-    const fetchPurchases = async () => {
-      const purchases = await getAllPurchases()
-      setPurchases(purchases)
-      setInitialPurchases(purchases)
-      return
-    }
-
-    fetchPurchases()
-  }, [])
-
-  React.useEffect(() => {
-    setPurchases(initialPurchases)
-
-    const filteredPurchases = initialPurchases.filter(
-      (purchase) =>
-        purchase.createdAt >= (date?.from || new Date(2024, 2, 20)).getTime() &&
-        purchase.createdAt <=
-          (date?.to || addDays(new Date(2024, 2, 20), 30)).getTime() + DAY_IN_MILLISECONDS,
-    )
-
-    setPurchases(filteredPurchases)
-  }, [date, initialPurchases])
-
   return (
     <div className='w-full'>
-      <div className='flex items-center justify-between py-4 flex-wrap gap-5 md:gap-0'>
-        <DatePickerWithRange numberOfMonths={1} setDate={setDate} date={date} />
-        <div className='flex items-center gap-4'>
-          <Button
-            onClick={() =>
-              toast({
-                title: (
-                  <div className='flex w-full items-center gap-2'>
-                    Esta función aún no está disponible
-                    <MehIcon />
-                  </div>
-                ),
-              })
-            }
-          >
-            <Download className='mr-2 h-4 w-4' /> Download
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant='outline' className='ml-auto'>
-                Columnas <ChevronDown className='ml-2 h-4 w-4' />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align='end'>
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className='capitalize'
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  )
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+      <div className='flex items-center justify-between py-4'>
+        <Input
+          placeholder='Buscar usuario...'
+          value={
+            (table.getColumn('fullName')?.getFilterValue() as string) ?? ''
+          }
+          onChange={(event) =>
+            table.getColumn('fullName')?.setFilterValue(event.target.value)
+          }
+          className='max-w-sm'
+        />
       </div>
-      <div className='rounded-md border w-full max-w-[92vw]'>
+      <div className='rounded-md border max-w-[92vw]'>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
@@ -395,15 +301,6 @@ export function PurchasesTable() {
               </TableRow>
             )}
           </TableBody>
-          <TableFooter className='bg-inherit'>
-            <TableRow>
-              <TableCell colSpan={5}></TableCell>
-              <TableCell className='text-right font-semibold'>Total</TableCell>
-              <TableCell className='text-right font-semibold'>
-                {calculateTotalFromPurchases(purchases)}
-              </TableCell>
-            </TableRow>
-          </TableFooter>
         </Table>
       </div>
       <div className='flex items-center justify-end space-x-2 py-4'>
