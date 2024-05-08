@@ -1,12 +1,7 @@
 'use client'
-import { File, ListFilter, PlusCircle, Users2 } from 'lucide-react'
-import { useSession } from 'next-auth/react'
-import { redirect } from 'next/navigation'
-
+import { File, ListFilter } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Suspense, useEffect, useState } from 'react'
-import Loading from './loading'
-import { getAllProducts } from '@/api'
+import { useEffect, useState } from 'react'
 
 import {
   DropdownMenu,
@@ -33,6 +28,7 @@ export default function UsersPage() {
     const users: User[] = [
       {
         id: '1',
+        active: true,
         fullName: 'Juan Pérez',
         nit: 'LP123456',
         phone: '60012345',
@@ -50,6 +46,7 @@ export default function UsersPage() {
       },
       {
         id: '2',
+        active: false,
         fullName: 'María López',
         nit: 'SC654321',
         phone: '70123456',
@@ -74,92 +71,70 @@ export default function UsersPage() {
     fetchUsers()
   }, [])
 
-  const session = useSession({
-    required: true,
-    onUnauthenticated() {
-      redirect('/login')
-    },
-  })
-
-  if (!session) {
-    return null
-  }
-
   return (
-    <Suspense fallback={<Loading />}>
-      <div className='flex h-full flex-col gap-4'>
-        <h2 className='mb-5 flex items-center justify-center gap-3 text-center text-3xl font-semibold'>
-          <Users2 width={36} height={36} />
-          Usuarios
-        </h2>
-        <main className='flex h-full flex-1 flex-col gap-4'>
-          <Tabs defaultValue='all'>
-            <div className='flex items-center'>
-              <TabsList>
-                <TabsTrigger value='all'>All</TabsTrigger>
-                <TabsTrigger value='active'>Active</TabsTrigger>
-                <TabsTrigger value='draft'>Draft</TabsTrigger>
-                <TabsTrigger value='archived' className='hidden sm:flex'>
+    <main className='flex h-full flex-1 flex-col gap-4'>
+      <Tabs defaultValue='all'>
+        <div className='flex items-center'>
+          <TabsList>
+            <TabsTrigger value='all'>All</TabsTrigger>
+            <TabsTrigger value='active'>Active</TabsTrigger>
+            <TabsTrigger value='draft'>Draft</TabsTrigger>
+            <TabsTrigger value='archived' className='hidden sm:flex'>
+              Archived
+            </TabsTrigger>
+          </TabsList>
+          <div className='ml-auto flex items-center gap-2'>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant='outline' size='sm' className='h-8 gap-1 py-4'>
+                  <ListFilter className='h-3.5 w-3.5' />
+                  <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>
+                    Filter
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className='w-56'>
+                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuCheckboxItem
+                  checked={showStatusBar}
+                  onCheckedChange={setShowStatusBar}
+                >
+                  Active
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  checked={showPanel}
+                  onCheckedChange={setShowPanel}
+                >
+                  Drafts
+                </DropdownMenuCheckboxItem>
+                <DropdownMenuCheckboxItem
+                  checked={showArchived}
+                  onCheckedChange={setShowArchived}
+                >
                   Archived
-                </TabsTrigger>
-              </TabsList>
-              <div className='ml-auto flex items-center gap-2'>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant='outline' size='sm' className='h-8 gap-1'>
-                      <ListFilter className='h-3.5 w-3.5' />
-                      <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>
-                        Filter
-                      </span>
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent className='w-56'>
-                    <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuCheckboxItem
-                      checked={showStatusBar}
-                      onCheckedChange={setShowStatusBar}
-                    >
-                      Active
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem
-                      checked={showPanel}
-                      onCheckedChange={setShowPanel}
-                    >
-                      Drafts
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuCheckboxItem
-                      checked={showArchived}
-                      onCheckedChange={setShowArchived}
-                    >
-                      Archived
-                    </DropdownMenuCheckboxItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-                <Button size='sm' variant='outline' className='h-8 gap-1'>
-                  <File className='h-3.5 w-3.5' />
-                  <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>
-                    Export
-                  </span>
-                </Button>
-                <Button size='sm' className='h-8 gap-1'>
-                  <PlusCircle className='h-3.5 w-3.5' />
-                  <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>
-                    Registrar usuario
-                  </span>
-                </Button>
-              </div>
-            </div>
-            <TabsContent value='all'>
-              <UsersTable users={users} />
-            </TabsContent>
-            <TabsContent value='active'>
-              <h3>Active</h3>
-            </TabsContent>
-          </Tabs>
-        </main>
-      </div>
-    </Suspense>
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button size='sm' variant='outline' className='h-8 gap-1 py-4'>
+              <File className='h-3.5 w-3.5' />
+              <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>
+                Export
+              </span>
+            </Button>
+          </div>
+        </div>
+        <TabsContent value='all'>
+          <UsersTable users={users} />
+        </TabsContent>
+        <TabsContent value='active'>
+          <UsersTable users={(users || []).filter((user) => user.active)} />
+        </TabsContent>
+        <TabsContent value='draft'>
+          <UsersTable users={(users || []).filter((user) => !user.active)} />
+        </TabsContent>
+      </Tabs>
+    </main>
   )
 }
 

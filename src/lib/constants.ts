@@ -37,3 +37,18 @@ export const DEFAULT_VALUES = {
 }
 
 export const DAY_IN_MILLISECONDS = 86400000
+
+export const DISCIPLINES: Record<string, Discipline> = {
+  CALISTENIA: {
+    slug: 'calistenia',
+    name: 'Calistenia',
+  },
+  POWER_PLATE: {
+    slug: 'power-plate',
+    name: 'Power plate',
+  },
+  CUSTOM: {
+    slug: 'custom',
+    name: 'Personalizado',
+  },
+}

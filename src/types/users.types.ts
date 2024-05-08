@@ -1,5 +1,6 @@
 interface User {
   id: string
+  active: boolean
   fullName: string
   nit: string
   phone: string

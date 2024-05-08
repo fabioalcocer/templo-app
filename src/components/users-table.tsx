@@ -14,7 +14,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { ArrowUpDown, ImageIcon, MoreHorizontal } from 'lucide-react'
+import {
+  ArrowUpDown,
+  ImageIcon,
+  MoreHorizontal,
+  PlusCircle,
+} from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -35,12 +40,12 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { getCategories } from '@/api'
 import { DataTablePagination } from './table-pagination'
 import { CreateCategoryForm } from './create-category-form'
 import { AlertDialogConfirm } from './dialog-confirm'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
+import CreateUserDialog from './create-user-dialog'
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -241,7 +246,7 @@ export function UsersTable({ users }: { users: User[] }) {
 
   return (
     <div className='w-full'>
-      <div className='flex items-center justify-between py-4'>
+      <div className='flex items-center justify-between pb-4 pt-2'>
         <Input
           placeholder='Buscar usuario...'
           value={
@@ -252,8 +257,9 @@ export function UsersTable({ users }: { users: User[] }) {
           }
           className='max-w-sm'
         />
+        <CreateUserDialog />
       </div>
-      <div className='rounded-md border max-w-[92vw]'>
+      <div className='max-w-[92vw] rounded-md border'>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
