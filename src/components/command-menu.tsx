@@ -9,6 +9,7 @@ import {
   LineChart,
   Smile,
   UserCogIcon,
+  Users2,
 } from 'lucide-react'
 
 import {
@@ -58,17 +59,21 @@ export function CommandDialogMenu() {
       path: '/admin/purchases',
       icon: <UserCogIcon className='mr-2 h-4 w-4' />,
     },
-
     {
       label: 'Analíticas',
       path: '/admin/analytics',
       icon: <LineChart className='mr-2 h-4 w-4' />,
     },
+    {
+      label: 'Usuarios',
+      path: '/admin/users',
+      icon: <Users2 className='mr-2 h-4 w-4' />,
+    },
   ]
 
   return (
     <>
-      <p className='py-2 text-sm text-muted-foreground hidden md:inline'>
+      <p className='hidden py-2 text-sm text-muted-foreground md:inline'>
         Presiona{' '}
         <kbd className='pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100'>
           <span className='text-xs'>⌘</span>J
@@ -80,10 +85,7 @@ export function CommandDialogMenu() {
           <CommandEmpty>No se encontraron resultados.</CommandEmpty>
           <CommandGroup heading='Sugerencias'>
             {ROUTES.map((route) => (
-              <Link
-                key={route.path}
-                href={route.path}
-              >
+              <Link key={route.path} href={route.path}>
                 <CommandItem key={route.label}>
                   {route.icon}
                   <span className='text-muted-foreground'>{route.label}</span>

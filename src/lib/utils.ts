@@ -1,6 +1,6 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
-import { CATEGORIES } from './constants'
+import { CATEGORIES, DISCIPLINES } from './constants'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -35,4 +35,15 @@ export const calculateTotalFromPurchases = (purchases: Purchase[]) => {
   }, 0)
 
   return parsedPriceFromNumber(total)
+}
+
+
+export const getObjBySlug = (slug: string): Discipline | null => {
+  for (let key in DISCIPLINES) {
+    if (DISCIPLINES[key].slug === slug) {
+      return DISCIPLINES[key]
+    }
+  }
+
+  return null
 }

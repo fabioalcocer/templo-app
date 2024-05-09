@@ -40,10 +40,14 @@ export async function getCategoryById(id: string): Promise<Category | null> {
   }
 }
 
-export async function createCategory({ data }: any) {
+export async function createItem({ data, collectionName }: any) {
+  const dataWithoutUndefined = Object.fromEntries(
+    Object.entries(data).filter(([, value]) => value !== undefined),
+  )
+
   try {
-    const docRef = await addDoc(collection(database, 'categories'), {
-      ...data,
+    const docRef = await addDoc(collection(database, collectionName), {
+      ...dataWithoutUndefined,
       createdAt: Date.now(),
     })
     console.log('Document written with ID: ', docRef.id)
@@ -205,5 +209,16 @@ export async function discountProductStock(
     })
   } catch (e) {
     console.error('Error adding document: ', e)
+  }
+}
+
+export async function getAllUsers(): Promise<User[]> {
+  try {
+    const querySnapshot = await getDocs(collection(database, 'users'))
+    const productsData = querySnapshot.docs.map((doc) => doc.data())
+    return productsData as User[]
+  } catch (err) {
+    console.error(err)
+    return []
   }
 }

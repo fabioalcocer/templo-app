@@ -14,6 +14,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { UsersTable } from '@/components/users-table'
 import { DropdownMenuCheckboxItemProps } from '@radix-ui/react-dropdown-menu'
+import { getAllUsers } from '@/api'
 
 type Checked = DropdownMenuCheckboxItemProps['checked']
 
@@ -24,46 +25,7 @@ export default function UsersPage() {
   const [users, setUsers] = useState<User[]>([])
 
   const fetchUsers = async () => {
-    // const users = await getAllProducts()
-    const users: User[] = [
-      {
-        id: '1',
-        active: true,
-        fullName: 'Juan Pérez',
-        nit: 'LP123456',
-        phone: '60012345',
-        email: 'juan.perez@example.com',
-        socialMedia: {
-          facebook: 'juanperezfb',
-          instagram: 'juanperezinsta',
-          tiktok: 'juanpereztik',
-        },
-        discipline: 'Jiu-Jitsu',
-        plan: 'Monthly',
-        sessions: 12,
-        price: 350,
-        admissionDate: new Date('2024-01-15'),
-      },
-      {
-        id: '2',
-        active: false,
-        fullName: 'María López',
-        nit: 'SC654321',
-        phone: '70123456',
-        email: 'maria.lopez@example.com',
-        socialMedia: {
-          facebook: 'marialopezfb',
-          instagram: 'marialopezinsta',
-          tiktok: 'marialopeztik',
-        },
-        discipline: 'Muay Thai',
-        plan: 'Annual',
-        sessions: 36,
-        price: 1000,
-        admissionDate: new Date('2024-02-20'),
-      },
-    ]
-
+    const users = await getAllUsers()
     return setUsers(users)
   }
 

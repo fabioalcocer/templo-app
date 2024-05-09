@@ -14,12 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import {
-  ArrowUpDown,
-  ImageIcon,
-  MoreHorizontal,
-  PlusCircle,
-} from 'lucide-react'
+import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -46,6 +41,8 @@ import { AlertDialogConfirm } from './dialog-confirm'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import CreateUserDialog from './create-user-dialog'
+import { getObjBySlug } from '@/lib/utils'
+import { Timestamp } from 'firebase/firestore'
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -91,7 +88,7 @@ export const columns: ColumnDef<User>[] = [
     ),
   },
   {
-    accessorKey: 'fullName',
+    accessorKey: 'name',
     header: ({ column }) => {
       return (
         <Button
@@ -104,10 +101,10 @@ export const columns: ColumnDef<User>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className=''>{row.getValue('fullName')}</div>,
+    cell: ({ row }) => <div className=''>{row.getValue('name')}</div>,
   },
   {
-    accessorKey: 'email',
+    accessorKey: 'lastName',
     header: ({ column }) => {
       return (
         <Button
@@ -115,12 +112,12 @@ export const columns: ColumnDef<User>[] = [
           className='p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Correo electrónico
+          Apellidos
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       )
     },
-    cell: ({ row }) => <div className=''>{row.getValue('email')}</div>,
+    cell: ({ row }) => <div className=''>{row.getValue('lastName')}</div>,
   },
   {
     accessorKey: 'discipline',
@@ -136,7 +133,9 @@ export const columns: ColumnDef<User>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className=''>{row.getValue('discipline')}</div>,
+    cell: ({ row }) => (
+      <div className=''>{getObjBySlug(row.getValue('discipline'))?.name}</div>
+    ),
   },
   {
     accessorKey: 'sessions',
@@ -152,10 +151,10 @@ export const columns: ColumnDef<User>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className=''>{row.getValue('sessions')}</div>,
+    cell: ({ row }) => <div className=''>{row.getValue('sessions') || 0}</div>,
   },
   {
-    accessorKey: 'admissionDate',
+    accessorKey: 'dateEntry',
     header: ({ column }) => {
       return (
         <Button
@@ -169,11 +168,13 @@ export const columns: ColumnDef<User>[] = [
       )
     },
     cell: ({ row }) => {
-      const date = row.getValue('admissionDate') as Date
+      const date = row.getValue('dateEntry') as Date
+      const parsedDate = (date as unknown as Timestamp)?.toDate()
+
       return (
         <div>
           {date
-            ? format(date, 'PPP', {
+            ? format(parsedDate, 'PPP', {
                 locale: es,
               })
             : 'Sin fecha'}
@@ -249,11 +250,9 @@ export function UsersTable({ users }: { users: User[] }) {
       <div className='flex items-center justify-between pb-4 pt-2'>
         <Input
           placeholder='Buscar usuario...'
-          value={
-            (table.getColumn('fullName')?.getFilterValue() as string) ?? ''
-          }
+          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
-            table.getColumn('fullName')?.setFilterValue(event.target.value)
+            table.getColumn('name')?.setFilterValue(event.target.value)
           }
           className='max-w-sm'
         />

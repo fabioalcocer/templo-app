@@ -1,5 +1,4 @@
 'use client'
-
 import {
   Form,
   FormControl,
@@ -20,12 +19,21 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Check, ChevronLeft, Loader2 } from 'lucide-react'
+import { CalendarIcon, Check, ChevronLeft, Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { DEFAULT_VALUES, DISCIPLINES } from '@/lib/constants'
-import { getCategories, getProductById, createProduct } from '@/api'
+import { USER_DEFAULT_VALUES, DISCIPLINES } from '@/lib/constants'
+import { createItem, getProductById } from '@/api'
 import { toast } from '@/components/ui/use-toast'
 import Link from 'next/link'
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
+import { cn, getObjBySlug } from '@/lib/utils'
+import { Calendar } from '@/components/ui/calendar'
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale/es'
 
 const FormSchema = z.object({
   name: z
@@ -35,80 +43,90 @@ const FormSchema = z.object({
     .min(3, {
       message: 'El nombre debe tener al menos 3 caracteres.',
     })
-    .max(40, {
-      message: 'El nombre debe tener como máximo 40 caracteres.',
+    .max(30, {
+      message: 'El nombre debe tener como máximo 30 caracteres.',
     }),
-  cost: z
-    .number({
-      required_error: 'Por favor, ingresa un monto.',
-    })
-    .min(1, {
-      message: 'Por favor, ingresa un monto mayor a 0.',
-    }),
-  price: z
-    .number({
-      required_error: 'Por favor, ingresa un monto.',
-    })
-    .min(1, {
-      message: 'Por favor, ingresa un monto mayor a 0.',
-    }),
-  categoryId: z.string({
-    required_error: 'Por favor, selecciona un categoría.',
-  }),
-  stock: z
-    .number({
-      required_error: 'Por favor, ingresa un monto.',
-    })
-    .min(1, {
-      message: 'Por favor, ingresa un monto mayor a 0.',
-    }),
-  img: z
+  lastName: z
     .string({
-      required_error: 'Por favor, ingresa una imagen.',
+      required_error: 'Por favor, ingresa los apellidos.',
     })
-    .url({
-      message: 'Por favor, ingresa una URL válida.',
+    .min(3, {
+      message: 'El nombre debe tener al menos 3 caracteres.',
+    })
+    .max(30, {
+      message: 'El nombre debe tener como máximo 30 caracteres.',
     }),
+  phone: z
+    .string({
+      required_error: 'Por favor, ingresa un número de teléfono.',
+    })
+    .min(7, {
+      message: 'El nombre debe tener al menos 7 dígitos.',
+    })
+    .max(11, {
+      message: 'El nombre debe tener como máximo 11 dígitos.',
+    })
+    .regex(/^[0-9]/, {
+      message: 'El número de teléfono debe ser numérico.',
+    }),
+  discipline: z.string({
+    required_error: 'Por favor, selecciona una disciplina.',
+  }),
+  dateEntry: z.date({
+    required_error: 'Por favor, ingresa una fecha.',
+  }),
+  unitPrice: z
+    .number({
+      required_error: 'Por favor, ingresa un monto.',
+    })
+    .min(1, {
+      message: 'Ingresa un monto mayor a 0.',
+    }),
+  discount: z
+    .number({
+      required_error: 'Por favor, ingresa un monto.',
+    })
+    .min(1, {
+      message: 'Ingresa un monto mayor a 0.',
+    }),
+  finalPrice: z
+    .number({
+      required_error: 'Por favor, ingresa un monto.',
+    })
+    .min(1, {
+      message: 'Ingresa un monto mayor a 0.',
+    }),
+  paymentType: z.string({
+    required_error: 'Por favor, selecciona un método de pago.',
+  }),
+  finalDate: z.date().optional(),
 })
 
 function UsersForm({ params }: { params: { type: string } }) {
   const USER_TYPE = params.type
-
   const [loading, setLoading] = useState(false)
-  const [categoriesOptions, setCategoriesOptions] = useState<OptionCategory[]>(
-    [],
-  )
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
-    defaultValues: DEFAULT_VALUES,
+    defaultValues: USER_DEFAULT_VALUES,
   })
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setLoading(true)
 
-    await createProduct({ data })
+    await createItem({ data, collectionName: 'users' })
 
     toast({
-      title: (
-        <div className='flex w-full items-center gap-2'>
-          La compra se registró exitosamente
-          <Check />
-        </div>
+      title: 'You submitted the following values:',
+      description: (
+        <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
+          <code className='text-white'>{JSON.stringify(data, null, 2)}</code>
+        </pre>
       ),
-      description: 'Puedes ver los datos en tu inventario',
     })
 
-    form.reset(DEFAULT_VALUES)
+    form.reset(USER_DEFAULT_VALUES)
     setLoading(false)
-  }
-
-  const fetchCategoriesOptions = async () => {
-    const products = await getCategories()
-    const options = products?.map((option) => ({
-      value: option.id,
-      label: option.name,
-    }))
-    return setCategoriesOptions(options)
   }
 
   useEffect(() => {
@@ -125,32 +143,37 @@ function UsersForm({ params }: { params: { type: string } }) {
     fetchProduct()
   }, [form, USER_TYPE])
 
-  useEffect(() => {
-    fetchCategoriesOptions()
-  }, [])
+  const disciplineOptions = Object.keys(DISCIPLINES).map((key) => ({
+    value: key,
+    label: DISCIPLINES[key].name,
+  }))
 
-  const getNameBySlug = (slug: string): string => {
-    for (let key in DISCIPLINES) {
-      if (DISCIPLINES[key].slug === slug) {
-        return DISCIPLINES[key].name
-      }
-    }
-    return 'Slug no encontrado'
-  }
+  const currentDisciplineOption = disciplineOptions.find(
+    (option) => option.label === getObjBySlug(USER_TYPE)?.name,
+  )
+
+  useEffect(() => {
+    form.setValue('discipline', getObjBySlug(USER_TYPE)?.slug as string)
+  })
 
   return (
     <div>
-      <div className='mx-auto mr-10 flex w-full max-w-4xl items-center gap-6'>
+      <div className='mx-auto mr-32 flex w-full max-w-3xl items-center gap-6'>
         <Link href='/admin/users'>
           <Button variant='outline' size='icon' className='h-9 w-9'>
             <ChevronLeft className='h-4 w-4' />
           </Button>
         </Link>
-        <h3 className='text-2xl font-semibold'>{getNameBySlug(USER_TYPE)}</h3>
+        <h3 className='text-2xl font-semibold'>
+          {getObjBySlug(USER_TYPE)?.name}
+        </h3>
       </div>
-      <div className='mx-auto mt-5 max-w-2xl'>
+      <div className='mx-auto mt-5 max-w-xl'>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className=''>
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className='flex flex-col gap-4'
+          >
             <FormField
               control={form.control}
               name='name'
@@ -158,22 +181,168 @@ function UsersForm({ params }: { params: { type: string } }) {
                 <FormItem>
                   <FormLabel>Nombre</FormLabel>
                   <FormControl>
-                    <Input placeholder='Agua Vital 500ml' {...field} />
+                    <Input placeholder='José Tomás' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <div className='flex items-center gap-3'>
+            <FormField
+              control={form.control}
+              name='lastName'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Apellidos</FormLabel>
+                  <FormControl>
+                    <Input placeholder='Díaz Vega' {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='phone'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Teléfono</FormLabel>
+                  <FormControl>
+                    <Input placeholder='70787673' {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='discipline'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Disciplina:</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value || currentDisciplineOption?.value}
+                    disabled={Boolean(currentDisciplineOption?.value)}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder='Selecciona una disciplina' />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {disciplineOptions?.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className='my-1 flex flex-wrap items-center justify-between gap-4'>
               <FormField
                 control={form.control}
-                name='stock'
+                name='dateEntry'
                 render={({ field }) => (
-                  <FormItem className='mt-2'>
-                    <FormLabel>Cantidad</FormLabel>
+                  <FormItem className='flex flex-col'>
+                    <FormLabel>Fecha de ingreso</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={'outline'}
+                            className={cn(
+                              'w-[250px] pl-3 text-left font-normal',
+                              !field.value && 'text-muted-foreground',
+                            )}
+                          >
+                            {field.value ? (
+                              format(field.value, 'PPP', {
+                                locale: es,
+                              })
+                            ) : (
+                              <span>Elige una fecha</span>
+                            )}
+                            <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className='w-auto p-0' align='start'>
+                        <Calendar
+                          mode='single'
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) =>
+                            date > new Date() || date < new Date('1900-01-01')
+                          }
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              {USER_TYPE === 'calistenia' && (
+                <FormField
+                  control={form.control}
+                  name='finalDate'
+                  render={({ field }) => (
+                    <FormItem className='flex flex-col'>
+                      <FormLabel>Fecha final</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              variant={'outline'}
+                              className={cn(
+                                'w-[250px] flex-1  pl-3 text-left font-normal',
+                                !field.value && 'text-muted-foreground',
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, 'PPP', {
+                                  locale: es,
+                                })
+                              ) : (
+                                <span>Elige una fecha</span>
+                              )}
+                              <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className='w-auto p-0' align='start'>
+                          <Calendar
+                            mode='single'
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date('1900-01-01')
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              )}
+            </div>
+
+            <div className='flex flex-wrap items-center gap-5'>
+              <FormField
+                control={form.control}
+                name='unitPrice'
+                render={({ field }) => (
+                  <FormItem className='min-w-[98px] flex-1'>
+                    <FormLabel>Precio unitario</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='8'
+                        placeholder='Bs 250'
                         {...field}
                         type='number'
                         defaultValue='0'
@@ -189,10 +358,10 @@ function UsersForm({ params }: { params: { type: string } }) {
 
               <FormField
                 control={form.control}
-                name='cost'
+                name='discount'
                 render={({ field }) => (
-                  <FormItem className='mt-2'>
-                    <FormLabel>Costo</FormLabel>
+                  <FormItem className='min-w-[98px] flex-1'>
+                    <FormLabel>Descuento</FormLabel>
                     <FormControl>
                       <Input
                         placeholder='Bs 50'
@@ -211,13 +380,13 @@ function UsersForm({ params }: { params: { type: string } }) {
 
               <FormField
                 control={form.control}
-                name='price'
+                name='finalPrice'
                 render={({ field }) => (
-                  <FormItem className='mt-2'>
+                  <FormItem className='min-w-[98px] flex-1'>
                     <FormLabel>Precio unitario</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder='Bs 53'
+                        placeholder='Bs 450'
                         {...field}
                         type='number'
                         defaultValue='0'
@@ -234,25 +403,23 @@ function UsersForm({ params }: { params: { type: string } }) {
 
             <FormField
               control={form.control}
-              name='categoryId'
+              name='paymentType'
               render={({ field }) => (
-                <FormItem className='mt-2'>
-                  <FormLabel>Categoría:</FormLabel>
+                <FormItem>
+                  <FormLabel>Método de pago:</FormLabel>
                   <Select
                     onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
                       <SelectTrigger>
-                        <SelectValue placeholder='Selecciona una categoría' />
+                        <SelectValue placeholder='Selecciona un método de pago' />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {categoriesOptions?.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
+                      <SelectItem value='qr'>QR</SelectItem>
+                      <SelectItem value='cash'>Efectivo</SelectItem>
+                      <SelectItem value='card'>Tarjeta de débito</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormMessage />
@@ -260,31 +427,12 @@ function UsersForm({ params }: { params: { type: string } }) {
               )}
             />
 
-            <div className='mt-2'>
-              <FormField
-                control={form.control}
-                name='img'
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Imagen del producto</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder='https://fsa.bo/productos/14959-01.jpg'
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
-
             <div className='my-4 flex justify-end gap-2'>
               <Button type='button' variant='secondary'>
                 Cancelar
               </Button>
 
-              <Button disabled={loading} type='submit'>
+              <Button type='submit'>
                 {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
                 Crear usuario
               </Button>

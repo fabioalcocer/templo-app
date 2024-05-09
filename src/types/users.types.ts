@@ -1,18 +1,21 @@
 interface User {
   id: string
   active: boolean
-  fullName: string
-  nit: string
+  name: string
+  lastName: string
   phone: string
-  email: string
+  discipline: string
+  dateEntry: Date
+  unitPrice: number
+  discount: number
+  finalPrice: number
+  paymentType: string
+  finalDate: Date
   socialMedia: {
     facebook: string
     instagram: string
     tiktok: string
   }
-  discipline: string
   plan: string
   sessions: number
-  price: number
-  admissionDate: Date
 }

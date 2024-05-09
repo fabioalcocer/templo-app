@@ -52,3 +52,17 @@ export const DISCIPLINES: Record<string, Discipline> = {
     name: 'Personalizado',
   },
 }
+
+export const USER_DEFAULT_VALUES = {
+  id: '',
+  name: '',
+  lastName: '',
+  phone: '',
+  discipline: '',
+  dateEntry: undefined,
+  unitPrice: 0,
+  discount: 0,
+  finalPrice: 0,
+  paymentType: undefined,
+  finalDate: undefined,
+}

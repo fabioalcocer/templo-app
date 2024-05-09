@@ -14,7 +14,7 @@ import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { toast } from '@/components/ui/use-toast'
-import { createCategory, getCategoryById, updateInventoryItem } from '@/api'
+import { createItem, getCategoryById, updateInventoryItem } from '@/api'
 import { useEffect, useState } from 'react'
 import { CATEGORY_DEFAULT_VALUES } from '@/lib/constants'
 import { Switch } from './ui/switch'
@@ -79,7 +79,7 @@ export function CreateCategoryForm({ categoryId, isEditing }: Props) {
     setLoading(true)
     isEditing
       ? await updateInventoryItem({ ...data, id: categoryId }, 'categories')
-      : await createCategory({ data })
+      : await createItem({ data, collectionName: 'categories' })
 
     toast({
       title: (
