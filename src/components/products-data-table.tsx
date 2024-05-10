@@ -233,7 +233,11 @@ export const columns: ColumnDef<Product>[] = [
             <DropdownMenuSeparator />
             <AddProductForm productId={product.id} isEditing={true} />
             <DropdownMenuItem asChild>
-              <AlertDialogConfirm itemId={product.id} itemName='producto' />
+              <AlertDialogConfirm
+                itemId={product.id}
+                itemName='producto'
+                collectionName='products'
+              />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

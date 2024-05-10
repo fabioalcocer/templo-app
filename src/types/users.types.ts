@@ -3,6 +3,7 @@ interface User {
   active: boolean
   name: string
   lastName: string
+  ci: string
   phone: string
   discipline: string
   dateEntry: Date

@@ -69,24 +69,24 @@ export const columns: ColumnDef<User>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  {
-    accessorKey: 'id',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          className='hidden p-0 md:flex'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Id
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      )
-    },
-    cell: ({ row }) => (
-      <div className='hidden capitalize md:flex'>{row.getValue('id')}</div>
-    ),
-  },
+  // {
+  //   accessorKey: 'id',
+  //   header: ({ column }) => {
+  //     return (
+  //       <Button
+  //         variant='ghost'
+  //         className='hidden p-0 md:flex'
+  //         onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+  //       >
+  //         Id
+  //         <ArrowUpDown className='ml-2 h-4 w-4' />
+  //       </Button>
+  //     )
+  //   },
+  //   cell: ({ row }) => (
+  //     <div className='hidden capitalize md:flex'>{row.getValue('id')}</div>
+  //   ),
+  // },
   {
     accessorKey: 'name',
     header: ({ column }) => {
@@ -138,22 +138,6 @@ export const columns: ColumnDef<User>[] = [
     ),
   },
   {
-    accessorKey: 'sessions',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant='ghost'
-          className='p-0'
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Sesiones
-          <ArrowUpDown className='ml-2 h-4 w-4' />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div className=''>{row.getValue('sessions') || 0}</div>,
-  },
-  {
     accessorKey: 'dateEntry',
     header: ({ column }) => {
       return (
@@ -183,10 +167,56 @@ export const columns: ColumnDef<User>[] = [
     },
   },
   {
+    accessorKey: 'finalDate',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          className='p-0'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Fecha de expiración
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const date = row.getValue('finalDate') as Date
+      const parsedDate = (date as unknown as Timestamp)?.toDate()
+
+      return (
+        <div>
+          {date
+            ? format(parsedDate, 'PPP', {
+                locale: es,
+              })
+            : 'No aplica'}
+        </div>
+      )
+    },
+  },
+  {
+    accessorKey: 'sessions',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          className='p-0'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Sesiones
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
+    cell: ({ row }) => <div className=''>{row.getValue('sessions') || 0}</div>,
+  },
+
+  {
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const category = row.original
+      const user = row.original
 
       return (
         <DropdownMenu>
@@ -199,16 +229,20 @@ export const columns: ColumnDef<User>[] = [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(category.id)}
+              onClick={() => navigator.clipboard.writeText(user.id)}
             >
               Copiar ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <CreateCategoryForm categoryId={category.id} isEditing={true} />
+              <CreateCategoryForm categoryId={user.id} isEditing={true} />
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <AlertDialogConfirm itemId={category.id} itemName='categoría' />
+              <AlertDialogConfirm
+                itemId={user.id}
+                itemName='usuario'
+                collectionName='users'
+              />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

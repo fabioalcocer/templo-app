@@ -1,4 +1,4 @@
-import { deleteInventoryItem } from '@/api'
+import { deleteItem } from '@/api'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,11 +15,12 @@ import { Button } from './ui/button'
 type Props = {
   itemId: string
   itemName: string
+  collectionName: string
 }
 
-export function AlertDialogConfirm({ itemId, itemName }: Props) {
-  const deleteItem = async () => {
-    await deleteInventoryItem(itemId, 'products')
+export function AlertDialogConfirm({ itemId, itemName, collectionName }: Props) {
+  const handleDeleteItem = async () => {
+    await deleteItem(itemId, collectionName)
   }
 
   return (
@@ -40,7 +41,7 @@ export function AlertDialogConfirm({ itemId, itemName }: Props) {
         <AlertDialogFooter>
           <AlertDialogCancel>Cancelar</AlertDialogCancel>
           <Button variant='destructive' asChild>
-            <AlertDialogAction onClick={deleteItem}>Eliminar</AlertDialogAction>
+            <AlertDialogAction onClick={handleDeleteItem}>Eliminar</AlertDialogAction>
           </Button>
         </AlertDialogFooter>
       </AlertDialogContent>

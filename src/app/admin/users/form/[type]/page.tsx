@@ -19,7 +19,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { CalendarIcon, Check, ChevronLeft, Loader2 } from 'lucide-react'
+import { CalendarIcon, ChevronLeft, Loader2 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { USER_DEFAULT_VALUES, DISCIPLINES } from '@/lib/constants'
 import { createItem, getProductById } from '@/api'
@@ -32,7 +32,7 @@ import {
 } from '@/components/ui/popover'
 import { cn, getObjBySlug } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
-import { format } from 'date-fns'
+import { addDays, format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 
 const FormSchema = z.object({
@@ -54,6 +54,16 @@ const FormSchema = z.object({
       message: 'El nombre debe tener al menos 3 caracteres.',
     })
     .max(30, {
+      message: 'El nombre debe tener como máximo 30 caracteres.',
+    }),
+  ci: z
+    .string({
+      required_error: 'Por favor, ingresa los apellidos.',
+    })
+    .min(6, {
+      message: 'El nombre debe tener al menos 3 caracteres.',
+    })
+    .max(9, {
       message: 'El nombre debe tener como máximo 30 caracteres.',
     }),
   phone: z
@@ -111,6 +121,8 @@ function UsersForm({ params }: { params: { type: string } }) {
     defaultValues: USER_DEFAULT_VALUES,
   })
 
+  const watchStartDate = form.watch('dateEntry')
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setLoading(true)
 
@@ -129,8 +141,25 @@ function UsersForm({ params }: { params: { type: string } }) {
     setLoading(false)
   }
 
+  const disciplineOptions = Object.keys(DISCIPLINES).map((key) => ({
+    value: key,
+    label: DISCIPLINES[key].name,
+  }))
+
+  const currentDisciplineOption = disciplineOptions.find(
+    (option) => option.label === getObjBySlug(USER_TYPE)?.name,
+  )
+
+  useEffect(() => {
+    if (watchStartDate && USER_TYPE === 'calistenia') {
+      form.setValue('finalDate', addDays(watchStartDate, 30))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchStartDate])
+
   useEffect(() => {
     if (!USER_TYPE) return
+
     const fetchProduct = async () => {
       try {
         const product = await getProductById(USER_TYPE)
@@ -142,15 +171,6 @@ function UsersForm({ params }: { params: { type: string } }) {
 
     fetchProduct()
   }, [form, USER_TYPE])
-
-  const disciplineOptions = Object.keys(DISCIPLINES).map((key) => ({
-    value: key,
-    label: DISCIPLINES[key].name,
-  }))
-
-  const currentDisciplineOption = disciplineOptions.find(
-    (option) => option.label === getObjBySlug(USER_TYPE)?.name,
-  )
 
   useEffect(() => {
     form.setValue('discipline', getObjBySlug(USER_TYPE)?.slug as string)
@@ -195,6 +215,19 @@ function UsersForm({ params }: { params: { type: string } }) {
                   <FormLabel>Apellidos</FormLabel>
                   <FormControl>
                     <Input placeholder='Díaz Vega' {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name='ci'
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Carnet de identidad</FormLabel>
+                  <FormControl>
+                    <Input placeholder='6354678' {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -297,6 +330,7 @@ function UsersForm({ params }: { params: { type: string } }) {
                         <PopoverTrigger asChild>
                           <FormControl>
                             <Button
+                              disabled
                               variant={'outline'}
                               className={cn(
                                 'w-[250px] flex-1  pl-3 text-left font-normal',
@@ -319,9 +353,7 @@ function UsersForm({ params }: { params: { type: string } }) {
                             mode='single'
                             selected={field.value}
                             onSelect={field.onChange}
-                            disabled={(date) =>
-                              date > new Date() || date < new Date('1900-01-01')
-                            }
+                            disabled
                             initialFocus
                           />
                         </PopoverContent>
@@ -383,7 +415,7 @@ function UsersForm({ params }: { params: { type: string } }) {
                 name='finalPrice'
                 render={({ field }) => (
                   <FormItem className='min-w-[98px] flex-1'>
-                    <FormLabel>Precio unitario</FormLabel>
+                    <FormLabel>Precio final</FormLabel>
                     <FormControl>
                       <Input
                         placeholder='Bs 450'

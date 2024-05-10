@@ -68,7 +68,7 @@ export async function updateInventoryItem(data: any, collectionName: string) {
   }
 }
 
-export async function deleteInventoryItem(itemId: any, collectionName: string) {
+export async function deleteItem(itemId: any, collectionName: string) {
   try {
     const docRef = doc(database, collectionName, itemId)
     await deleteDoc(docRef)

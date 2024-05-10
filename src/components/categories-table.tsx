@@ -169,7 +169,11 @@ export const columns: ColumnDef<Category>[] = [
               <CreateCategoryForm categoryId={category.id} isEditing={true} />
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <AlertDialogConfirm itemId={category.id} itemName='categoría' />
+              <AlertDialogConfirm
+                itemId={category.id}
+                itemName='categoría'
+                collectionName='categories'
+              />
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
