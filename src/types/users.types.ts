@@ -4,6 +4,7 @@ interface User {
   name: string
   lastName: string
   ci: string
+  email: string
   phone: string
   discipline: string
   dateEntry: Date

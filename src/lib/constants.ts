@@ -58,6 +58,7 @@ export const USER_DEFAULT_VALUES = {
   name: '',
   lastName: '',
   ci: '',
+  email: '',
   phone: '',
   discipline: '',
   dateEntry: undefined,

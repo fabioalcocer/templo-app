@@ -40,7 +40,7 @@ export default function UsersPage() {
           <TabsList>
             <TabsTrigger value='all'>All</TabsTrigger>
             <TabsTrigger value='active'>Active</TabsTrigger>
-            <TabsTrigger value='draft'>Draft</TabsTrigger>
+            <TabsTrigger value='inactive'>Inactive</TabsTrigger>
             <TabsTrigger value='archived' className='hidden sm:flex'>
               Archived
             </TabsTrigger>
@@ -68,7 +68,7 @@ export default function UsersPage() {
                   checked={showPanel}
                   onCheckedChange={setShowPanel}
                 >
-                  Drafts
+                  Inactive
                 </DropdownMenuCheckboxItem>
                 <DropdownMenuCheckboxItem
                   checked={showArchived}
@@ -92,7 +92,7 @@ export default function UsersPage() {
         <TabsContent value='active'>
           <UsersTable users={(users || []).filter((user) => user.active)} />
         </TabsContent>
-        <TabsContent value='draft'>
+        <TabsContent value='inactive'>
           <UsersTable users={(users || []).filter((user) => !user.active)} />
         </TabsContent>
       </Tabs>
