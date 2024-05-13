@@ -55,16 +55,17 @@ export const DISCIPLINES: Record<string, Discipline> = {
 
 export const USER_DEFAULT_VALUES = {
   id: '',
-  name: '',
-  lastName: '',
-  ci: '',
-  email: '',
-  phone: '',
-  discipline: '',
+  name: undefined,
+  lastName: undefined,
+  ci: undefined,
+  email: undefined,
+  phone: undefined,
+  discipline: undefined,
   dateEntry: undefined,
   unitPrice: 0,
   discount: 0,
   finalPrice: 0,
   paymentType: undefined,
   finalDate: undefined,
+  injuries: undefined,
 }

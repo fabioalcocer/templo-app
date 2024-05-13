@@ -20,4 +20,5 @@ interface User {
   }
   plan: string
   sessions: number
+  injuries: string
 }
