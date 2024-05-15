@@ -1,4 +1,5 @@
 interface User {
+  createdAt: Date
   id: string
   active: boolean
   name: string
@@ -21,4 +22,11 @@ interface User {
   plan: string
   sessions: number
   injuries: string
+  diseases: string
+  operations: string
+  allergies: string
+  impediments: string
+  age: number
+  weight: number
+  height: number
 }

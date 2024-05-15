@@ -78,27 +78,58 @@ const FormSchema = z.object({
       required_error: 'Por favor, ingresa un monto.',
     })
     .min(1, {
-      message: 'Ingresa un monto mayor a 0.',
+      message: 'Ingresa un número mayor a 0',
     }),
   discount: z
     .number({
       required_error: 'Por favor, ingresa un monto.',
     })
     .min(1, {
-      message: 'Ingresa un monto mayor a 0.',
+      message: 'Ingresa un número mayor a 0',
     }),
   finalPrice: z
     .number({
       required_error: 'Por favor, ingresa un monto.',
     })
     .min(1, {
-      message: 'Ingresa un monto mayor a 0.',
+      message: 'Ingresa un número mayor a 0',
     }),
   paymentType: z.string({
     required_error: 'Por favor, selecciona un método de pago.',
   }),
   finalDate: z.date().optional(),
+  sessions: z
+    .number()
+    .min(0, {
+      message: 'Ingresa unnúmero mayor o igual a 0',
+    })
+    .optional(),
   injuries: z.string().optional(),
+  diseases: z.string().optional(),
+  operations: z.string().optional(),
+  allergies: z.string().optional(),
+  impediments: z.string().optional(),
+  age: z
+    .number({
+      required_error: 'Por favor, ingresa la edad',
+    })
+    .min(1, {
+      message: 'Debe ser un número mayor a 0',
+    }),
+  weight: z
+    .number({
+      required_error: 'Por favor, ingresa la edad',
+    })
+    .min(1, {
+      message: 'Debe ser un número mayor a 0',
+    }),
+  height: z
+    .number({
+      required_error: 'Por favor, ingresa la edad',
+    })
+    .min(1, {
+      message: 'Debe ser un número mayor a 0',
+    }),
 })
 
 function CreateUsersForm({ params }: { params: { type: string } }) {
@@ -146,6 +177,11 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
     (option) => option.label === getObjBySlug(USER_TYPE)?.name,
   )
 
+  const onError = (errors: any) => {
+    console.log(errors)
+    setShowBasicForm(true)
+  }
+
   useEffect(() => {
     if (watchStartDate && USER_TYPE === 'calistenia') {
       form.setValue('finalDate', addDays(watchStartDate, 30))
@@ -154,23 +190,8 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
   }, [watchStartDate])
 
   useEffect(() => {
-    if (!USER_TYPE) return
-
-    const fetchProduct = async () => {
-      try {
-        const product = await getProductById(USER_TYPE)
-        form.reset(product as never)
-      } catch (err) {
-        console.error(err)
-      }
-    }
-
-    fetchProduct()
-  }, [form, USER_TYPE])
-
-  useEffect(() => {
     form.setValue('discipline', getObjBySlug(USER_TYPE)?.slug as string)
-  })
+  }, [USER_TYPE, form])
 
   return (
     <div>
@@ -187,7 +208,7 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
       <div className='mx-auto mt-5 max-w-xl'>
         <Form {...form}>
           <form
-            onSubmit={form.handleSubmit(onSubmit)}
+            onSubmit={form.handleSubmit(onSubmit, onError)}
             className='flex flex-col gap-4'
           >
             {showBasicForm ? (

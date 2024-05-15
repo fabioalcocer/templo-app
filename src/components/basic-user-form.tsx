@@ -23,7 +23,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+import { cn, getObjBySlug } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
@@ -44,6 +44,15 @@ type Props = {
       finalPrice: number
       paymentType: string
       finalDate?: Date | undefined
+      sessions?: number | undefined
+      injuries?: string | undefined
+      diseases?: string | undefined
+      operations?: string | undefined
+      allergies?: string | undefined
+      impediments?: string | undefined
+      age: number
+      weight: number
+      height: number
     },
     any,
     {
@@ -59,8 +68,18 @@ type Props = {
       finalPrice: number
       paymentType: string
       finalDate?: Date | undefined
+      sessions?: number | undefined
+      injuries?: string | undefined
+      diseases?: string | undefined
+      operations?: string | undefined
+      allergies?: string | undefined
+      impediments?: string | undefined
+      age: number
+      weight: number
+      height: number
     }
   >
+
   disciplineOptions: {
     value: string
     label: string
@@ -163,7 +182,7 @@ function BasicUserForm({
             <FormLabel>Disciplina:</FormLabel>
             <Select
               onValueChange={field.onChange}
-              defaultValue={field.value || currentDisciplineOption?.value}
+              value={currentDisciplineOption?.value}
               disabled={Boolean(currentDisciplineOption?.value)}
             >
               <FormControl>
@@ -361,6 +380,29 @@ function BasicUserForm({
           </FormItem>
         )}
       />
+
+      {USER_TYPE !== 'calistenia' && (
+        <FormField
+          control={form.control}
+          name='sessions'
+          render={({ field }) => (
+            <FormItem className='min-w-[98px] flex-1'>
+              <FormLabel>Sesiones</FormLabel>
+              <FormControl>
+                <Input
+                  placeholder='0'
+                  {...field}
+                  type='number'
+                  onChange={(event) =>
+                    field.onChange(parseInt(event.target.value))
+                  }
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      )}
 
       <div className='my-4 flex justify-end gap-2'>
         <Button
