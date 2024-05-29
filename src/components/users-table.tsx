@@ -43,6 +43,7 @@ import { es } from 'date-fns/locale/es'
 import CreateUserDialog from './create-user-dialog'
 import { getObjBySlug } from '@/lib/utils'
 import { Timestamp } from 'firebase/firestore'
+import ManageUsers from './manage-users'
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -235,7 +236,7 @@ export const columns: ColumnDef<User>[] = [
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-              <CreateCategoryForm categoryId={user.id} isEditing={true} />
+              <ManageUsers userId={user.id} />
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <AlertDialogConfirm

@@ -25,7 +25,7 @@ export function AlertDialogConfirm({ itemId, itemName, collectionName }: Props) 
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger className='relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-secondary focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50'>
+      <AlertDialogTrigger className='relative text-destructive flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-secondary focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50'>
         Eliminar {itemName || 'item'}
       </AlertDialogTrigger>
       <AlertDialogContent>

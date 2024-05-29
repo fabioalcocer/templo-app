@@ -222,3 +222,18 @@ export async function getAllUsers(): Promise<User[]> {
     return []
   }
 }
+
+export async function getUserById(id: string): Promise<User | null> {
+  if (!id) return null
+
+  try {
+    const docRef = doc(database, 'users', id)
+    const userDoc = await getDoc(docRef)
+    const user = userDoc.data()
+
+    return user as User
+  } catch (err) {
+    console.error(err)
+    return null
+  }
+}

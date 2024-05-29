@@ -15,7 +15,13 @@ import {
 } from '@/components/ui/select'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { ArrowRight, CalendarIcon } from 'lucide-react'
+import {
+  ArrowRight,
+  CalendarIcon,
+  ChevronDownIcon,
+  LucideDollarSign,
+  PercentIcon,
+} from 'lucide-react'
 import { UseFormReturn } from 'react-hook-form'
 
 import {
@@ -23,11 +29,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { cn, getObjBySlug } from '@/lib/utils'
+import { cn } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
-import { Dispatch, SetStateAction } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from './ui/collapsible'
+import { DiscountType } from '@/types/discounts.types'
 
 type Props = {
   form: UseFormReturn<
@@ -92,6 +104,8 @@ type Props = {
     | undefined
   USER_TYPE: string
   setShowBasicForm: Dispatch<SetStateAction<boolean>>
+  setDiscountType: Dispatch<SetStateAction<DiscountType>>
+  discountType: DiscountType
 }
 
 function BasicUserForm({
@@ -100,6 +114,8 @@ function BasicUserForm({
   disciplineOptions,
   USER_TYPE,
   setShowBasicForm,
+  discountType,
+  setDiscountType
 }: Props) {
   return (
     <>
@@ -321,16 +337,49 @@ function BasicUserForm({
           render={({ field }) => (
             <FormItem className='min-w-[98px] flex-1'>
               <FormLabel>Descuento</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder='Bs 50'
-                  {...field}
-                  type='number'
-                  onChange={(event) =>
-                    field.onChange(parseFloat(event.target.value))
-                  }
-                />
-              </FormControl>
+              <div className='relative flex flex-col'>
+                <FormControl>
+                  <Input
+                    placeholder='Bs 50'
+                    {...field}
+                    type='number'
+                    onChange={(event) =>
+                      field.onChange(parseFloat(event.target.value))
+                    }
+                  />
+                </FormControl>
+                <Collapsible className=''>
+                  <CollapsibleTrigger className='absolute right-3 top-1/2 flex -translate-y-1/2 cursor-pointer items-center gap-1'>
+                    <ChevronDownIcon className='h-4 w-4 transition-transform duration-300 group-open:rotate-180' />
+                    <span className='text-sm font-medium'>
+                      {discountType === DiscountType?.Percent ? '%' : '$'}
+                    </span>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className='absolute right-0 top-full mt-1 w-max overflow-hidden rounded-md'>
+                    <div className='flex w-max flex-col rounded-lg bg-background'>
+                      <CollapsibleTrigger>
+                        <div
+                          className='flex min-w-min cursor-pointer items-center px-4 py-2 text-sm transition-colors hover:bg-secondary dark:hover:bg-muted'
+                          onClick={() => setDiscountType(DiscountType?.Percent)}
+                        >
+                          <PercentIcon className='mr-2 h-4 w-4' />
+                          <span>Porcentaje</span>
+                        </div>
+                      </CollapsibleTrigger>
+                      <CollapsibleTrigger>
+                        <div
+                          className='flex min-w-min cursor-pointer items-center px-4 py-2 text-sm transition-colors hover:bg-secondary dark:hover:bg-muted'
+                          onClick={() => setDiscountType(DiscountType?.Amount)}
+                        >
+                          <LucideDollarSign className='mr-2 h-4 w-4' />
+                          <span>Cantidad</span>
+                        </div>
+                      </CollapsibleTrigger>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
+              </div>
+
               <FormMessage />
             </FormItem>
           )}

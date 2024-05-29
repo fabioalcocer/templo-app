@@ -15,6 +15,7 @@ import { addDays } from 'date-fns'
 import BasicUserForm from './basic-user-form'
 import CustomUserForm from './custom-user-form'
 import { useRouter } from 'next/navigation'
+import { DiscountType } from '@/types/discounts.types'
 
 const FormSchema = z.object({
   name: z
@@ -136,6 +137,10 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
   const USER_TYPE = params.type
   const [loading, setLoading] = useState(false)
   const [showBasicForm, setShowBasicForm] = useState(true)
+  const [discountType, setDiscountType] = useState<DiscountType>(
+    DiscountType.Percent,
+  )
+
   const router = useRouter()
 
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -150,6 +155,7 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
     const userData = {
       ...data,
       active: true,
+      discountType,
     }
 
     await createItem({ data: userData, collectionName: 'users' })
@@ -169,12 +175,12 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
   }
 
   const disciplineOptions = Object.keys(DISCIPLINES).map((key) => ({
-    value: key,
+    value: DISCIPLINES[key]?.slug,
     label: DISCIPLINES[key].name,
   }))
 
   const currentDisciplineOption = disciplineOptions.find(
-    (option) => option.label === getObjBySlug(USER_TYPE)?.name,
+    (option) => option.value === USER_TYPE,
   )
 
   const onError = (errors: any) => {
@@ -190,8 +196,8 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
   }, [watchStartDate])
 
   useEffect(() => {
-    form.setValue('discipline', getObjBySlug(USER_TYPE)?.slug as string)
-  }, [USER_TYPE, form])
+    form.setValue('discipline', currentDisciplineOption?.value as string)
+  }, [form, currentDisciplineOption])
 
   return (
     <div>
@@ -218,6 +224,8 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
                 currentDisciplineOption={currentDisciplineOption}
                 USER_TYPE={USER_TYPE}
                 setShowBasicForm={setShowBasicForm}
+                setDiscountType={setDiscountType}
+                discountType={discountType}
               />
             ) : (
               <CustomUserForm

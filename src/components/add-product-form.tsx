@@ -124,8 +124,8 @@ export function AddProductForm({ isEditing, productId }: Props) {
   }
 
   const fetchCategoriesOptions = async () => {
-    const products = await getCategories()
-    const options = products?.map((option) => ({
+    const categories = await getCategories()
+    const options = categories?.map((option) => ({
       value: option.id,
       label: option.name,
     }))
