@@ -115,7 +115,7 @@ function BasicUserForm({
   USER_TYPE,
   setShowBasicForm,
   discountType,
-  setDiscountType
+  setDiscountType,
 }: Props) {
   return (
     <>
@@ -224,7 +224,7 @@ function BasicUserForm({
           control={form.control}
           name='dateEntry'
           render={({ field }) => (
-            <FormItem className='flex flex-1 flex-col'>
+            <FormItem className='flex-1 flex-col'>
               <FormLabel>Fecha de ingreso</FormLabel>
               <Popover>
                 <PopoverTrigger asChild>
@@ -232,7 +232,7 @@ function BasicUserForm({
                     <Button
                       variant={'outline'}
                       className={cn(
-                        'w-fullpl-3 min-w-max text-left font-normal',
+                        'w-full min-w-max pl-3 text-left font-normal',
                         !field.value && 'text-muted-foreground',
                       )}
                     >
@@ -263,12 +263,12 @@ function BasicUserForm({
             </FormItem>
           )}
         />
-        {USER_TYPE === 'calistenia' && (
+        {USER_TYPE === 'calistenia' ? (
           <FormField
             control={form.control}
             name='finalDate'
             render={({ field }) => (
-              <FormItem className='flex flex-1 flex-col'>
+              <FormItem className='flex-1 flex-col'>
                 <FormLabel>Fecha final</FormLabel>
                 <Popover>
                   <PopoverTrigger asChild>
@@ -277,7 +277,7 @@ function BasicUserForm({
                         disabled
                         variant={'outline'}
                         className={cn(
-                          'w-fullpl-3 min-w-max text-left font-normal',
+                          'w-full min-w-max pl-3 text-left font-normal',
                           !field.value && 'text-muted-foreground',
                         )}
                       >
@@ -302,6 +302,27 @@ function BasicUserForm({
                     />
                   </PopoverContent>
                 </Popover>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        ) : (
+          <FormField
+            control={form.control}
+            name='sessions'
+            render={({ field }) => (
+              <FormItem className='min-w-[98px] flex-1'>
+                <FormLabel>Sesiones</FormLabel>
+                <FormControl>
+                  <Input
+                    placeholder='0'
+                    {...field}
+                    type='number'
+                    onChange={(event) =>
+                      field.onChange(parseInt(event.target.value))
+                    }
+                  />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
@@ -355,7 +376,7 @@ function BasicUserForm({
                       {discountType === DiscountType?.Percent ? '%' : '$'}
                     </span>
                   </CollapsibleTrigger>
-                  <CollapsibleContent className='absolute right-0 top-full mt-1 w-max overflow-hidden rounded-md'>
+                  <CollapsibleContent className='absolute right-0 top-full mt-1 w-max overflow-hidden rounded-md shadow-md'>
                     <div className='flex w-max flex-col rounded-lg bg-background'>
                       <CollapsibleTrigger>
                         <div
@@ -429,29 +450,6 @@ function BasicUserForm({
           </FormItem>
         )}
       />
-
-      {USER_TYPE !== 'calistenia' && (
-        <FormField
-          control={form.control}
-          name='sessions'
-          render={({ field }) => (
-            <FormItem className='min-w-[98px] flex-1'>
-              <FormLabel>Sesiones</FormLabel>
-              <FormControl>
-                <Input
-                  placeholder='0'
-                  {...field}
-                  type='number'
-                  onChange={(event) =>
-                    field.onChange(parseInt(event.target.value))
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-      )}
 
       <div className='my-4 flex justify-end gap-2'>
         <Button

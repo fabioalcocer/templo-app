@@ -8,14 +8,21 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { Loader2 } from 'lucide-react'
+import {
+  CalendarIcon,
+  ChevronDownIcon,
+  Loader2,
+  LucideDollarSign,
+  PercentCircleIcon,
+  PercentIcon,
+} from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 
 import { toast } from '@/components/ui/use-toast'
-import { getUserById } from '@/api'
-import { useEffect, useState } from 'react'
+import { getUserById, updateInventoryItem } from '@/api'
+import { useEffect, useMemo, useState } from 'react'
 
 import {
   Sheet,
@@ -35,6 +42,18 @@ import {
   SelectValue,
 } from './ui/select'
 import { DISCIPLINES } from '@/lib/constants'
+import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
+import { cn } from '@/lib/utils'
+import { format } from 'date-fns'
+import { es } from 'date-fns/locale/es'
+import { Calendar } from './ui/calendar'
+import { Timestamp } from 'firebase/firestore'
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from './ui/collapsible'
+import { DiscountType } from '@/types/discounts.types'
 
 const FormSchema = z.object({
   name: z
@@ -73,6 +92,38 @@ const FormSchema = z.object({
   discipline: z.string({
     required_error: 'Por favor, selecciona una disciplina.',
   }),
+  dateEntry: z.date({
+    required_error: 'Por favor, ingresa una fecha.',
+  }),
+  unitPrice: z
+    .number({
+      required_error: 'Por favor, ingresa un monto.',
+    })
+    .min(1, {
+      message: 'Ingresa un número mayor a 0',
+    }),
+  discount: z
+    .number({
+      required_error: 'Por favor, ingresa un monto.',
+    })
+    .min(1, {
+      message: 'Ingresa un número mayor a 0',
+    }),
+  finalPrice: z
+    .number({
+      required_error: 'Por favor, ingresa un monto.',
+    })
+    .min(1, {
+      message: 'Ingresa un número mayor a 0',
+    }),
+  finalDate: z.date().optional(),
+  discountType: z.string().optional(),
+  sessions: z
+    .number()
+    .min(0, {
+      message: 'Ingresa unnúmero mayor o igual a 0',
+    })
+    .optional(),
 })
 
 function ManageUsers({ userId }: { userId: string }) {
@@ -86,19 +137,28 @@ function ManageUsers({ userId }: { userId: string }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   })
+  const fieldsToComplete = form.watch(['discipline', 'discountType'])
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setLoading(true)
+    const userData = {
+      ...data,
+      finalDate: data.finalDate ? data.finalDate : null,
+      discountType: fieldsToComplete[1] ? fieldsToComplete[1] : 'percent',
+    }
+
+    await updateInventoryItem({ id: userId, ...userData }, 'users')
 
     toast({
       title: 'You submitted the following values:',
       description: (
         <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-          <code className='text-white'>{JSON.stringify(data, null, 2)}</code>
+          <code className='text-white'>
+            {JSON.stringify(userData, null, 2)}
+          </code>
         </pre>
       ),
     })
-
     setLoading(false)
   }
 
@@ -107,7 +167,16 @@ function ManageUsers({ userId }: { userId: string }) {
     const fetchCategory = async () => {
       try {
         const user = await getUserById(userId)
-        form.reset(user as User)
+        const parsedDate = (user?.dateEntry as unknown as Timestamp)?.toDate()
+        const finalDate = user?.finalDate
+          ? (user?.finalDate as unknown as Timestamp)?.toDate()
+          : undefined
+
+        form.reset({
+          ...user,
+          dateEntry: parsedDate,
+          finalDate: finalDate,
+        })
       } catch (err) {
         console.error(err)
       }
@@ -125,7 +194,7 @@ function ManageUsers({ userId }: { userId: string }) {
         <SheetHeader>
           <SheetTitle className='text-xl'>Gestionar usuario</SheetTitle>
           <SheetDescription>
-            Crea una nueva categoría para registrarla en tu inventario.
+            Gestiona las sesiones y fechas de entrada del usuario.
           </SheetDescription>
         </SheetHeader>
         <div className='mt-5'>
@@ -178,7 +247,7 @@ function ManageUsers({ userId }: { userId: string }) {
                 />
               </div>
 
-              <p className='my-2 text-base font-medium'>
+              <p className='mt-2 text-base font-medium'>
                 Planes e inicio de mes
               </p>
               <FormField
@@ -209,6 +278,211 @@ function ManageUsers({ userId }: { userId: string }) {
                   </FormItem>
                 )}
               />
+
+              <div className='my-1 flex flex-wrap items-center justify-between gap-4'>
+                <FormField
+                  control={form.control}
+                  name='dateEntry'
+                  render={({ field }) => (
+                    <FormItem className='flex-1 flex-col'>
+                      <FormLabel>Fecha de ingreso</FormLabel>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              disabled
+                              variant={'outline'}
+                              className={cn(
+                                'w-full min-w-max pl-3 text-left font-normal',
+                                !field.value && 'text-muted-foreground',
+                              )}
+                            >
+                              {field.value ? (
+                                format(field.value, 'PPP', {
+                                  locale: es,
+                                })
+                              ) : (
+                                <span>Elige una fecha</span>
+                              )}
+                              <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent className='w-auto p-0' align='start'>
+                          <Calendar
+                            mode='single'
+                            selected={field.value}
+                            onSelect={field.onChange}
+                            disabled={(date) =>
+                              date > new Date() || date < new Date('1900-01-01')
+                            }
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                {(fieldsToComplete[0] as unknown as string) === 'calistenia' ? (
+                  <FormField
+                    control={form.control}
+                    name='finalDate'
+                    render={({ field }) => (
+                      <FormItem className='flex-1'>
+                        <FormLabel>Fecha final</FormLabel>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <FormControl>
+                              <Button
+                                variant={'outline'}
+                                className={cn(
+                                  'w-full min-w-max pl-3 text-left font-normal',
+                                  !field.value && 'text-muted-foreground',
+                                )}
+                              >
+                                {field.value ? (
+                                  format(field.value, 'PPP', {
+                                    locale: es,
+                                  })
+                                ) : (
+                                  <span>Elige una fecha</span>
+                                )}
+                                <CalendarIcon className='ml-auto h-4 w-4 opacity-50' />
+                              </Button>
+                            </FormControl>
+                          </PopoverTrigger>
+                          <PopoverContent className='w-auto p-0' align='start'>
+                            <Calendar
+                              mode='single'
+                              selected={field.value}
+                              onSelect={field.onChange}
+                              initialFocus
+                            />
+                          </PopoverContent>
+                        </Popover>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                ) : (
+                  <FormField
+                    control={form.control}
+                    name='sessions'
+                    render={({ field }) => (
+                      <FormItem className=' min-w-[98px] flex-1'>
+                        <FormLabel>Sesiones</FormLabel>
+                        <FormControl>
+                          <Input
+                            placeholder='0'
+                            {...field}
+                            type='number'
+                            onChange={(event) =>
+                              field.onChange(parseInt(event.target.value))
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                )}
+              </div>
+
+              <div className='flex flex-wrap items-center gap-5'>
+                <FormField
+                  control={form.control}
+                  name='unitPrice'
+                  render={({ field }) => (
+                    <FormItem className='min-w-[98px] flex-1'>
+                      <FormLabel>Precio unitario</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Bs 250'
+                          {...field}
+                          type='number'
+                          onChange={(event) =>
+                            field.onChange(parseInt(event.target.value))
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='discount'
+                  render={({ field }) => (
+                    <FormItem className='min-w-[98px] flex-1'>
+                      <FormLabel>Descuento</FormLabel>
+                      <div className='relative flex flex-col'>
+                        <FormControl>
+                          <Input
+                            placeholder='Bs 50'
+                            {...field}
+                            type='number'
+                            onChange={(event) =>
+                              field.onChange(parseFloat(event.target.value))
+                            }
+                          />
+                        </FormControl>
+                        <Collapsible className=''>
+                          <CollapsibleTrigger className='absolute right-3 top-1/2 flex -translate-y-1/2 cursor-pointer items-center gap-1'>
+                            <ChevronDownIcon className='h-4 w-4 transition-transform duration-300 group-open:rotate-180' />
+                            <span className='text-sm font-medium'>
+                              {fieldsToComplete[1] === DiscountType?.Percent
+                                ? '%'
+                                : '$'}
+                            </span>
+                          </CollapsibleTrigger>
+                          <CollapsibleContent className='absolute right-0 top-full mt-1 w-max overflow-hidden rounded-md shadow-md'>
+                            <div className='flex w-max flex-col rounded-lg bg-background'>
+                              <CollapsibleTrigger>
+                                <div className='flex min-w-min cursor-pointer items-center px-4 py-2 text-sm transition-colors hover:bg-secondary dark:hover:bg-muted'>
+                                  <PercentIcon className='mr-2 h-4 w-4' />
+                                  <span>Porcentaje</span>
+                                </div>
+                              </CollapsibleTrigger>
+                              <CollapsibleTrigger>
+                                <div className='flex min-w-min cursor-pointer items-center px-4 py-2 text-sm transition-colors hover:bg-secondary dark:hover:bg-muted'>
+                                  <LucideDollarSign className='mr-2 h-4 w-4' />
+                                  <span>Cantidad</span>
+                                </div>
+                              </CollapsibleTrigger>
+                            </div>
+                          </CollapsibleContent>
+                        </Collapsible>
+                      </div>
+
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name='finalPrice'
+                  render={({ field }) => (
+                    <FormItem className='min-w-[98px] flex-1'>
+                      <FormLabel>Precio final</FormLabel>
+                      <FormControl>
+                        <Input
+                          placeholder='Bs 450'
+                          {...field}
+                          type='number'
+                          onChange={(event) =>
+                            field.onChange(parseFloat(event.target.value))
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <SheetFooter className='mt-5 gap-2'>
                 <SheetClose asChild>

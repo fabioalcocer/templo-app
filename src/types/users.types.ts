@@ -29,4 +29,5 @@ interface User {
   age: number
   weight: number
   height: number
+  discountType: string
 }
