@@ -13,7 +13,6 @@ import {
   ChevronDownIcon,
   Loader2,
   LucideDollarSign,
-  PercentCircleIcon,
   PercentIcon,
 } from 'lucide-react'
 import { useForm } from 'react-hook-form'
@@ -22,7 +21,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 
 import { toast } from '@/components/ui/use-toast'
 import { getUserById, updateInventoryItem } from '@/api'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import {
   Sheet,
@@ -43,7 +42,7 @@ import {
 } from './ui/select'
 import { DISCIPLINES } from '@/lib/constants'
 import { Popover, PopoverContent, PopoverTrigger } from './ui/popover'
-import { cn } from '@/lib/utils'
+import { calculateDiscount, cn, validateDiscountValue } from '@/lib/utils'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import { Calendar } from './ui/calendar'
@@ -138,6 +137,7 @@ function ManageUsers({ userId }: { userId: string }) {
     resolver: zodResolver(FormSchema),
   })
   const fieldsToComplete = form.watch(['discipline', 'discountType'])
+  const watchPriceValues = form.watch(['unitPrice', 'discount'])
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setLoading(true)
@@ -149,16 +149,6 @@ function ManageUsers({ userId }: { userId: string }) {
 
     await updateInventoryItem({ id: userId, ...userData }, 'users')
 
-    toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-          <code className='text-white'>
-            {JSON.stringify(userData, null, 2)}
-          </code>
-        </pre>
-      ),
-    })
     setLoading(false)
   }
 
@@ -184,6 +174,16 @@ function ManageUsers({ userId }: { userId: string }) {
 
     fetchCategory()
   }, [form, userId])
+
+  useEffect(() => {
+    const totalPrice = calculateDiscount(
+      watchPriceValues[0],
+      watchPriceValues[1],
+      fieldsToComplete[1] || '',
+    )
+
+    form.setValue('finalPrice', totalPrice)
+  }, [watchPriceValues, form, fieldsToComplete])
 
   return (
     <Sheet>
@@ -402,9 +402,13 @@ function ManageUsers({ userId }: { userId: string }) {
                           placeholder='Bs 250'
                           {...field}
                           type='number'
-                          onChange={(event) =>
-                            field.onChange(parseInt(event.target.value))
-                          }
+                          onChange={(event) => {
+                            const value =
+                              parseFloat(event.target.value) < 0
+                                ? 0
+                                : parseFloat(event.target.value)
+                            field.onChange(value)
+                          }}
                         />
                       </FormControl>
                       <FormMessage />
@@ -424,9 +428,14 @@ function ManageUsers({ userId }: { userId: string }) {
                             placeholder='Bs 50'
                             {...field}
                             type='number'
-                            onChange={(event) =>
-                              field.onChange(parseFloat(event.target.value))
-                            }
+                            onChange={(event) => {
+                              const value = validateDiscountValue(
+                                parseFloat(event.target.value),
+                                fieldsToComplete[1] || '',
+                              )
+
+                              field.onChange(value)
+                            }}
                           />
                         </FormControl>
                         <Collapsible className=''>
@@ -470,6 +479,7 @@ function ManageUsers({ userId }: { userId: string }) {
                       <FormLabel>Precio final</FormLabel>
                       <FormControl>
                         <Input
+                          disabled
                           placeholder='Bs 450'
                           {...field}
                           type='number'

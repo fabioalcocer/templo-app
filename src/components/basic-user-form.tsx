@@ -29,7 +29,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+import { cn, validateDiscountValue } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
@@ -342,9 +342,13 @@ function BasicUserForm({
                   placeholder='Bs 250'
                   {...field}
                   type='number'
-                  onChange={(event) =>
-                    field.onChange(parseInt(event.target.value))
-                  }
+                  onChange={(event) => {
+                    const value =
+                      parseFloat(event.target.value) < 0
+                        ? 0
+                        : parseFloat(event.target.value)
+                    field.onChange(value)
+                  }}
                 />
               </FormControl>
               <FormMessage />
@@ -364,9 +368,14 @@ function BasicUserForm({
                     placeholder='Bs 50'
                     {...field}
                     type='number'
-                    onChange={(event) =>
-                      field.onChange(parseFloat(event.target.value))
-                    }
+                    onChange={(event) => {
+                      const value = validateDiscountValue(
+                        parseFloat(event.target.value),
+                        discountType,
+                      )
+
+                      field.onChange(value)
+                    }}
                   />
                 </FormControl>
                 <Collapsible className=''>
@@ -414,6 +423,7 @@ function BasicUserForm({
               <FormLabel>Precio final</FormLabel>
               <FormControl>
                 <Input
+                  disabled
                   placeholder='Bs 450'
                   {...field}
                   type='number'

@@ -37,7 +37,6 @@ export const calculateTotalFromPurchases = (purchases: Purchase[]) => {
   return parsedPriceFromNumber(total)
 }
 
-
 export const getObjBySlug = (slug: string): Discipline | null => {
   for (let key in DISCIPLINES) {
     if (DISCIPLINES[key].slug === slug) {
@@ -46,4 +45,24 @@ export const getObjBySlug = (slug: string): Discipline | null => {
   }
 
   return null
+}
+
+export const calculateDiscount = (
+  total: number,
+  discount: number,
+  discountType: string,
+) => {
+  if (discountType === 'percent') {
+    const discountedTotal = total - total * (discount / 100)
+    return discountedTotal
+  }
+
+  return total - discount
+}
+
+export const validateDiscountValue = (value: number, discountType: string) => {
+  if (value < 0) return 0
+  if (value > 100 && discountType === 'percent') return 100
+
+  return value
 }

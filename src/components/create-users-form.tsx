@@ -10,7 +10,7 @@ import { USER_DEFAULT_VALUES, DISCIPLINES } from '@/lib/constants'
 import { createItem, getProductById } from '@/api'
 import { toast } from '@/components/ui/use-toast'
 import Link from 'next/link'
-import { getObjBySlug } from '@/lib/utils'
+import { calculateDiscount, getObjBySlug } from '@/lib/utils'
 import { addDays } from 'date-fns'
 import BasicUserForm from './basic-user-form'
 import CustomUserForm from './custom-user-form'
@@ -149,6 +149,7 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
   })
 
   const watchStartDate = form.watch('dateEntry')
+  const watchPriceValues = form.watch(['unitPrice', 'discount'])
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setLoading(true)
@@ -159,15 +160,6 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
     }
 
     await createItem({ data: userData, collectionName: 'users' })
-
-    toast({
-      title: 'You submitted the following values:',
-      description: (
-        <pre className='mt-2 w-[340px] rounded-md bg-slate-950 p-4'>
-          <code className='text-white'>{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    })
 
     form.reset(USER_DEFAULT_VALUES)
     setLoading(false)
@@ -194,6 +186,15 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [watchStartDate])
+
+  useEffect(() => {
+    const totalPrice = calculateDiscount(
+      watchPriceValues[0],
+      watchPriceValues[1],
+      discountType,
+    )
+    form.setValue('finalPrice', totalPrice)
+  }, [watchPriceValues, discountType, form])
 
   useEffect(() => {
     form.setValue('discipline', currentDisciplineOption?.value as string)
