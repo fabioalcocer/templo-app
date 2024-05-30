@@ -10,6 +10,7 @@ import {
 import { Input } from '@/components/ui/input'
 import {
   CalendarIcon,
+  Check,
   ChevronDownIcon,
   Loader2,
   LucideDollarSign,
@@ -127,6 +128,9 @@ const FormSchema = z.object({
 
 function ManageUsers({ userId }: { userId: string }) {
   const [loading, setLoading] = useState(false)
+  const [discountType, setDiscountType] = useState<DiscountType>(
+    DiscountType.Percent,
+  )
 
   const disciplineOptions = Object.keys(DISCIPLINES).map((key) => ({
     value: DISCIPLINES[key]?.slug,
@@ -149,6 +153,14 @@ function ManageUsers({ userId }: { userId: string }) {
 
     await updateInventoryItem({ id: userId, ...userData }, 'users')
 
+    toast({
+      title: (
+        <div className='flex w-full items-center gap-2'>
+          El usuario se actualizó exitosamente
+          <Check />
+        </div>
+      ),
+    })
     setLoading(false)
   }
 
@@ -179,11 +191,11 @@ function ManageUsers({ userId }: { userId: string }) {
     const totalPrice = calculateDiscount(
       watchPriceValues[0],
       watchPriceValues[1],
-      fieldsToComplete[1] || '',
+      discountType || '',
     )
 
     form.setValue('finalPrice', totalPrice)
-  }, [watchPriceValues, form, fieldsToComplete])
+  }, [watchPriceValues, form, fieldsToComplete, discountType])
 
   return (
     <Sheet>
@@ -431,7 +443,7 @@ function ManageUsers({ userId }: { userId: string }) {
                             onChange={(event) => {
                               const value = validateDiscountValue(
                                 parseFloat(event.target.value),
-                                fieldsToComplete[1] || '',
+                                discountType || '',
                               )
 
                               field.onChange(value)
@@ -442,7 +454,7 @@ function ManageUsers({ userId }: { userId: string }) {
                           <CollapsibleTrigger className='absolute right-3 top-1/2 flex -translate-y-1/2 cursor-pointer items-center gap-1'>
                             <ChevronDownIcon className='h-4 w-4 transition-transform duration-300 group-open:rotate-180' />
                             <span className='text-sm font-medium'>
-                              {fieldsToComplete[1] === DiscountType?.Percent
+                              {discountType === DiscountType?.Percent
                                 ? '%'
                                 : '$'}
                             </span>
@@ -450,13 +462,23 @@ function ManageUsers({ userId }: { userId: string }) {
                           <CollapsibleContent className='absolute right-0 top-full mt-1 w-max overflow-hidden rounded-md shadow-md'>
                             <div className='flex w-max flex-col rounded-lg bg-background'>
                               <CollapsibleTrigger>
-                                <div className='flex min-w-min cursor-pointer items-center px-4 py-2 text-sm transition-colors hover:bg-secondary dark:hover:bg-muted'>
+                                <div
+                                  className='flex min-w-min cursor-pointer items-center px-4 py-2 text-sm transition-colors hover:bg-secondary dark:hover:bg-muted'
+                                  onClick={() =>
+                                    setDiscountType(DiscountType?.Percent)
+                                  }
+                                >
                                   <PercentIcon className='mr-2 h-4 w-4' />
                                   <span>Porcentaje</span>
                                 </div>
                               </CollapsibleTrigger>
                               <CollapsibleTrigger>
-                                <div className='flex min-w-min cursor-pointer items-center px-4 py-2 text-sm transition-colors hover:bg-secondary dark:hover:bg-muted'>
+                                <div
+                                  className='flex min-w-min cursor-pointer items-center px-4 py-2 text-sm transition-colors hover:bg-secondary dark:hover:bg-muted'
+                                  onClick={() =>
+                                    setDiscountType(DiscountType?.Amount)
+                                  }
+                                >
                                   <LucideDollarSign className='mr-2 h-4 w-4' />
                                   <span>Cantidad</span>
                                 </div>

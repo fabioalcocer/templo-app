@@ -4,7 +4,7 @@ import { z } from 'zod'
 import { Button } from '@/components/ui/button'
 import { useEffect, useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ChevronLeft } from 'lucide-react'
+import { Check, ChevronLeft } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { USER_DEFAULT_VALUES, DISCIPLINES } from '@/lib/constants'
 import { createItem, getProductById } from '@/api'
@@ -163,6 +163,15 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
 
     form.reset(USER_DEFAULT_VALUES)
     setLoading(false)
+    toast({
+      title: (
+        <div className='flex w-full items-center gap-2'>
+          El usuario se creó exitosamente
+          <Check />
+        </div>
+      ),
+    })
+
     router.push('/admin/users')
   }
 
