@@ -140,7 +140,7 @@ function ManageUsers({ userId }: { userId: string }) {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
   })
-  const fieldsToComplete = form.watch(['discipline', 'discountType'])
+  const watchDiscipline = form.watch('discipline')
   const watchPriceValues = form.watch(['unitPrice', 'discount'])
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
@@ -148,7 +148,7 @@ function ManageUsers({ userId }: { userId: string }) {
     const userData = {
       ...data,
       finalDate: data.finalDate ? data.finalDate : null,
-      discountType: fieldsToComplete[1] ? fieldsToComplete[1] : 'percent',
+      discountType: discountType ? discountType : 'percent',
     }
 
     await updateInventoryItem({ id: userId, ...userData }, 'users')
@@ -166,9 +166,11 @@ function ManageUsers({ userId }: { userId: string }) {
 
   useEffect(() => {
     if (!userId) return
-    const fetchCategory = async () => {
+    const fetchUserById = async () => {
       try {
         const user = await getUserById(userId)
+        setDiscountType(user?.discountType as DiscountType)
+
         const parsedDate = (user?.dateEntry as unknown as Timestamp)?.toDate()
         const finalDate = user?.finalDate
           ? (user?.finalDate as unknown as Timestamp)?.toDate()
@@ -184,7 +186,7 @@ function ManageUsers({ userId }: { userId: string }) {
       }
     }
 
-    fetchCategory()
+    fetchUserById()
   }, [form, userId])
 
   useEffect(() => {
@@ -195,11 +197,11 @@ function ManageUsers({ userId }: { userId: string }) {
     )
 
     form.setValue('finalPrice', totalPrice)
-  }, [watchPriceValues, form, fieldsToComplete, discountType])
+  }, [watchPriceValues, form, watchDiscipline, discountType])
 
   return (
     <Sheet>
-      <SheetTrigger className='relative flex w-full cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-secondary focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50'>
+      <SheetTrigger className='relative flex w-full cursor-default select-none items-center text-primary rounded-sm px-2 py-1.5 text-sm outline-none transition-colors hover:bg-secondary focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50'>
         Gestionar usuario
       </SheetTrigger>
       <SheetContent className='xl:max-w-lg'>
@@ -337,7 +339,7 @@ function ManageUsers({ userId }: { userId: string }) {
                   )}
                 />
 
-                {(fieldsToComplete[0] as unknown as string) === 'calistenia' ? (
+                {(watchDiscipline as unknown as string) === 'calistenia' ? (
                   <FormField
                     control={form.control}
                     name='finalDate'

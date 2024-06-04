@@ -7,7 +7,12 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Check, ChevronLeft } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { USER_DEFAULT_VALUES, DISCIPLINES } from '@/lib/constants'
-import { createItem, getProductById } from '@/api'
+import {
+  createItem,
+  getProductById,
+  getUserById,
+  updateInventoryItem,
+} from '@/api'
 import { toast } from '@/components/ui/use-toast'
 import Link from 'next/link'
 import { calculateDiscount, getObjBySlug } from '@/lib/utils'
@@ -16,6 +21,11 @@ import BasicUserForm from './basic-user-form'
 import CustomUserForm from './custom-user-form'
 import { useRouter } from 'next/navigation'
 import { DiscountType } from '@/types/discounts.types'
+import { Timestamp } from 'firebase/firestore'
+
+type Props = {
+  params: any
+}
 
 const FormSchema = z.object({
   name: z
@@ -133,8 +143,11 @@ const FormSchema = z.object({
     }),
 })
 
-function CreateUsersForm({ params }: { params: { type: string } }) {
-  const USER_TYPE = params.type
+function CreateUsersForm({ params }: Props) {
+  const USER_TYPE = params?.type
+  const userId = params?.id
+
+  const [userData, setUserData] = useState<User | null>(null)
   const [loading, setLoading] = useState(false)
   const [showBasicForm, setShowBasicForm] = useState(true)
   const [discountType, setDiscountType] = useState<DiscountType>(
@@ -156,10 +169,13 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
     const userData = {
       ...data,
       active: true,
+      finalDate: data.finalDate ? data.finalDate : null,
       discountType,
     }
 
-    await createItem({ data: userData, collectionName: 'users' })
+    userId
+      ? await updateInventoryItem({ id: userId, ...userData }, 'users')
+      : await createItem({ data: userData, collectionName: 'users' })
 
     form.reset(USER_DEFAULT_VALUES)
     setLoading(false)
@@ -181,7 +197,7 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
   }))
 
   const currentDisciplineOption = disciplineOptions.find(
-    (option) => option.value === USER_TYPE,
+    (option) => option.value === (USER_TYPE || userData?.discipline),
   )
 
   const onError = (errors: any) => {
@@ -193,8 +209,7 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
     if (watchStartDate && USER_TYPE === 'calistenia') {
       form.setValue('finalDate', addDays(watchStartDate, 30))
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watchStartDate])
+  }, [form, watchStartDate, USER_TYPE])
 
   useEffect(() => {
     const totalPrice = calculateDiscount(
@@ -208,6 +223,35 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
   useEffect(() => {
     form.setValue('discipline', currentDisciplineOption?.value as string)
   }, [form, currentDisciplineOption])
+
+  useEffect(() => {
+    if (!userId) return
+    const fetchUserById = async () => {
+      try {
+        const user = await getUserById(userId)
+        setUserData(user as User)
+
+        const parsedDate = (user?.dateEntry as unknown as Timestamp)?.toDate()
+        const finalDate = user?.finalDate
+          ? (user?.finalDate as unknown as Timestamp)?.toDate()
+          : undefined
+
+        form.reset({
+          ...user,
+          dateEntry: parsedDate,
+          finalDate: finalDate,
+        })
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    fetchUserById()
+  }, [form, userId])
+
+  useEffect(() => {
+    setDiscountType(userData?.discountType as DiscountType)
+  }, [userData])
 
   return (
     <div>
@@ -236,12 +280,14 @@ function CreateUsersForm({ params }: { params: { type: string } }) {
                 setShowBasicForm={setShowBasicForm}
                 setDiscountType={setDiscountType}
                 discountType={discountType}
+                userId={userId}
               />
             ) : (
               <CustomUserForm
                 form={form}
                 loading={loading}
                 setShowBasicForm={setShowBasicForm}
+                userId={userId}
               />
             )}
           </form>

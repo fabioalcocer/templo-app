@@ -69,3 +69,18 @@ export const USER_DEFAULT_VALUES = {
   finalDate: undefined,
   injuries: undefined,
 }
+
+export const PAYMENT_TYPES = [
+  {
+    label: 'QR',
+    value: 'qr',
+  },
+  {
+    label: 'Efectivo',
+    value: 'cash',
+  },
+  {
+    label: 'Tarjeta de débito',
+    value: 'card',
+  },
+]

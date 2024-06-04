@@ -63,9 +63,10 @@ type Props = {
   >
   loading: boolean
   setShowBasicForm: Dispatch<SetStateAction<boolean>>
+  userId: string
 }
 
-function CustomUserForm({ form, loading, setShowBasicForm }: Props) {
+function CustomUserForm({ form, loading, setShowBasicForm , userId }: Props) {
   return (
     <>
       <FormField
@@ -213,7 +214,7 @@ function CustomUserForm({ form, loading, setShowBasicForm }: Props) {
 
         <Button type='submit'>
           {loading && <Loader2 className='mr-2 h-4 w-4 animate-spin' />}
-          Crear usuario
+          {userId ? 'Actualizar usuario' : 'Crear usuario'}
         </Button>
       </div>
     </>

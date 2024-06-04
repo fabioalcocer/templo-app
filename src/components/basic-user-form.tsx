@@ -33,13 +33,14 @@ import { cn, validateDiscountValue } from '@/lib/utils'
 import { Calendar } from '@/components/ui/calendar'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from './ui/collapsible'
 import { DiscountType } from '@/types/discounts.types'
+import { PAYMENT_TYPES } from '@/lib/constants'
 
 type Props = {
   form: UseFormReturn<
@@ -106,6 +107,7 @@ type Props = {
   setShowBasicForm: Dispatch<SetStateAction<boolean>>
   setDiscountType: Dispatch<SetStateAction<DiscountType>>
   discountType: DiscountType
+  userId: string
 }
 
 function BasicUserForm({
@@ -116,6 +118,7 @@ function BasicUserForm({
   setShowBasicForm,
   discountType,
   setDiscountType,
+  userId
 }: Props) {
   return (
     <>
@@ -444,16 +447,22 @@ function BasicUserForm({
         render={({ field }) => (
           <FormItem>
             <FormLabel>Método de pago:</FormLabel>
-            <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <Select
+              onValueChange={field.onChange}
+              defaultValue={field.value}
+              value={field.value}
+            >
               <FormControl>
                 <SelectTrigger>
                   <SelectValue placeholder='Selecciona un método de pago' />
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                <SelectItem value='qr'>QR</SelectItem>
-                <SelectItem value='cash'>Efectivo</SelectItem>
-                <SelectItem value='card'>Tarjeta de débito</SelectItem>
+                {PAYMENT_TYPES.map((option) => (
+                  <SelectItem key={option.value} value={option.value}>
+                    {option.label}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
             <FormMessage />

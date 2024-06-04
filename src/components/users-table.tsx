@@ -36,7 +36,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { DataTablePagination } from './table-pagination'
-import { CreateCategoryForm } from './create-category-form'
 import { AlertDialogConfirm } from './dialog-confirm'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
@@ -44,6 +43,8 @@ import CreateUserDialog from './create-user-dialog'
 import { getObjBySlug } from '@/lib/utils'
 import { Timestamp } from 'firebase/firestore'
 import ManageUsers from './manage-users'
+import { Badge } from './ui/badge'
+import Link from 'next/link'
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -210,9 +211,39 @@ export const columns: ColumnDef<User>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className=''>{row.getValue('sessions') || 0}</div>,
+    cell: ({ row }) => (
+      <div className='text-center'>{row.getValue('sessions') || 0}</div>
+    ),
   },
+  {
+    accessorKey: 'state',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant='ghost'
+          className='p-0'
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Estado
+          <ArrowUpDown className='ml-2 h-4 w-4' />
+        </Button>
+      )
+    },
+    cell: ({ row }) => {
+      const sessions = row.getValue('sessions') as number
+      const isActive = sessions!! && sessions > 0
 
+      return (
+        <div>
+          {isActive ? (
+            <Badge>Activo</Badge>
+          ) : (
+            <Badge variant='destructive'>Inactivo</Badge>
+          )}
+        </div>
+      )
+    },
+  },
   {
     id: 'actions',
     enableHiding: false,
@@ -229,14 +260,21 @@ export const columns: ColumnDef<User>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
+
+            <DropdownMenuItem asChild>
+              <ManageUsers userId={user.id} />
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+
+            <DropdownMenuItem asChild>
+              <Link href={`/admin/users/form/edit/${user.id}`}>
+                Editar usuario
+              </Link>
+            </DropdownMenuItem>
             <DropdownMenuItem
               onClick={() => navigator.clipboard.writeText(user.id)}
             >
               Copiar ID
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild>
-              <ManageUsers userId={user.id} />
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
               <AlertDialogConfirm
