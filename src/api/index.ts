@@ -237,3 +237,23 @@ export async function getUserById(id: string): Promise<User | null> {
     return null
   }
 }
+
+export async function decreaseSessionUserById(id: string) {
+  if (!id) return null
+
+  try {
+    const docRef = doc(database, 'users', id)
+    const userDoc = await getDoc(docRef)
+    const user = userDoc.data()
+
+    if (!user?.sessions || user?.sessions <= 0) return
+
+    await updateDoc(docRef, {
+      sessions: user?.sessions - 1,
+    })
+
+    console.log('Las sesiones ha sido actualizada')
+  } catch (e) {
+    console.error('Error adding document: ', e)
+  }
+}
