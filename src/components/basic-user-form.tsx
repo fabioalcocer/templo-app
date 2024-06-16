@@ -118,7 +118,6 @@ function BasicUserForm({
   setShowBasicForm,
   discountType,
   setDiscountType,
-  userId
 }: Props) {
   return (
     <>
@@ -266,7 +265,7 @@ function BasicUserForm({
             </FormItem>
           )}
         />
-        {USER_TYPE === 'calistenia' ? (
+        {currentDisciplineOption?.value === 'calistenia' ? (
           <FormField
             control={form.control}
             name='finalDate'

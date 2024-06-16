@@ -8,7 +8,7 @@ import {
   SheetTitle,
 } from './ui/sheet'
 import { Timestamp } from 'firebase/firestore'
-import { format } from 'date-fns'
+import { differenceInCalendarDays, format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import { getObjBySlug } from '@/lib/utils'
 import { Skeleton } from './ui/skeleton'
@@ -26,6 +26,8 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
 
   const dateEntry = userData?.dateEntry as Date
   const parsedDate = (dateEntry as unknown as Timestamp)?.toDate()
+  const finalDate = userData?.finalDate as Date
+  const finalParsedDate = (finalDate as unknown as Timestamp)?.toDate()
 
   const decreaseSessions = async () => {
     if (userData?.sessions && userData?.sessions > 0) {
@@ -58,6 +60,8 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
     fetchUserById()
   }, [userId])
 
+  const remaingDays = differenceInCalendarDays(finalParsedDate, Date.now()) ?? 0
+
   return (
     <div>
       <SheetHeader>
@@ -78,23 +82,32 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
           </div>
         </div>
       ) : (
-        <div className='my-5 mt-10 flex items-center justify-between'>
-          <div className='flex flex-col items-center gap-1'>
-            <span className='text-lg'>Sesiones</span>
-            <p className='text-7xl font-bold'>{userData?.sessions || 0}</p>
-            <Button
-              type='button'
-              variant='destructive'
-              onClick={() => decreaseSessions()}
-              className='mt-4 text-sm'
-              disabled={!userData?.sessions || decreaseLoading}
-            >
-              {decreaseLoading && (
-                <Loader2 className='mr-2 h-4 w-4 animate-spin' />
-              )}
-              Registrar uso de sesión
-            </Button>
-          </div>
+        <div className='my-5 mt-10 flex items-center justify-between px-5'>
+          {userData?.discipline === 'calistenia' ? (
+            <div className='flex flex-col items-center justify-center gap-5 p-7'>
+              <span className='text-lg'>Días restantes</span>
+              <p className='text-7xl font-bold'>
+                {remaingDays <= 0 ? 0 : remaingDays}
+              </p>
+            </div>
+          ) : (
+            <div className='flex flex-col items-center justify-center gap-1'>
+              <span className='text-lg'>Sesiones</span>
+              <p className='text-7xl font-bold'>{userData?.sessions || 0}</p>
+              <Button
+                type='button'
+                variant='destructive'
+                onClick={() => decreaseSessions()}
+                className='mt-4 text-sm'
+                disabled={!userData?.sessions || decreaseLoading}
+              >
+                {decreaseLoading && (
+                  <Loader2 className='mr-2 h-4 w-4 animate-spin' />
+                )}
+                Registrar sesión
+              </Button>
+            </div>
+          )}
 
           <div className='p-4'>
             <p className='text-lg text-secondary-foreground'>

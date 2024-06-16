@@ -173,6 +173,10 @@ function CreateUsersForm({ params }: Props) {
       discountType,
     }
 
+    Object.keys(userData).forEach((key) => {
+      if (userData[key as never] === undefined) delete userData[key as never]
+    })
+
     userId
       ? await updateInventoryItem({ id: userId, ...userData }, 'users')
       : await createItem({ data: userData, collectionName: 'users' })
@@ -182,7 +186,9 @@ function CreateUsersForm({ params }: Props) {
     toast({
       title: (
         <div className='flex w-full items-center gap-2'>
-          El usuario se creó exitosamente
+          {userId
+            ? 'El usuario se actualizó exitosamente'
+            : 'El usuario se creó exitosamente'}
           <Check />
         </div>
       ),
@@ -206,10 +212,10 @@ function CreateUsersForm({ params }: Props) {
   }
 
   useEffect(() => {
-    if (watchStartDate && USER_TYPE === 'calistenia') {
+    if (watchStartDate && currentDisciplineOption?.value === 'calistenia') {
       form.setValue('finalDate', addDays(watchStartDate, 30))
     }
-  }, [form, watchStartDate, USER_TYPE])
+  }, [form, watchStartDate, currentDisciplineOption])
 
   useEffect(() => {
     const totalPrice = calculateDiscount(
