@@ -81,6 +81,9 @@ const FormSchema = z.object({
   discipline: z.string({
     required_error: 'Por favor, selecciona una disciplina.',
   }),
+  plan: z.string({
+    required_error: 'Por favor, ingresa un plan.',
+  }),
   dateEntry: z.date({
     required_error: 'Por favor, ingresa una fecha.',
   }),

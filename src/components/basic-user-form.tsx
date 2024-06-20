@@ -51,6 +51,7 @@ type Props = {
       email: string
       phone: string
       discipline: string
+      plan: string
       dateEntry: Date
       unitPrice: number
       discount: number
@@ -75,6 +76,7 @@ type Props = {
       email: string
       phone: string
       discipline: string
+      plan: string
       dateEntry: Date
       unitPrice: number
       discount: number
@@ -192,34 +194,50 @@ function BasicUserForm({
         )}
       />
 
-      <FormField
-        control={form.control}
-        name='discipline'
-        render={({ field }) => (
-          <FormItem>
-            <FormLabel>Disciplina:</FormLabel>
-            <Select
-              onValueChange={field.onChange}
-              value={currentDisciplineOption?.value}
-              disabled={Boolean(currentDisciplineOption?.value)}
-            >
+      <div className='my-1 flex flex-wrap items-center justify-between gap-4'>
+        <FormField
+          control={form.control}
+          name='plan'
+          render={({ field }) => (
+            <FormItem className='flex-1'>
+              <FormLabel>Plan</FormLabel>
               <FormControl>
-                <SelectTrigger>
-                  <SelectValue placeholder='Selecciona una disciplina' />
-                </SelectTrigger>
+                <Input placeholder='Power plate 12 sesiones' {...field} />
               </FormControl>
-              <SelectContent>
-                {disciplineOptions?.map((option) => (
-                  <SelectItem key={option.value} value={option.value}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name='discipline'
+          render={({ field }) => (
+            <FormItem className='flex-1'>
+              <FormLabel>Disciplina:</FormLabel>
+              <Select
+                onValueChange={field.onChange}
+                value={currentDisciplineOption?.value}
+                disabled={Boolean(currentDisciplineOption?.value)}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder='Selecciona una disciplina' />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {disciplineOptions?.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+      </div>
 
       <div className='my-1 flex flex-wrap items-center justify-between gap-4'>
         <FormField

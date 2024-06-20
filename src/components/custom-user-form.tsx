@@ -20,6 +20,7 @@ type Props = {
       email: string
       phone: string
       discipline: string
+      plan: string
       dateEntry: Date
       unitPrice: number
       discount: number
@@ -44,6 +45,7 @@ type Props = {
       email: string
       phone: string
       discipline: string
+      plan: string
       dateEntry: Date
       unitPrice: number
       discount: number
