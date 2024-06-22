@@ -50,8 +50,13 @@ export async function createItem({ data, collectionName }: any) {
       ...dataWithoutUndefined,
       createdAt: Date.now(),
     })
-    console.log('Document written with ID: ', docRef.id)
-    return setDoc(docRef, { id: docRef.id }, { merge: true })
+
+    console.log(
+      `Document written in collection ${collectionName} with ID: `,
+      docRef.id,
+    )
+    setDoc(docRef, { id: docRef.id }, { merge: true })
+    return docRef?.id
   } catch (e) {
     console.error('Error adding document: ', e)
   }
@@ -95,6 +100,17 @@ export async function getAllPurchases(): Promise<Purchase[]> {
     const querySnapshot = await getDocs(collection(database, 'purchases'))
     const purchasesData = querySnapshot.docs.map((doc) => doc.data())
     return purchasesData as Purchase[]
+  } catch (err) {
+    console.error(err)
+    return []
+  }
+}
+
+export async function getAllPayments(): Promise<Payment[]> {
+  try {
+    const querySnapshot = await getDocs(collection(database, 'payments'))
+    const paymentsData = querySnapshot.docs.map((doc) => doc.data())
+    return paymentsData as Payment[]
   } catch (err) {
     console.error(err)
     return []
@@ -193,25 +209,6 @@ export async function getSales(): Promise<Sale[]> {
   }
 }
 
-// Actions
-export async function discountProductStock(
-  productId: string,
-  quantity: number,
-) {
-  try {
-    const docRef = doc(database, 'products', productId)
-    const productData = await getDoc(docRef)
-    const product = productData.data()
-    if (product?.stock < quantity || product?.stock <= 0) return
-
-    updateDoc(docRef, {
-      stock: product?.stock - quantity,
-    })
-  } catch (e) {
-    console.error('Error adding document: ', e)
-  }
-}
-
 export async function getAllUsers(): Promise<User[]> {
   try {
     const querySnapshot = await getDocs(collection(database, 'users'))
@@ -238,6 +235,25 @@ export async function getUserById(id: string): Promise<User | null> {
   }
 }
 
+// Actions
+export async function discountProductStock(
+  productId: string,
+  quantity: number,
+) {
+  try {
+    const docRef = doc(database, 'products', productId)
+    const productData = await getDoc(docRef)
+    const product = productData.data()
+    if (product?.stock < quantity || product?.stock <= 0) return
+
+    updateDoc(docRef, {
+      stock: product?.stock - quantity,
+    })
+  } catch (e) {
+    console.error('Error adding document: ', e)
+  }
+}
+
 export async function decreaseSessionUserById(id: string) {
   if (!id) return null
 
@@ -255,5 +271,19 @@ export async function decreaseSessionUserById(id: string) {
     console.log('Las sesiones ha sido actualizada')
   } catch (e) {
     console.error('Error adding document: ', e)
+  }
+}
+
+export async function desactiveUsers(users: User[]) {
+  for (const user of users) {
+    try {
+      const docRef = doc(database, 'users', user?.id)
+      updateDoc(docRef, {
+        active: false,
+      })
+      console.log(`El usuario ${user?.id} ha sido desactivado`)
+    } catch (e) {
+      console.error('Error updating document: ', e)
+    }
   }
 }

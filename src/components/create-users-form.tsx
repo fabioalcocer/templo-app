@@ -167,6 +167,23 @@ function CreateUsersForm({ params }: Props) {
   const watchStartDate = form.watch('dateEntry')
   const watchPriceValues = form.watch(['unitPrice', 'discount'])
 
+  const createUserAndPayment = async (userData: User) => {
+    const userId = await createItem({ data: userData, collectionName: 'users' })
+
+    const paymentData = {
+      userId: userId,
+      unitPrice: userData?.unitPrice,
+      discount: userData?.discount,
+      discountType: userData?.discountType,
+      finalPrice: userData?.finalPrice,
+      paymentType: userData?.paymentType,
+      plan: userData?.plan,
+      discipline: userData?.discipline,
+    }
+
+    await createItem({ data: paymentData, collectionName: 'payments' })
+  }
+
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setLoading(true)
     const userData = {
@@ -182,7 +199,7 @@ function CreateUsersForm({ params }: Props) {
 
     userId
       ? await updateInventoryItem({ id: userId, ...userData }, 'users')
-      : await createItem({ data: userData, collectionName: 'users' })
+      : await createUserAndPayment(userData as User)
 
     form.reset(USER_DEFAULT_VALUES)
     setLoading(false)
@@ -215,12 +232,6 @@ function CreateUsersForm({ params }: Props) {
   }
 
   useEffect(() => {
-    if (watchStartDate && currentDisciplineOption?.value === 'calistenia') {
-      form.setValue('finalDate', addDays(watchStartDate, 30))
-    }
-  }, [form, watchStartDate, currentDisciplineOption])
-
-  useEffect(() => {
     const totalPrice = calculateDiscount(
       watchPriceValues[0],
       watchPriceValues[1],
@@ -231,7 +242,11 @@ function CreateUsersForm({ params }: Props) {
 
   useEffect(() => {
     form.setValue('discipline', currentDisciplineOption?.value as string)
-  }, [form, currentDisciplineOption])
+
+    if (watchStartDate && currentDisciplineOption?.value === 'calistenia') {
+      form.setValue('finalDate', addDays(watchStartDate, 30))
+    }
+  }, [form, watchStartDate, currentDisciplineOption])
 
   useEffect(() => {
     if (!userId) return

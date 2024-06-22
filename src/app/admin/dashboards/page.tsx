@@ -32,7 +32,7 @@ import {
   calculateTotalFromSales,
   parsedPriceFromNumber,
 } from '@/lib/utils'
-import { getAllPurchases, getSales } from '@/api'
+import { getAllPayments, getAllPurchases, getSales, getUserById } from '@/api'
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
@@ -42,6 +42,7 @@ import { DatePickerWithRange } from '@/components/date-range-picker'
 import { toast } from '@/components/ui/use-toast'
 
 function DashboardsPage() {
+  const [payments, setPayments] = useState<Payment[]>([])
   const [purchases, setPurchases] = useState<Purchase[]>([])
   const [sales, setSales] = useState<Sale[]>([])
 
@@ -66,8 +67,11 @@ function DashboardsPage() {
   const fetchData = async () => {
     const sales = await getSales()
     const purchases = await getAllPurchases()
+    const payments = await getAllPayments()
+
     setSales(sales)
     setPurchases(purchases)
+    setPayments(payments)
   }
 
   useEffect(() => {
@@ -220,31 +224,15 @@ function DashboardsPage() {
               </Table>
             </CardContent>
           </Card>
-          <Card>
+          <Card className='w-full'>
             <CardHeader>
-              <CardTitle>Compras recientes</CardTitle>
+              <CardTitle>Inscripciones recientes</CardTitle>
             </CardHeader>
-            <CardContent className='grid gap-8'>
-              {purchases?.slice(0, 5).map((purchase) => (
-                <div className='flex items-center gap-4' key={purchase.id}>
-                  <div className='grid gap-1'>
-                    <p className='text-sm font-medium leading-none'>
-                      {purchase.productName}
-                    </p>
-                    <p className='text-sm text-muted-foreground'>
-                      {purchase?.createdAt
-                        ? format(purchase?.createdAt, 'P', {
-                            locale: es,
-                          })
-                        : 'Sin fecha'}
-                    </p>
-                  </div>
-                  <div className='ml-auto font-medium'>
-                    {parsedPriceFromNumber(purchase.cost * purchase.stock)}
-                  </div>
-                </div>
+            {payments
+              ?.slice(0, 5)
+              .map((payment) => (
+                <PaymentCards payment={payment} key={payment.id} />
               ))}
-            </CardContent>
           </Card>
         </div>
       </main>
@@ -253,3 +241,33 @@ function DashboardsPage() {
 }
 
 export default DashboardsPage
+
+export function PaymentCards({ payment }: { payment: Payment }) {
+  const [userData, setUserData] = useState<User | null>(null)
+
+  useEffect(() => {
+    if (payment?.userId) {
+      getUserById(payment?.userId).then((userData) => {
+        setUserData(userData)
+      })
+    }
+  }, [payment?.userId])
+
+  return (
+    <CardContent className='grid gap-8 overflow-hidden'>
+      <div className='flex items-center gap-4'>
+        <Avatar className='hidden h-9 w-9 md:flex'>
+          <AvatarImage src='/avatars/01.png' alt='Avatar' />
+          <AvatarFallback>OM</AvatarFallback>
+        </Avatar>
+        <div className='grid gap-1'>
+          <p className='text-sm font-medium leading-none'>{userData?.name}</p>
+          <p className='text-xs text-muted-foreground'>{userData?.email}</p>
+        </div>
+        <div className='ml-auto font-medium text-sm'>
+          +{parsedPriceFromNumber(payment?.finalPrice)}
+        </div>
+      </div>
+    </CardContent>
+  )
+}

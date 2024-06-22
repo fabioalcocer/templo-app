@@ -216,7 +216,7 @@ export const columns: ColumnDef<User>[] = [
     ),
   },
   {
-    accessorKey: 'state',
+    accessorKey: 'active',
     header: ({ column }) => {
       return (
         <Button
@@ -230,8 +230,7 @@ export const columns: ColumnDef<User>[] = [
       )
     },
     cell: ({ row }) => {
-      const sessions = row.getValue('sessions') as number
-      const isActive = sessions!! && sessions > 0
+      const isActive = row.getValue('active') as number
 
       return (
         <div>

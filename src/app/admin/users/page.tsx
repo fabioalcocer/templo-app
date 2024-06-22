@@ -14,7 +14,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { UsersTable } from '@/components/users-table'
 import { DropdownMenuCheckboxItemProps } from '@radix-ui/react-dropdown-menu'
-import { getAllUsers } from '@/api'
+import { desactiveUsers, getAllUsers } from '@/api'
 
 type Checked = DropdownMenuCheckboxItemProps['checked']
 
@@ -24,14 +24,31 @@ export default function UsersPage() {
   const [showPanel, setShowPanel] = useState<Checked>(false)
   const [users, setUsers] = useState<User[]>([])
 
+  const [reFetchUsers, setReFetchUsers] = useState<boolean>(false)
+
+  const checkInactiveUsersAndUpdate = async (users: User[]) => {
+    const inactiveUsers = users.filter(
+      (user) =>
+        user?.discipline !== 'calistenia' && !user?.sessions && user?.active,
+    )
+
+    if (inactiveUsers.length > 0) {
+      await desactiveUsers(inactiveUsers)
+      setReFetchUsers(true)
+    }
+  }
+
   const fetchUsers = async () => {
     const users = await getAllUsers()
+    checkInactiveUsersAndUpdate(users)
+
     return setUsers(users)
   }
 
   useEffect(() => {
     fetchUsers()
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reFetchUsers])
 
   return (
     <main className='flex h-full flex-1 flex-col gap-4'>
