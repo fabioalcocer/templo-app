@@ -40,6 +40,7 @@ import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import { DatePickerWithRange } from '@/components/date-range-picker'
 import { toast } from '@/components/ui/use-toast'
+import PaymentCards from '@/components/payments-card'
 
 function DashboardsPage() {
   const [payments, setPayments] = useState<Payment[]>([])
@@ -241,33 +242,3 @@ function DashboardsPage() {
 }
 
 export default DashboardsPage
-
-export function PaymentCards({ payment }: { payment: Payment }) {
-  const [userData, setUserData] = useState<User | null>(null)
-
-  useEffect(() => {
-    if (payment?.userId) {
-      getUserById(payment?.userId).then((userData) => {
-        setUserData(userData)
-      })
-    }
-  }, [payment?.userId])
-
-  return (
-    <CardContent className='grid gap-8 overflow-hidden'>
-      <div className='flex items-center gap-4'>
-        <Avatar className='hidden h-9 w-9 md:flex'>
-          <AvatarImage src='/avatars/01.png' alt='Avatar' />
-          <AvatarFallback>OM</AvatarFallback>
-        </Avatar>
-        <div className='grid gap-1'>
-          <p className='text-sm font-medium leading-none'>{userData?.name}</p>
-          <p className='text-xs text-muted-foreground'>{userData?.email}</p>
-        </div>
-        <div className='ml-auto font-medium text-sm'>
-          +{parsedPriceFromNumber(payment?.finalPrice)}
-        </div>
-      </div>
-    </CardContent>
-  )
-}
