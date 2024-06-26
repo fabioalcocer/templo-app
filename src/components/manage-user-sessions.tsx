@@ -1,4 +1,9 @@
-import { decreaseSessionUserById, getUserById } from '@/api'
+import {
+  decreaseSessionUserById,
+  desactiveUser,
+  getSessionLogsByUserId,
+  getUserById,
+} from '@/api'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { Button } from './ui/button'
 import {
@@ -13,6 +18,8 @@ import { es } from 'date-fns/locale/es'
 import { getObjBySlug } from '@/lib/utils'
 import { Skeleton } from './ui/skeleton'
 import { Loader2 } from 'lucide-react'
+import { ScrollArea } from './ui/scroll-area'
+import { Separator } from './ui/separator'
 
 type Props = {
   userId: string
@@ -20,6 +27,7 @@ type Props = {
 }
 
 function ManageUserSessions({ userId, setIsReinscription }: Props) {
+  const [sessionLogs, setSessionLogs] = useState<SessionLog[] | null>(null)
   const [userData, setUserData] = useState<User>()
   const [decreaseLoading, setDecreaseLoading] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -28,19 +36,30 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
   const parsedDate = (dateEntry as unknown as Timestamp)?.toDate()
   const finalDate = userData?.finalDate as Date
   const finalParsedDate = (finalDate as unknown as Timestamp)?.toDate()
+  const remaingDays = differenceInCalendarDays(finalParsedDate, Date.now()) ?? 0
 
   const decreaseSessions = async () => {
     if (userData?.sessions && userData?.sessions > 0) {
       setDecreaseLoading(true)
-
       setUserData({
         ...userData,
         sessions: userData?.sessions - 1,
       })
+
+      await fetchSessionLogs(userData?.id)
+      await decreaseSessionUserById(userId)
     }
 
-    await decreaseSessionUserById(userId)
     return setDecreaseLoading(false)
+  }
+
+  const fetchSessionLogs = async (userId: string) => {
+    try {
+      const sessionLogs = await getSessionLogsByUserId(userId)
+      setSessionLogs(sessionLogs)
+    } catch (err) {
+      console.error(err)
+    }
   }
 
   useEffect(() => {
@@ -58,9 +77,23 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
     }
 
     fetchUserById()
+    fetchSessionLogs(userId)
   }, [userId])
 
-  const remaingDays = differenceInCalendarDays(finalParsedDate, Date.now()) ?? 0
+  useEffect(() => {
+    const checkInactiveUsersAndUpdate = async () => {
+      if (userData?.active && userData?.sessions <= 0) {
+        await desactiveUser(userData?.id as string)
+        return console.log('Se desactivó el usuario')
+      }
+    }
+
+    checkInactiveUsersAndUpdate()
+  }, [userData])
+
+  const sortedSessionLogs = sessionLogs?.sort(
+    (a, b) => (b.createdAt as never) - (a.createdAt as never),
+  )
 
   return (
     <div>
@@ -128,6 +161,26 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
           </div>
         </div>
       )}
+
+      <ScrollArea className='h-80 my-8 mx-4 rounded-lg border w-[calc(100%-20px)]'>
+        <div className='p-4'>
+          <h4 className='mb-5 text-xl font-medium leading-none'>
+            Historial de sesiones
+          </h4>
+          {sortedSessionLogs?.map((sessionLog) => (
+            <>
+              <div key={sessionLog.id} className='text-[15px]'>
+                {sessionLog?.createdAt
+                  ? format(sessionLog?.createdAt, 'PPP - HH:mm', {
+                      locale: es,
+                    })
+                  : 'Fecha inválida'}
+              </div>
+              <Separator className='my-2' />
+            </>
+          ))}
+        </div>
+      </ScrollArea>
 
       <div className='mt-10 flex items-center justify-end space-x-2 py-4'>
         <SheetClose asChild>

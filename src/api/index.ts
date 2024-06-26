@@ -235,6 +235,22 @@ export async function getUserById(id: string): Promise<User | null> {
   }
 }
 
+export const getSessionLogsByUserId = cache(
+  async (userId: string): Promise<SessionLog[] | null> => {
+    const colRef = collection(database, 'sessionLogs')
+    const queryRef = query(colRef, where('userId', '==', userId))
+
+    try {
+      const querySnapshot = await getDocs(queryRef)
+      const sessionLogsData = querySnapshot.docs.map((doc) => doc.data())
+      return sessionLogsData as SessionLog[]
+    } catch (err) {
+      console.error(err)
+      return []
+    }
+  },
+)
+
 // Actions
 export async function discountProductStock(
   productId: string,
@@ -268,7 +284,23 @@ export async function decreaseSessionUserById(id: string) {
       sessions: user?.sessions - 1,
     })
 
+    await registerSessionLog(user?.id)
     console.log('Las sesiones ha sido actualizada')
+  } catch (e) {
+    console.error('Error adding document: ', e)
+  }
+}
+
+export async function registerSessionLog(userId: string) {
+  try {
+    const docRef = await addDoc(collection(database, 'sessionLogs'), {
+      userId,
+      createdAt: Date.now(),
+    })
+
+    console.log('Session log was created: ', docRef.id)
+    setDoc(docRef, { id: docRef.id }, { merge: true })
+    return docRef?.id
   } catch (e) {
     console.error('Error adding document: ', e)
   }
@@ -285,5 +317,17 @@ export async function desactiveUsers(users: User[]) {
     } catch (e) {
       console.error('Error updating document: ', e)
     }
+  }
+}
+
+export async function desactiveUser(userId: string) {
+  try {
+    const docRef = doc(database, 'users', userId)
+    updateDoc(docRef, {
+      active: false,
+    })
+    console.log(`El usuario ${userId} ha sido desactivado`)
+  } catch (e) {
+    console.error('Error updating document: ', e)
   }
 }

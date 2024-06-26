@@ -147,10 +147,13 @@ function ManageUsers({ userId }: { userId: string }) {
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
     setLoading(true)
+    const sessions = data.sessions ? data.sessions : 0
+
     const userData = {
       ...data,
       finalDate: data.finalDate ? data.finalDate : null,
       discountType: discountType ? discountType : 'percent',
+      active: sessions > 0 ? true : false,
     }
 
     await updateInventoryItem({ id: userId, ...userData }, 'users')

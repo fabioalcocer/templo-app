@@ -40,7 +40,7 @@ import { AlertDialogConfirm } from './dialog-confirm'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import CreateUserDialog from './create-user-dialog'
-import { getObjBySlug } from '@/lib/utils'
+import { cn, getObjBySlug } from '@/lib/utils'
 import { Timestamp } from 'firebase/firestore'
 import ManageUsers from './manage-users'
 import { Badge } from './ui/badge'
@@ -187,7 +187,7 @@ export const columns: ColumnDef<User>[] = [
       const parsedDate = (date as unknown as Timestamp)?.toDate()
 
       return (
-        <div>
+        <div className={cn(date ? '' : 'text-muted-foreground')}>
           {date
             ? format(parsedDate, 'PPP', {
                 locale: es,
@@ -211,9 +211,19 @@ export const columns: ColumnDef<User>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => (
-      <div className='text-center'>{row.getValue('sessions') || 0}</div>
-    ),
+    cell: ({ row }) => {
+      const discipline = row.getValue('discipline')
+
+      return (
+        <div
+          className={cn(
+            discipline !== 'calistenia' ? '' : 'text-muted-foreground',
+          )}
+        >
+          {discipline !== 'calistenia' ? row.getValue('sessions') : 'No aplica'}
+        </div>
+      )
+    },
   },
   {
     accessorKey: 'active',

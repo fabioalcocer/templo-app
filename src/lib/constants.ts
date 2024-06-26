@@ -66,6 +66,7 @@ export const USER_DEFAULT_VALUES = {
   unitPrice: 0,
   discount: 0,
   finalPrice: 0,
+  sessions: 0,
   paymentType: undefined,
   finalDate: undefined,
   injuries: '',

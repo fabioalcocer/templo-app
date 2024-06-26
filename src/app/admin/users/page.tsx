@@ -15,6 +15,8 @@ import { Button } from '@/components/ui/button'
 import { UsersTable } from '@/components/users-table'
 import { DropdownMenuCheckboxItemProps } from '@radix-ui/react-dropdown-menu'
 import { desactiveUsers, getAllUsers } from '@/api'
+import { addDays, isAfter, isBefore } from 'date-fns'
+import { Timestamp } from 'firebase/firestore'
 
 type Checked = DropdownMenuCheckboxItemProps['checked']
 
@@ -27,12 +29,21 @@ export default function UsersPage() {
   const [reFetchUsers, setReFetchUsers] = useState<boolean>(false)
 
   const checkInactiveUsersAndUpdate = async (users: User[]) => {
-    const inactiveUsers = users.filter(
-      (user) =>
-        user?.discipline !== 'calistenia' && !user?.sessions && user?.active,
+    const today = new Date()
+
+    const activeUsersWithOverdueDate = users.filter(
+      (user) => user?.discipline === 'calistenia' && user?.active,
     )
 
+    const inactiveUsers = activeUsersWithOverdueDate.filter((user) => {
+      const finalDate = user?.finalDate as Date
+      const parsedDate = (finalDate as unknown as Timestamp)?.toDate()
+
+      return user?.finalDate && isBefore(parsedDate, addDays(today, 1))
+    })
+
     if (inactiveUsers.length > 0) {
+      console.log(inactiveUsers)
       await desactiveUsers(inactiveUsers)
       setReFetchUsers(true)
     }
