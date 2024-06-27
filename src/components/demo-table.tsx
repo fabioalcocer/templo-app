@@ -265,8 +265,8 @@ export function SalesTable() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
   const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(2024, 2, 20),
-    to: addDays(new Date(2024, 2, 20), 30),
+    from: new Date(2024, 0, 1),
+    to: addDays(new Date(), 1),
   })
 
   const table = useReactTable({
