@@ -6,12 +6,13 @@ import {
   doc,
   getDoc,
   getDocs,
+  onSnapshot,
   query,
   setDoc,
   updateDoc,
   where,
 } from 'firebase/firestore'
-import { cache } from 'react'
+import { Dispatch, SetStateAction, cache } from 'react'
 
 export const revalidate = 20
 
@@ -220,6 +221,17 @@ export async function getAllUsers(): Promise<User[]> {
   }
 }
 
+export function getAllUsersBySnapshot(
+  setUsers: Dispatch<SetStateAction<User[]>>,
+) {
+  const q = query(collection(database, 'users'))
+
+  onSnapshot(q, async (querySnapshot) => {
+    const users = querySnapshot.docs.map((doc) => doc.data())
+    setUsers(users as User[])
+  })
+}
+
 export async function getUserById(id: string): Promise<User | null> {
   if (!id) return null
 
@@ -250,6 +262,19 @@ export const getSessionLogsByUserId = cache(
     }
   },
 )
+
+export function getSessionLogsOnSnapshot(
+  userId: string,
+  setSessionLogs: (value: SetStateAction<SessionLog[] | null>) => void,
+) {
+  const colRef = collection(database, 'sessionLogs')
+  const queryRef = query(colRef, where('userId', '==', userId))
+
+  onSnapshot(queryRef, async (querySnapshot) => {
+    const sessionLogs = querySnapshot.docs.map((doc) => doc.data())
+    setSessionLogs(sessionLogs as SessionLog[])
+  })
+}
 
 // Actions
 export async function discountProductStock(

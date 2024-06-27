@@ -14,8 +14,8 @@ import {
 import { Button } from '@/components/ui/button'
 import { UsersTable } from '@/components/users-table'
 import { DropdownMenuCheckboxItemProps } from '@radix-ui/react-dropdown-menu'
-import { desactiveUsers, getAllUsers } from '@/api'
-import { addDays, isAfter, isBefore } from 'date-fns'
+import { desactiveUsers, getAllUsersBySnapshot } from '@/api'
+import { isBefore } from 'date-fns'
 import { Timestamp } from 'firebase/firestore'
 
 type Checked = DropdownMenuCheckboxItemProps['checked']
@@ -25,8 +25,6 @@ export default function UsersPage() {
   const [showArchived, setShowArchived] = useState<Checked>(false)
   const [showPanel, setShowPanel] = useState<Checked>(false)
   const [users, setUsers] = useState<User[]>([])
-
-  const [reFetchUsers, setReFetchUsers] = useState<boolean>(false)
 
   const checkInactiveUsersAndUpdate = async (users: User[]) => {
     const today = new Date()
@@ -39,27 +37,22 @@ export default function UsersPage() {
       const finalDate = user?.finalDate as Date
       const parsedDate = (finalDate as unknown as Timestamp)?.toDate()
 
-      return user?.finalDate && isBefore(parsedDate, addDays(today, 1))
+      return user?.finalDate && isBefore(parsedDate, today)
     })
 
     if (inactiveUsers.length > 0) {
-      console.log(inactiveUsers)
       await desactiveUsers(inactiveUsers)
-      setReFetchUsers(true)
     }
   }
 
-  const fetchUsers = async () => {
-    const users = await getAllUsers()
+  useEffect(() => {
+    if (!users.length) return
     checkInactiveUsersAndUpdate(users)
-
-    return setUsers(users)
-  }
+  }, [users])
 
   useEffect(() => {
-    fetchUsers()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reFetchUsers])
+    getAllUsersBySnapshot(setUsers)
+  }, [])
 
   return (
     <main className='flex h-full flex-1 flex-col gap-4'>

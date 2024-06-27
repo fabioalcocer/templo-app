@@ -1,7 +1,7 @@
 import {
   decreaseSessionUserById,
   desactiveUser,
-  getSessionLogsByUserId,
+  getSessionLogsOnSnapshot,
   getUserById,
 } from '@/api'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
@@ -46,20 +46,10 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
         sessions: userData?.sessions - 1,
       })
 
-      await fetchSessionLogs(userData?.id)
       await decreaseSessionUserById(userId)
     }
 
     return setDecreaseLoading(false)
-  }
-
-  const fetchSessionLogs = async (userId: string) => {
-    try {
-      const sessionLogs = await getSessionLogsByUserId(userId)
-      setSessionLogs(sessionLogs)
-    } catch (err) {
-      console.error(err)
-    }
   }
 
   useEffect(() => {
@@ -77,7 +67,7 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
     }
 
     fetchUserById()
-    fetchSessionLogs(userId)
+    getSessionLogsOnSnapshot(userId, setSessionLogs)
   }, [userId])
 
   useEffect(() => {
@@ -162,7 +152,7 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
         </div>
       )}
 
-      <ScrollArea className='h-80 my-8 mx-4 rounded-lg border w-[calc(100%-20px)]'>
+      <ScrollArea className='mx-4 my-8 h-80 w-[calc(100%-20px)] rounded-lg border'>
         <div className='p-4'>
           <h4 className='mb-5 text-xl font-medium leading-none'>
             Historial de sesiones
