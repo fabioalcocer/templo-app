@@ -31,7 +31,7 @@ function Header() {
 
   return (
     <header className='sticky top-0 z-50 flex w-full bg-background px-0 py-3 shadow-sm md:p-5'>
-      <div className='mx-auto flex w-full max-w-7xl items-center justify-between px-3 md:px-5'>
+      <div className='mx-auto flex w-full max-w-[1450px] items-center justify-between px-3'>
         <Link href='/' className='flex items-center gap-3'>
           <Image
             src={isDarkTheme ? LogoWhite : Logo}

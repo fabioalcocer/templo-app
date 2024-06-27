@@ -70,10 +70,10 @@ function AdminSidebar({
                   key={route.path}
                   href={route.path}
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-3 transition-all hover:text-primary',
+                    'flex items-center gap-3 rounded-lg px-3 py-3 transition-all duration-300 dark:hover:text-primary',
                     path === route.path
-                      ? 'bg-secondary text-primary'
-                      : 'text-foreground',
+                      ? 'bg-primary text-foreground dark:bg-secondary dark:text-primary'
+                      : 'text-foreground hover:bg-secondary hover:text-foreground dark:hover:bg-transparent',
                   )}
                 >
                   {route.icon}

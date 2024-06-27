@@ -85,6 +85,8 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
     (a, b) => (b.createdAt as never) - (a.createdAt as never),
   )
 
+  const isCalisteniaUser = userData?.discipline === 'calistenia'
+
   return (
     <div>
       <SheetHeader>
@@ -106,7 +108,7 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
         </div>
       ) : (
         <div className='my-5 mt-10 flex items-center justify-between px-5'>
-          {userData?.discipline === 'calistenia' ? (
+          {isCalisteniaUser ? (
             <div className='flex flex-col items-center justify-center gap-5 p-7'>
               <span className='text-lg'>Días restantes</span>
               <p className='text-7xl font-bold'>
@@ -152,25 +154,27 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
         </div>
       )}
 
-      <ScrollArea className='mx-4 my-8 h-80 w-[calc(100%-20px)] rounded-lg border'>
-        <div className='p-4'>
-          <h4 className='mb-5 text-xl font-medium leading-none'>
-            Historial de sesiones
-          </h4>
-          {sortedSessionLogs?.map((sessionLog) => (
-            <>
-              <div key={sessionLog.id} className='text-[15px]'>
-                {sessionLog?.createdAt
-                  ? format(sessionLog?.createdAt, 'PPP - HH:mm', {
-                      locale: es,
-                    })
-                  : 'Fecha inválida'}
-              </div>
-              <Separator className='my-2' />
-            </>
-          ))}
-        </div>
-      </ScrollArea>
+      {!isCalisteniaUser && (
+        <ScrollArea className='mx-4 my-8 h-80 w-[calc(100%-20px)] rounded-lg border'>
+          <div className='p-4'>
+            <h4 className='mb-5 text-xl font-medium leading-none'>
+              Historial de sesiones
+            </h4>
+            {sortedSessionLogs?.map((sessionLog) => (
+              <>
+                <div key={sessionLog.id} className='text-[15px]'>
+                  {sessionLog?.createdAt
+                    ? format(sessionLog?.createdAt, 'PPP - HH:mm', {
+                        locale: es,
+                      })
+                    : 'Fecha inválida'}
+                </div>
+                <Separator className='my-2' />
+              </>
+            ))}
+          </div>
+        </ScrollArea>
+      )}
 
       <div className='mt-10 flex items-center justify-end space-x-2 py-4'>
         <SheetClose asChild>
