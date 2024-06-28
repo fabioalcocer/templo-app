@@ -31,9 +31,9 @@ function CreateUserDialog() {
         </DialogHeader>
         <div className='mb-3 mt-6 flex flex-wrap items-center justify-center gap-6'>
           <Link href={`/admin/users/form/${DISCIPLINES.CALISTENIA.slug}`}>
-            <div className='group flex w-32 cursor-pointer flex-col items-center gap-4 rounded-md border border-secondary p-4 px-3 transition-colors duration-300 hover:bg-primary/80 hover:text-white'>
+            <div className='group flex w-32 cursor-pointer flex-col items-center gap-4 rounded-md border border-secondary p-4 px-3 transition-colors duration-300 hover:bg-primary/80'>
               <h4 className='text-sm'>{DISCIPLINES.CALISTENIA.name}</h4>
-              <DumbbellIcon className='h-10 w-10 font-semibold text-primary  transition-colors duration-300' />
+              <DumbbellIcon className='h-10 w-10 font-semibold text-primary  transition-colors duration-300 group-hover:text-[#fff]' />
             </div>
           </Link>
           <Link href={`/admin/users/form/${DISCIPLINES.POWER_PLATE.slug}`}>
