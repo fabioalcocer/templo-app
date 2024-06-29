@@ -1,6 +1,6 @@
 'use client'
 
-import { BoxIcon, DollarSign, UserCogIcon, Users2 } from 'lucide-react'
+import { BoxIcon, DollarSign, UserCheck2, UserCogIcon, Users2 } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -45,6 +45,11 @@ function AdminSidebar({
       label: 'Usuarios',
       path: '/admin/users',
       icon: <Users2 className='h-5 w-5' />,
+    },
+    {
+      label: 'Inscripciones',
+      path: '/admin/payments',
+      icon: <UserCheck2 className='h-5 w-5' />,
     },
   ]
 

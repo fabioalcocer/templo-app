@@ -7,6 +7,6 @@ interface Payment {
   finalPrice: number
   paymentType: string
   plan: string
-  createdAt: Date
+  createdAt: number
   discipline: string
 }

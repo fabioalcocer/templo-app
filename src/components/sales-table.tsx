@@ -304,9 +304,9 @@ export function SalesTable() {
 
     const filteredSales = initialSales.filter(
       (purchase) =>
-        purchase.createdAt >= (date?.from || new Date(2024, 2, 20)).getTime() &&
+        purchase.createdAt >= (date?.from || new Date(2024, 0, 1)).getTime() &&
         purchase.createdAt <=
-          (date?.to || addDays(new Date(2024, 2, 20), 30)).getTime() + DAY_IN_MILLISECONDS,
+          (date?.to || addDays(new Date(), 1)).getTime() + DAY_IN_MILLISECONDS,
     )
 
     setSales(filteredSales)
@@ -329,7 +329,7 @@ export function SalesTable() {
               })
             }
           >
-            <Download className='mr-2 h-4 w-4' /> Download
+            <Download className='mr-2 h-4 w-4' /> Descargar
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

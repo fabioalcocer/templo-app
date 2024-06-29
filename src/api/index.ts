@@ -118,6 +118,28 @@ export async function getAllPayments(): Promise<Payment[]> {
   }
 }
 
+export async function getSales(): Promise<Sale[]> {
+  try {
+    const querySnapshot = await getDocs(collection(database, 'sales'))
+    const salesData = querySnapshot.docs.map((doc) => doc.data())
+    return salesData as Sale[]
+  } catch (err) {
+    console.error(err)
+    return []
+  }
+}
+
+export async function getAllUsers(): Promise<User[]> {
+  try {
+    const querySnapshot = await getDocs(collection(database, 'users'))
+    const productsData = querySnapshot.docs.map((doc) => doc.data())
+    return productsData as User[]
+  } catch (err) {
+    console.error(err)
+    return []
+  }
+}
+
 export const getProductsByCategoryId = cache(
   async (categoryId: string): Promise<Product[]> => {
     const colRef = collection(database, 'products')
@@ -196,28 +218,6 @@ export async function registerProductPurchase({
     return setDoc(docRef, { id: docRef.id }, { merge: true })
   } catch (e) {
     console.error('Error adding document: ', e)
-  }
-}
-
-export async function getSales(): Promise<Sale[]> {
-  try {
-    const querySnapshot = await getDocs(collection(database, 'sales'))
-    const salesData = querySnapshot.docs.map((doc) => doc.data())
-    return salesData as Sale[]
-  } catch (err) {
-    console.error(err)
-    return []
-  }
-}
-
-export async function getAllUsers(): Promise<User[]> {
-  try {
-    const querySnapshot = await getDocs(collection(database, 'users'))
-    const productsData = querySnapshot.docs.map((doc) => doc.data())
-    return productsData as User[]
-  } catch (err) {
-    console.error(err)
-    return []
   }
 }
 

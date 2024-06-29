@@ -109,7 +109,7 @@ function DashboardsPage() {
                 })
               }
             >
-              <Download className='mr-2 h-4 w-4' /> Download
+              <Download className='mr-2 h-4 w-4' /> Descargar
             </Button>
           </div>
         </header>

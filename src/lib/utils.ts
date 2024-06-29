@@ -20,6 +20,14 @@ export function getCategoryNameById(id: string): string | undefined {
   return category ? category.name : ''
 }
 
+export const calculateTotalFromPayments = (payments: Payment[]) => {
+  const total = payments.reduce((total, sale) => {
+    return total + sale?.finalPrice
+  }, 0)
+
+  return parsedPriceFromNumber(total)
+}
+
 export const calculateTotalFromSales = (sales: Sale[]) => {
   const total = sales.reduce((total, sale) => {
     return total + sale?.total

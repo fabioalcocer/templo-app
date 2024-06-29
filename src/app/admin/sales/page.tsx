@@ -1,5 +1,5 @@
 'use client'
-import { SalesTable } from '@/components/demo-table'
+import { SalesTable } from '@/components/sales-table'
 import { DollarSign } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'

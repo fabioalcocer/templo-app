@@ -17,7 +17,6 @@ import {
 import {
   ArrowUpDown,
   ChevronDown,
-  CloudFog,
   Download,
   MehIcon,
   MoreHorizontal,
@@ -43,18 +42,32 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { getAllPurchases } from '@/api'
-import { calculateTotalFromPurchases, parsedPriceFromNumber } from '@/lib/utils'
+import { getAllPayments } from '@/api'
+import {
+  calculateTotalFromPayments,
+  getObjBySlug,
+  parsedPriceFromNumber,
+} from '@/lib/utils'
 import { DataTablePagination } from './table-pagination'
 import { DatePickerWithRange } from './date-range-picker'
-import { Badge } from './ui/badge'
 import { es } from 'date-fns/locale/es'
 import { toast } from './ui/use-toast'
 import { DateRange } from 'react-day-picker'
 import { addDays, format } from 'date-fns'
 import { DAY_IN_MILLISECONDS } from '@/lib/constants'
 
-export const columns: ColumnDef<Purchase>[] = [
+const parsePaymentType = (paymentType: string) => {
+  type Payments = keyof typeof paymentTypes
+  const paymentTypes = {
+    qr: 'QR',
+    cash: 'Efectivo',
+    card: 'Tarjeta de débito',
+  } as const
+
+  return paymentTypes[paymentType as Payments] ?? ''
+}
+
+export const columns: ColumnDef<Payment>[] = [
   {
     id: 'select',
     header: ({ table }) => (
@@ -80,7 +93,7 @@ export const columns: ColumnDef<Purchase>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: 'productName',
+    accessorKey: 'userId',
     header: ({ column }) => {
       return (
         <Button
@@ -93,7 +106,7 @@ export const columns: ColumnDef<Purchase>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div className=''>{row.getValue('productName')}</div>,
+    cell: ({ row }) => <div className=''>{row.getValue('userId')}</div>,
   },
   {
     accessorKey: 'createdAt',
@@ -123,7 +136,7 @@ export const columns: ColumnDef<Purchase>[] = [
     },
   },
   {
-    accessorKey: 'reStock',
+    accessorKey: 'discipline',
     header: ({ column }) => {
       return (
         <Button
@@ -131,26 +144,19 @@ export const columns: ColumnDef<Purchase>[] = [
           className='p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Re-stock
+          Disciplina
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       )
     },
     cell: ({ row }) => {
-      const reStock = row.getValue('reStock')
       return (
-        <div>
-          {reStock ? (
-            <Badge>Re-stock</Badge>
-          ) : (
-            <Badge variant='outline'>No</Badge>
-          )}
-        </div>
+        <div className=''>{getObjBySlug(row.getValue('discipline'))?.name}</div>
       )
     },
   },
   {
-    accessorKey: 'stock',
+    accessorKey: 'plan',
     header: ({ column }) => {
       return (
         <Button
@@ -163,33 +169,35 @@ export const columns: ColumnDef<Purchase>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div>{row.getValue('stock')}</div>,
+    cell: ({ row }) => <div>{row.getValue('plan')}</div>,
   },
   {
-    accessorKey: 'cost',
+    accessorKey: 'paymentType',
     header: ({ column }) => {
       return (
         <Button
           asChild
           variant='ghost'
-          className='ml-auto w-full justify-end p-0 text-right'
+          className='ml-auto w-full justify-start p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          <div className='text-right'>
-            Costo
+          <div className='text-left'>
+            Método de pago
             <ArrowUpDown className='ml-2 h-4 w-4' />
           </div>
         </Button>
       )
     },
     cell: ({ row }) => {
-      const amount = parseFloat(row.getValue('cost'))
-      const formatted = parsedPriceFromNumber(amount)
-      return <div className='text-right font-medium'>{formatted}</div>
+      return (
+        <div className='font-medium'>
+          {parsePaymentType(row.getValue('paymentType'))}
+        </div>
+      )
     },
   },
   {
-    accessorKey: 'total',
+    accessorKey: 'finalPrice',
     header: ({ column }) => {
       return (
         <Button
@@ -206,9 +214,8 @@ export const columns: ColumnDef<Purchase>[] = [
       )
     },
     cell: ({ row }) => {
-      const stock = parseFloat(row.getValue('stock'))
-      const amount = parseFloat(row.getValue('cost'))
-      const formatted = parsedPriceFromNumber(stock * amount)
+      const finalPrice = parseFloat(row.getValue('finalPrice'))
+      const formatted = parsedPriceFromNumber(finalPrice)
       return <div className='text-right font-medium'>{formatted}</div>
     },
   },
@@ -241,9 +248,9 @@ export const columns: ColumnDef<Purchase>[] = [
   },
 ]
 
-export function PurchasesTable() {
-  const [purchases, setPurchases] = React.useState<Purchase[]>([])
-  const [initialPurchases, setInitialPurchases] = React.useState<Purchase[]>([])
+export function PaymentsTable() {
+  const [payments, setPayments] = React.useState<Payment[]>([])
+  const [initialPayments, setInitialPayments] = React.useState<Payment[]>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -258,7 +265,7 @@ export function PurchasesTable() {
   })
 
   const table = useReactTable({
-    data: purchases,
+    data: payments,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -278,9 +285,9 @@ export function PurchasesTable() {
 
   React.useEffect(() => {
     const fetchPurchases = async () => {
-      const purchases = await getAllPurchases()
-      setPurchases(purchases)
-      setInitialPurchases(purchases)
+      const payments = await getAllPayments()
+      setPayments(payments)
+      setInitialPayments(payments)
       return
     }
 
@@ -288,17 +295,17 @@ export function PurchasesTable() {
   }, [])
 
   React.useEffect(() => {
-    setPurchases(initialPurchases)
+    setPayments(initialPayments)
 
-    const filteredPurchases = initialPurchases.filter(
+    const filteredPurchases = initialPayments.filter(
       (purchase) =>
         purchase.createdAt >= (date?.from || new Date(2024, 0, 1)).getTime() &&
         purchase.createdAt <=
           (date?.to || addDays(new Date(), 1)).getTime() + DAY_IN_MILLISECONDS,
     )
 
-    setPurchases(filteredPurchases)
-  }, [date, initialPurchases])
+    setPayments(filteredPurchases)
+  }, [date, initialPayments])
 
   return (
     <div className='w-full'>
@@ -400,7 +407,7 @@ export function PurchasesTable() {
               <TableCell colSpan={5}></TableCell>
               <TableCell className='text-right font-semibold'>Total</TableCell>
               <TableCell className='text-right font-semibold'>
-                {calculateTotalFromPurchases(purchases)}
+                {calculateTotalFromPayments(payments)}
               </TableCell>
             </TableRow>
           </TableFooter>
