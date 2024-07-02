@@ -101,12 +101,16 @@ export const columns: ColumnDef<Payment>[] = [
           className='p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Nombre
+          ID Usuario
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       )
     },
-    cell: ({ row }) => <div className=''>{row.getValue('userId')}</div>,
+    cell: ({ row }) => {
+      return (
+        <div className=''>{row.getValue('userId')}</div>
+      )
+    },
   },
   {
     accessorKey: 'createdAt',
@@ -164,7 +168,7 @@ export const columns: ColumnDef<Payment>[] = [
           className='p-0'
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Stock
+          Plan
           <ArrowUpDown className='ml-2 h-4 w-4' />
         </Button>
       )
@@ -315,6 +319,7 @@ export function PaymentsTable() {
           <Button
             onClick={() =>
               toast({
+                variant: 'destructive',
                 title: (
                   <div className='flex w-full items-center gap-2'>
                     Esta función aún no está disponible
@@ -324,7 +329,7 @@ export function PaymentsTable() {
               })
             }
           >
-            <Download className='mr-2 h-4 w-4' /> Descargar
+            <Download className='mr-2 h-4 w-4' /> Exportar
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

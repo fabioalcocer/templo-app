@@ -74,6 +74,7 @@ export const USER_DEFAULT_VALUES = {
   operations: '',
   allergies: '',
   impediments: '',
+  physicalCondition: '',
 }
 
 export const PAYMENT_TYPES = [

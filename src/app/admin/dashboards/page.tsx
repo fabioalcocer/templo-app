@@ -28,6 +28,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import {
+  calculateTotalFromPayments,
   calculateTotalFromPurchases,
   calculateTotalFromSales,
   parsedPriceFromNumber,
@@ -50,13 +51,18 @@ function DashboardsPage() {
   const calculateTotalRevenues = () => {
     const salesTotal = calculateTotalFromSales(sales)
     const purchasesTotal = calculateTotalFromPurchases(purchases)
+    const paymentsTotal = calculateTotalFromPayments(payments)
+
+    const integerPaymentsValue = parseInt(paymentsTotal.replace(/\D/g, ''), 10)
     const integerSalesValue = parseInt(salesTotal.replace(/\D/g, ''), 10)
     const integerPurchasesValue = parseInt(
       purchasesTotal.replace(/\D/g, ''),
       10,
     )
 
-    const totalRenevues = (integerSalesValue - integerPurchasesValue) / 100
+    const totalRevenues = integerSalesValue + integerPaymentsValue
+    const totalRenevues = (totalRevenues - integerPurchasesValue) / 100
+
     return parsedPriceFromNumber(totalRenevues)
   }
 
@@ -72,7 +78,7 @@ function DashboardsPage() {
 
     setSales(sales)
     setPurchases(purchases)
-    setPayments(payments)
+    setPayments(payments?.sort((a, b) => b.createdAt - a.createdAt))
   }
 
   useEffect(() => {
@@ -96,7 +102,7 @@ function DashboardsPage() {
         <header className='flex flex-wrap items-center justify-between gap-4 lg:gap-0'>
           <h1 className='text-3xl font-bold'>Dashboard</h1>
           <div className='flex flex-wrap items-center gap-4'>
-            <DatePickerWithRange />
+            {/* <DatePickerWithRange /> */}
             <Button
               onClick={() =>
                 toast({
@@ -109,7 +115,7 @@ function DashboardsPage() {
                 })
               }
             >
-              <Download className='mr-2 h-4 w-4' /> Descargar
+              <Download className='mr-2 h-4 w-4' /> Exportar
             </Button>
           </div>
         </header>
@@ -151,7 +157,7 @@ function DashboardsPage() {
             </CardHeader>
             <CardContent>
               <div className='text-2xl font-bold'>
-                - {calculateTotalFromPurchases(purchases)}
+                {calculateTotalFromPurchases(purchases)}
               </div>
               <p className='text-xs text-muted-foreground'>
                 +180.1% desde el último mes
@@ -160,13 +166,17 @@ function DashboardsPage() {
           </Card>
           <Card>
             <CardHeader className='flex flex-row items-center justify-between space-y-0 pb-2'>
-              <CardTitle className='text-sm font-medium'>Active Now</CardTitle>
+              <CardTitle className='text-sm font-medium'>
+                Inscripciones
+              </CardTitle>
               <Activity className='h-4 w-4 text-muted-foreground' />
             </CardHeader>
             <CardContent>
-              <div className='text-2xl font-bold'>+573</div>
+              <div className='text-2xl font-bold'>
+                {calculateTotalFromPayments(payments)}
+              </div>
               <p className='text-xs text-muted-foreground'>
-                +201 since last hour
+                +10% desde el ultimo mes
               </p>
             </CardContent>
           </Card>
@@ -230,7 +240,7 @@ function DashboardsPage() {
               <CardTitle>Inscripciones recientes</CardTitle>
             </CardHeader>
             {payments
-              ?.slice(0, 5)
+              ?.slice(0, 6)
               .map((payment) => (
                 <PaymentCards payment={payment} key={payment.id} />
               ))}

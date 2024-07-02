@@ -30,4 +30,5 @@ interface User {
   weight: number
   height: number
   discountType: string
+  physicalCondition: string
 }

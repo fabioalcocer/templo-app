@@ -144,6 +144,7 @@ const FormSchema = z.object({
     .min(1, {
       message: 'Debe ser un número mayor a 0',
     }),
+  physicalCondition: z.string().optional(),
 })
 
 function CreateUsersForm({ params }: Props) {

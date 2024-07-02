@@ -36,6 +36,7 @@ type Props = {
       age: number
       weight: number
       height: number
+      physicalCondition?: string | undefined
     },
     any,
     {
@@ -61,6 +62,7 @@ type Props = {
       age: number
       weight: number
       height: number
+      physicalCondition?: string | undefined
     }
   >
   loading: boolean
@@ -68,7 +70,7 @@ type Props = {
   userId: string
 }
 
-function CustomUserForm({ form, loading, setShowBasicForm , userId }: Props) {
+function CustomUserForm({ form, loading, setShowBasicForm, userId }: Props) {
   return (
     <>
       <FormField
@@ -203,6 +205,20 @@ function CustomUserForm({ form, loading, setShowBasicForm , userId }: Props) {
           )}
         />
       </div>
+
+      <FormField
+        control={form.control}
+        name='physicalCondition'
+        render={({ field }) => (
+          <FormItem className='flex flex-1 flex-col'>
+            <FormLabel>Condición física</FormLabel>
+            <FormControl>
+              <Input placeholder='Sedentario, muy activo...' {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
 
       <div className='my-4 flex justify-end gap-2'>
         <Button
