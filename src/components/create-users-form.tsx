@@ -287,7 +287,7 @@ function CreateUsersForm({ params }: Props) {
           </Button>
         </Link>
         <h3 className='text-2xl font-semibold'>
-          {getObjBySlug(USER_TYPE)?.name}
+          {USER_TYPE === 'calistenia' ? 'Planes mensuales' : getObjBySlug(USER_TYPE)?.name}
         </h3>
       </div>
       <div className='mx-auto mt-5 max-w-xl'>
@@ -301,7 +301,6 @@ function CreateUsersForm({ params }: Props) {
                 form={form}
                 disciplineOptions={disciplineOptions}
                 currentDisciplineOption={currentDisciplineOption}
-                USER_TYPE={USER_TYPE}
                 setShowBasicForm={setShowBasicForm}
                 setDiscountType={setDiscountType}
                 discountType={discountType}

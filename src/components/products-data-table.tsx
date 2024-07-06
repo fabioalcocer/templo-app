@@ -42,7 +42,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { getAllProducts } from '@/api'
-import { getCategoryNameById, parsedPriceFromNumber } from '@/lib/utils'
+import { getCategoryNameById, parsedPriceFromNumber, showToastForCopyText } from '@/lib/utils'
 import { DataTablePagination } from './table-pagination'
 import { AddProductForm } from './add-product-form'
 import { AlertDialogConfirm } from './dialog-confirm'
@@ -215,7 +215,7 @@ export const columns: ColumnDef<Product>[] = [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(product.id)}
+              onClick={() => showToastForCopyText(product.id)}
             >
               Copiar ID
             </DropdownMenuItem>

@@ -1,6 +1,7 @@
 import { type ClassValue, clsx } from 'clsx'
 import { twMerge } from 'tailwind-merge'
 import { CATEGORIES, DISCIPLINES } from './constants'
+import { toast } from '@/components/ui/use-toast'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -73,4 +74,12 @@ export const validateDiscountValue = (value: number, discountType: string) => {
   if (value > 100 && discountType === 'percent') return 100
 
   return value
+}
+
+export const showToastForCopyText = (userId: string) => {
+  toast({
+    title: 'Se copió el texto al portapapeles',
+  })
+
+  return navigator.clipboard.writeText(userId)
 }

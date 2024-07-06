@@ -40,7 +40,7 @@ import { AlertDialogConfirm } from './dialog-confirm'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import CreateUserDialog from './create-user-dialog'
-import { cn, getObjBySlug } from '@/lib/utils'
+import { cn, getObjBySlug, showToastForCopyText } from '@/lib/utils'
 import { Timestamp } from 'firebase/firestore'
 import ManageUsers from './manage-users'
 import { Badge } from './ui/badge'
@@ -281,7 +281,7 @@ export const columns: ColumnDef<User>[] = [
               </Link>
             </DropdownMenuItem>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(user.id)}
+              onClick={() => showToastForCopyText(user.id)}
             >
               Copiar ID
             </DropdownMenuItem>

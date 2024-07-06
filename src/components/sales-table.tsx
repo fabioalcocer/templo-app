@@ -43,7 +43,7 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { getSales } from '@/api'
-import { calculateTotalFromSales, parsedPriceFromNumber } from '@/lib/utils'
+import { calculateTotalFromSales, parsedPriceFromNumber, showToastForCopyText } from '@/lib/utils'
 import { DataTablePagination } from './table-pagination'
 import { DatePickerWithRange } from './date-range-picker'
 import { es } from 'date-fns/locale/es'
@@ -229,7 +229,7 @@ export const columns: ColumnDef<Sale>[] = [
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const product = row.original
+      const sale = row.original
 
       return (
         <DropdownMenu>
@@ -242,7 +242,7 @@ export const columns: ColumnDef<Sale>[] = [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(product.id)}
+              onClick={() => showToastForCopyText(sale.id)}
             >
               Copiar ID
             </DropdownMenuItem>

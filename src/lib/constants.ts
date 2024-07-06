@@ -91,3 +91,19 @@ export const PAYMENT_TYPES = [
     value: 'card',
   },
 ]
+
+
+export const CALISTENIA_PLANS = [
+  {
+    label: 'Calistenia',
+    value: 'calistenia',
+  },
+  {
+    label: 'Calistenia mujeres',
+    value: 'women-calistenia',
+  },
+  {
+    label: 'Calistenia personalizada',
+    value: 'custom-calistenia',
+  },
+]

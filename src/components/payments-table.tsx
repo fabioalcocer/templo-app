@@ -47,6 +47,7 @@ import {
   calculateTotalFromPayments,
   getObjBySlug,
   parsedPriceFromNumber,
+  showToastForCopyText,
 } from '@/lib/utils'
 import { DataTablePagination } from './table-pagination'
 import { DatePickerWithRange } from './date-range-picker'
@@ -227,7 +228,7 @@ export const columns: ColumnDef<Payment>[] = [
     id: 'actions',
     enableHiding: false,
     cell: ({ row }) => {
-      const product = row.original
+      const payment = row.original
 
       return (
         <DropdownMenu>
@@ -240,7 +241,7 @@ export const columns: ColumnDef<Payment>[] = [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(product.id)}
+              onClick={() => showToastForCopyText(payment.id)}
             >
               Copiar ID
             </DropdownMenuItem>

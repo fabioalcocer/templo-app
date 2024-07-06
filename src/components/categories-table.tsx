@@ -46,6 +46,7 @@ import { getCategories } from '@/api'
 import { DataTablePagination } from './table-pagination'
 import { CreateCategoryForm } from './create-category-form'
 import { AlertDialogConfirm } from './dialog-confirm'
+import { showToastForCopyText } from '@/lib/utils'
 
 export const columns: ColumnDef<Category>[] = [
   {
@@ -160,7 +161,7 @@ export const columns: ColumnDef<Category>[] = [
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
             <DropdownMenuItem
-              onClick={() => navigator.clipboard.writeText(category.id)}
+              onClick={() => showToastForCopyText(category.id)}
             >
               Copiar ID
             </DropdownMenuItem>

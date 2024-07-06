@@ -40,7 +40,7 @@ import {
   CollapsibleTrigger,
 } from './ui/collapsible'
 import { DiscountType } from '@/types/discounts.types'
-import { PAYMENT_TYPES } from '@/lib/constants'
+import { CALISTENIA_PLANS, PAYMENT_TYPES } from '@/lib/constants'
 
 type Props = {
   form: UseFormReturn<
@@ -105,7 +105,6 @@ type Props = {
         label: string
       }
     | undefined
-  USER_TYPE: string
   setShowBasicForm: Dispatch<SetStateAction<boolean>>
   setDiscountType: Dispatch<SetStateAction<DiscountType>>
   discountType: DiscountType
@@ -116,7 +115,6 @@ function BasicUserForm({
   form,
   currentDisciplineOption,
   disciplineOptions,
-  USER_TYPE,
   setShowBasicForm,
   discountType,
   setDiscountType,
@@ -201,9 +199,23 @@ function BasicUserForm({
           render={({ field }) => (
             <FormItem className='flex-1'>
               <FormLabel>Plan</FormLabel>
-              <FormControl>
-                <Input placeholder='Power plate 12 sesiones' {...field} />
-              </FormControl>
+              <Select
+                onValueChange={field.onChange}
+                value={field.value}
+              >
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder='Elije un plan mensual' />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {CALISTENIA_PLANS?.map((option) => (
+                    <SelectItem key={option.value} value={option.value}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -214,7 +226,7 @@ function BasicUserForm({
           name='discipline'
           render={({ field }) => (
             <FormItem className='flex-1'>
-              <FormLabel>Disciplina:</FormLabel>
+              <FormLabel>Disciplina</FormLabel>
               <Select
                 onValueChange={field.onChange}
                 value={currentDisciplineOption?.value}
