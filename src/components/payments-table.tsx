@@ -55,7 +55,7 @@ import { es } from 'date-fns/locale/es'
 import { toast } from './ui/use-toast'
 import { DateRange } from 'react-day-picker'
 import { addDays, format } from 'date-fns'
-import { DAY_IN_MILLISECONDS } from '@/lib/constants'
+import { CALISTENIA_PLANS, DAY_IN_MILLISECONDS } from '@/lib/constants'
 
 const parsePaymentType = (paymentType: string) => {
   type Payments = keyof typeof paymentTypes
@@ -108,9 +108,7 @@ export const columns: ColumnDef<Payment>[] = [
       )
     },
     cell: ({ row }) => {
-      return (
-        <div className=''>{row.getValue('userId')}</div>
-      )
+      return <div className=''>{row.getValue('userId')}</div>
     },
   },
   {
@@ -174,7 +172,15 @@ export const columns: ColumnDef<Payment>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div>{row.getValue('plan')}</div>,
+    cell: ({ row }) => {
+      const planValue = row.getValue('plan') as string
+      const parsedPlanName = CALISTENIA_PLANS.find(
+        (plan) => planValue === plan.value,
+      )
+      const planName = parsedPlanName?.label
+
+      return <div>{planName || planValue}</div>
+    },
   },
   {
     accessorKey: 'paymentType',
@@ -240,9 +246,7 @@ export const columns: ColumnDef<Payment>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => showToastForCopyText(payment.id)}
-            >
+            <DropdownMenuItem onClick={() => showToastForCopyText(payment.id)}>
               Copiar ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
