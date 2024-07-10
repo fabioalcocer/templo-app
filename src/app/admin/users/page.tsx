@@ -66,46 +66,6 @@ export default function UsersPage() {
               Archived
             </TabsTrigger>
           </TabsList>
-          <div className='ml-auto flex items-center gap-2'>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant='outline' size='sm' className='h-8 gap-1 py-4'>
-                  <ListFilter className='h-3.5 w-3.5' />
-                  <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>
-                    Filter
-                  </span>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className='w-56'>
-                <DropdownMenuLabel>Filter by</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuCheckboxItem
-                  checked={showStatusBar}
-                  onCheckedChange={setShowStatusBar}
-                >
-                  Active
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  checked={showPanel}
-                  onCheckedChange={setShowPanel}
-                >
-                  Inactive
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  checked={showArchived}
-                  onCheckedChange={setShowArchived}
-                >
-                  Archived
-                </DropdownMenuCheckboxItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button size='sm' variant='outline' className='h-8 gap-1 py-4'>
-              <File className='h-3.5 w-3.5' />
-              <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>
-                Export
-              </span>
-            </Button>
-          </div>
         </div>
         <TabsContent value='all'>
           <UsersTable users={users} />

@@ -14,7 +14,7 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table'
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
+import { ArrowUpDown, Download, MoreHorizontal } from 'lucide-react'
 
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
@@ -45,6 +45,7 @@ import { Timestamp } from 'firebase/firestore'
 import ManageUsers from './manage-users'
 import { Badge } from './ui/badge'
 import Link from 'next/link'
+import { exportTableToCSV } from '@/lib/export'
 
 export const columns: ColumnDef<User>[] = [
   {
@@ -280,9 +281,7 @@ export const columns: ColumnDef<User>[] = [
                 Editar usuario
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => showToastForCopyText(user.id)}
-            >
+            <DropdownMenuItem onClick={() => showToastForCopyText(user.id)}>
               Copiar ID
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
@@ -329,16 +328,30 @@ export function UsersTable({ users }: { users: User[] }) {
 
   return (
     <div className='w-full'>
-      <div className='flex items-center justify-between pb-4 pt-2'>
+      <div className='flex w-full items-center justify-between gap-3 pb-4 pt-2'>
         <Input
           placeholder='Buscar usuario...'
           value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('name')?.setFilterValue(event.target.value)
           }
-          className='max-w-sm'
+          className='w-full max-w-sm'
         />
-        <CreateUserDialog />
+
+        <div className='flex items-center gap-2 sm:gap-4'>
+          <Button
+            variant='outline'
+            onClick={() =>
+              exportTableToCSV(table, {
+                filename: 'users',
+                excludeColumns: ['select', 'actions'],
+              })
+            }
+          >
+            <Download className='sm:mr-2 h-4 w-4' /> <span className='hidden sm:inline'>Exportar</span>
+          </Button>
+          <CreateUserDialog />
+        </div>
       </div>
       <div className='max-w-[92vw] rounded-md border'>
         <Table>

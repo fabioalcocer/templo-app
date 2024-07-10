@@ -43,7 +43,11 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { getSales } from '@/api'
-import { calculateTotalFromSales, parsedPriceFromNumber, showToastForCopyText } from '@/lib/utils'
+import {
+  calculateTotalFromSales,
+  parsedPriceFromNumber,
+  showToastForCopyText,
+} from '@/lib/utils'
 import { DataTablePagination } from './table-pagination'
 import { DatePickerWithRange } from './date-range-picker'
 import { es } from 'date-fns/locale/es'
@@ -51,6 +55,7 @@ import { toast } from './ui/use-toast'
 import { DateRange } from 'react-day-picker'
 import { addDays, format } from 'date-fns'
 import { DAY_IN_MILLISECONDS } from '@/lib/constants'
+import { exportTableToCSV } from '@/lib/export'
 
 const parsePaymentType = (paymentType: string) => {
   type Payments = keyof typeof paymentTypes
@@ -241,9 +246,7 @@ export const columns: ColumnDef<Sale>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align='end'>
             <DropdownMenuLabel>Acciones</DropdownMenuLabel>
-            <DropdownMenuItem
-              onClick={() => showToastForCopyText(sale.id)}
-            >
+            <DropdownMenuItem onClick={() => showToastForCopyText(sale.id)}>
               Copiar ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -319,13 +322,9 @@ export function SalesTable() {
         <div className='flex items-center gap-4'>
           <Button
             onClick={() =>
-              toast({
-                title: (
-                  <div className='flex w-full items-center gap-2'>
-                    Esta función aún no está disponible
-                    <MehIcon />
-                  </div>
-                ),
+              exportTableToCSV(table, {
+                filename: 'sales',
+                excludeColumns: ['select', 'actions'],
               })
             }
           >

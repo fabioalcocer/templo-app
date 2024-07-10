@@ -18,8 +18,8 @@ function CreateUserDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size='sm' className='h-8 gap-2 rounded-md py-[18px]'>
-          <PlusCircle className='h-3.5 w-3.5' />
+        <Button size='sm' className='h-10 min-w-[3rem] sm:w-auto gap-2 rounded-md py-[18px]'>
+          <PlusCircle className='h-4 w-4' />
           <span className='sr-only sm:not-sr-only sm:whitespace-nowrap'>
             Registrar usuario
           </span>

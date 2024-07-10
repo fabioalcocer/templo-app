@@ -56,6 +56,7 @@ import { toast } from './ui/use-toast'
 import { DateRange } from 'react-day-picker'
 import { addDays, format } from 'date-fns'
 import { CALISTENIA_PLANS, DAY_IN_MILLISECONDS } from '@/lib/constants'
+import { exportTableToCSV } from '@/lib/export'
 
 const parsePaymentType = (paymentType: string) => {
   type Payments = keyof typeof paymentTypes
@@ -323,14 +324,9 @@ export function PaymentsTable() {
         <div className='flex items-center gap-4'>
           <Button
             onClick={() =>
-              toast({
-                variant: 'destructive',
-                title: (
-                  <div className='flex w-full items-center gap-2'>
-                    Esta función aún no está disponible
-                    <MehIcon />
-                  </div>
-                ),
+              exportTableToCSV(table, {
+                filename: 'payments',
+                excludeColumns: ['select', 'actions'],
               })
             }
           >
