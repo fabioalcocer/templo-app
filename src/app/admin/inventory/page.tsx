@@ -42,6 +42,7 @@ export default function InventaryPage() {
           <BoxIcon width={36} height={36} />
           Inventario
         </h2>
+
         <main className='flex h-full flex-1 flex-col gap-4'>
           <Tabs defaultValue='categories' className='w-[400px]'>
             <TabsList className='py- grid h-auto w-full grid-cols-2'>
@@ -64,8 +65,12 @@ export default function InventaryPage() {
             </TabsList>
           </Tabs>
 
+          {/* <h1 className='dashboard text-3xl font-bold'>Ir al Dashboard</h1> */}
+
           {activeTab === 'categories' && <CategoriesTable />}
-          {activeTab === 'products' && <ProductsTableInventory products={products} />}
+          {activeTab === 'products' && (
+            <ProductsTableInventory products={products} />
+          )}
         </main>
       </div>
     </Suspense>

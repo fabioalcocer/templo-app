@@ -62,3 +62,8 @@
     @apply bg-background text-foreground;
   }
 }
+
+.dashboard {
+  view-transition-name: demo-title;
+  width: fit-content;
+}

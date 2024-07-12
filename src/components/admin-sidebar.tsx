@@ -1,7 +1,12 @@
 'use client'
 
-import { BoxIcon, DollarSign, UserCheck2, UserCogIcon, Users2 } from 'lucide-react'
-import Link from 'next/link'
+import {
+  BoxIcon,
+  DollarSign,
+  UserCheck2,
+  UserCogIcon,
+  Users2,
+} from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
 import { Home, LineChart, Menu, UserIcon } from 'lucide-react'
@@ -9,6 +14,7 @@ import { Home, LineChart, Menu, UserIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
+import { Link } from 'next-view-transitions'
 
 function AdminSidebar({
   children,

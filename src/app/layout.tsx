@@ -1,5 +1,6 @@
-import type { Metadata } from 'next'
 import './globals.css'
+import type { Metadata } from 'next'
+import { ViewTransitions } from 'next-view-transitions'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
 import { fontSans } from '@/lib/fonts'
@@ -19,34 +20,36 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='es'>
-      <body
-        suppressHydrationWarning
-        className={cn(
-          'min-h-screen bg-background font-sans antialiased',
-          fontSans.variable,
-        )}
-      >
-        <SessionProvider>
-          <ThemeProvider
-            attribute='class'
-            defaultTheme='system'
-            enableSystem
-            disableTransitionOnChange
-          >
-            <main className='flex min-h-screen flex-col items-center'>
-              <Header />
-              <div className='container flex w-full flex-col px-0'>
-                {children}
-              </div>
-              <div className='mt-auto w-full mx-auto text-center'>
-                <CommandDialogMenu />
-              </div>
-            </main>
-          </ThemeProvider>
-          <Toaster />
-        </SessionProvider>
-      </body>
-    </html>
+    <ViewTransitions>
+      <html lang='es'>
+        <body
+          suppressHydrationWarning
+          className={cn(
+            'min-h-screen bg-background font-sans antialiased',
+            fontSans.variable,
+          )}
+        >
+          <SessionProvider>
+            <ThemeProvider
+              attribute='class'
+              defaultTheme='system'
+              enableSystem
+              disableTransitionOnChange
+            >
+              <main className='flex min-h-screen flex-col items-center'>
+                <Header />
+                <div className='container flex w-full flex-col px-0'>
+                  {children}
+                </div>
+                <div className='mx-auto mt-auto w-full text-center'>
+                  <CommandDialogMenu />
+                </div>
+              </main>
+            </ThemeProvider>
+            <Toaster />
+          </SessionProvider>
+        </body>
+      </html>
+    </ViewTransitions>
   )
 }
