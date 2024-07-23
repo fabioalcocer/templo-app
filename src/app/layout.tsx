@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import Header from '@/components/header'
 import SessionProvider from './SessionProvider'
 import { CommandDialogMenu } from '@/components/command-menu'
+import Script from 'next/script'
 
 export const metadata: Metadata = {
   title: 'Templo App',
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <ViewTransitions>
       <html lang='es'>
+      <Script  src="https://cdn.seline.so/seline.js" async />
         <body
           suppressHydrationWarning
           className={cn(
