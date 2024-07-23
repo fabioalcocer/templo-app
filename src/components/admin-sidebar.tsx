@@ -42,11 +42,7 @@ function AdminSidebar({
       path: '/admin/purchases',
       icon: <UserCogIcon className='h-5 w-5' />,
     },
-    {
-      label: 'Analíticas',
-      path: '/admin/analytics',
-      icon: <LineChart className='h-5 w-5' />,
-    },
+
     {
       label: 'Usuarios',
       path: '/admin/users',
@@ -56,6 +52,11 @@ function AdminSidebar({
       label: 'Inscripciones',
       path: '/admin/payments',
       icon: <UserCheck2 className='h-5 w-5' />,
+    },
+    {
+      label: 'Analíticas',
+      path: '/admin/analytics',
+      icon: <LineChart className='h-5 w-5' />,
     },
   ]
 
