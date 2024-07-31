@@ -1,5 +1,7 @@
 'use client'
 import { AreaChartComponent } from '@/components/area-chart'
+import { BarsChartComponent } from '@/components/bar-chart'
+import { LineChartComponent } from '@/components/line-chart'
 import { LineChart } from 'lucide-react'
 import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
@@ -24,6 +26,14 @@ export default function SalesPage() {
       </h2>
 
       <AreaChartComponent />
+      <section className='mt-3 flex flex-wrap gap-5 md:gap-4'>
+        <div className='w-full max-w-none md:max-w-sm'>
+          <BarsChartComponent />
+        </div>
+        <div className='w-full max-w-none md:max-w-sm'>
+          <LineChartComponent />
+        </div>
+      </section>
     </div>
   )
 }
