@@ -77,7 +77,7 @@ export function BarsChartComponent() {
           Trending up by 5.2% this month <TrendingUp className='h-4 w-4' />
         </div>
         <div className='leading-none text-muted-foreground'>
-          Mostrando el total de usuarios activos para los últimos 6 meses
+          Mostrando el total de usuarios activos
         </div>
       </CardFooter>
     </Card>
