@@ -90,7 +90,7 @@ export function PieChartComponent() {
 	}, [])
 
 	return (
-		<Card className="flex flex-col">
+		<Card className="flex flex-col h-full">
 			<CardHeader className="items-center pb-0">
 				<CardTitle>Usuarios - Disciplinas</CardTitle>
 				<CardDescription>Enero - Agosto 2024</CardDescription>
@@ -147,7 +147,7 @@ export function PieChartComponent() {
 			</CardContent>
 			<CardFooter className="flex-col gap-2 text-sm">
 				<div className="flex items-center gap-2 font-medium leading-none">
-					Creció un 2.2% en este mes <TrendingUp className="h-4 w-4" />
+					La tendencia sube un 2,2% este mes <TrendingUp className="h-4 w-4" />
 				</div>
 				<div className="leading-none text-muted-foreground">
 					Total de usuarios en los últimos 6 meses
