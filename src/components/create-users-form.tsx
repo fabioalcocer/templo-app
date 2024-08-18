@@ -24,7 +24,7 @@ import BasicUserForm from './basic-user-form'
 import CustomUserForm from './custom-user-form'
 
 type Props = {
-	params: { id: string; type: string }
+	params: any
 }
 
 const FormSchema = z.object({
