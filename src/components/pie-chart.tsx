@@ -90,7 +90,7 @@ export function PieChartComponent() {
 	}, [])
 
 	return (
-		<Card className="flex flex-col h-full">
+		<Card className="flex flex-col h-full" id="onborda-step6">
 			<CardHeader className="items-center pb-0">
 				<CardTitle>Usuarios - Disciplinas</CardTitle>
 				<CardDescription>Enero - Agosto 2024</CardDescription>
