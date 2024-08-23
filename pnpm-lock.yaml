@@ -83,6 +83,9 @@ dependencies:
   lucide-react:
     specifier: ^0.341.0
     version: 0.341.0(react@18.0.0)
+  motion-number:
+    specifier: ^0.1.6
+    version: 0.1.6(framer-motion@11.3.28)(react-dom@18.0.0)(react@18.0.0)
   next:
     specifier: 14.1.0
     version: 14.1.0(react-dom@18.0.0)(react@18.0.0)
@@ -4396,6 +4399,18 @@ packages:
   /minipass@7.0.4:
     resolution: {integrity: sha512-jYofLM5Dam9279rdkWzqHozUo4ybjdZmCsDHePy5V/PbBcVMiSZR97gmAy45aqi8CK1lG2ECd356FU86avfwUQ==}
     engines: {node: '>=16 || 14 >=14.17'}
+
+  /motion-number@0.1.6(framer-motion@11.3.28)(react-dom@18.0.0)(react@18.0.0):
+    resolution: {integrity: sha512-KR/BxaMMHaHciAxXAtp5EI+M0/KrXFWKdkUkKz0UE7WotLltpedF5YPnjsAP7bgdExR72TRUZCTtCzG9paER9w==}
+    peerDependencies:
+      framer-motion: ^11.3.19
+      react: ^18.0.0
+      react-dom: ^18.0.0
+    dependencies:
+      framer-motion: 11.3.28(react-dom@18.0.0)(react@18.0.0)
+      react: 18.0.0
+      react-dom: 18.0.0(react@18.0.0)
+    dev: false
 
   /ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}

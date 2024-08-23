@@ -39,16 +39,22 @@ import {
 } from '@/lib/utils'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
+import MotionNumber from 'motion-number'
 import { useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
 import { useEffect, useState } from 'react'
-
 function DashboardsPage() {
 	const [payments, setPayments] = useState<Payment[]>([])
 	const [purchases, setPurchases] = useState<Purchase[]>([])
 	const [sales, setSales] = useState<Sale[]>([])
 
-	const calculateTotalRevenues = () => {
+	const [totalRevenues, setTotalRevenues] = useState<number>(0)
+
+	const calculateTotalRevenues = (
+		sales: Sale[],
+		purchases: Purchase[],
+		payments: Payment[],
+	) => {
 		const salesTotal = calculateTotalFromSales(sales)
 		const purchasesTotal = calculateTotalFromPurchases(purchases)
 		const paymentsTotal = calculateTotalFromPayments(payments)
@@ -65,6 +71,7 @@ function DashboardsPage() {
 
 		const totalRevenues = integerSalesValue + integerPaymentsValue
 		const totalRenevues = (totalRevenues - integerPurchasesValue) / 100
+		setTotalRevenues(totalRenevues)
 
 		return parsedPriceFromNumber(totalRenevues)
 	}
@@ -78,6 +85,8 @@ function DashboardsPage() {
 		const sales = await getSales()
 		const purchases = await getAllPurchases()
 		const payments = await getAllPayments()
+
+		calculateTotalRevenues(sales, purchases, payments)
 
 		setSales(sales)
 		setPurchases(purchases)
@@ -132,7 +141,12 @@ function DashboardsPage() {
 						</CardHeader>
 						<CardContent>
 							<div className="text-2xl font-bold">
-								{calculateTotalRevenues()}
+								Bs.{' '}
+								<MotionNumber
+									value={totalRevenues}
+									format={{ notation: 'standard' }}
+									locales="es-BO"
+								/>
 							</div>
 							<p className="text-xs text-muted-foreground">
 								-20.1% desde el último mes
