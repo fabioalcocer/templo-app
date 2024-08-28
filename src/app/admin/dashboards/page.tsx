@@ -5,6 +5,7 @@ import {
 	CreditCard,
 	DollarSign,
 	Download,
+	HandCoinsIcon,
 	MehIcon,
 	Users,
 } from 'lucide-react'
@@ -55,9 +56,9 @@ function DashboardsPage() {
 		purchases: Purchase[],
 		payments: Payment[],
 	) => {
-		const salesTotal = calculateTotalFromSales(sales)
-		const purchasesTotal = calculateTotalFromPurchases(purchases)
-		const paymentsTotal = calculateTotalFromPayments(payments)
+		const salesTotal = calculateTotalFromSales(sales) as string
+		const purchasesTotal = calculateTotalFromPurchases(purchases) as string
+		const paymentsTotal = calculateTotalFromPayments(payments) as string
 
 		const integerPaymentsValue = Number.parseInt(
 			paymentsTotal.replace(/\D/g, ''),
@@ -137,7 +138,7 @@ function DashboardsPage() {
 							<CardTitle className="text-sm font-medium">
 								Total de Ingresos
 							</CardTitle>
-							<DollarSign className="h-4 w-4 text-muted-foreground" />
+							<DollarSign className="h-5 w-5 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
 							<div className="text-2xl font-bold">
@@ -156,11 +157,16 @@ function DashboardsPage() {
 					<Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle className="text-sm font-medium">Ventas</CardTitle>
-							<Users className="h-4 w-4 text-muted-foreground" />
+							<HandCoinsIcon className="h-5 w-5 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
 							<div className="text-2xl font-bold">
-								{calculateTotalFromSales(sales)}
+								Bs.{' '}
+								<MotionNumber
+									value={calculateTotalFromSales(sales, true)}
+									format={{ notation: 'standard' }}
+									locales="es-BO"
+								/>
 							</div>
 							<p className="text-xs text-muted-foreground">
 								+19% desde el último mes
@@ -170,11 +176,16 @@ function DashboardsPage() {
 					<Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle className="text-sm font-medium">Compras</CardTitle>
-							<CreditCard className="h-4 w-4 text-muted-foreground" />
+							<CreditCard className="h-5 w-5 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
 							<div className="text-2xl font-bold">
-								{calculateTotalFromPurchases(purchases)}
+								- Bs.{' '}
+								<MotionNumber
+									value={calculateTotalFromPurchases(purchases, true)}
+									format={{ notation: 'standard' }}
+									locales="es-BO"
+								/>
 							</div>
 							<p className="text-xs text-muted-foreground">
 								+180.1% desde el último mes
@@ -186,11 +197,16 @@ function DashboardsPage() {
 							<CardTitle className="text-sm font-medium">
 								Inscripciones
 							</CardTitle>
-							<Activity className="h-4 w-4 text-muted-foreground" />
+							<Users className="h-5 w-5 text-muted-foreground" />
 						</CardHeader>
 						<CardContent>
 							<div className="text-2xl font-bold">
-								{calculateTotalFromPayments(payments)}
+								Bs.{' '}
+								<MotionNumber
+									value={calculateTotalFromPayments(payments, true)}
+									format={{ notation: 'standard' }}
+									locales="es-BO"
+								/>
 							</div>
 							<p className="text-xs text-muted-foreground">
 								+10% desde el ultimo mes
