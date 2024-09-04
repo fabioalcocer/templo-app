@@ -98,3 +98,8 @@ export const showToastForCopyText = (userId: string) => {
 
 	return navigator.clipboard.writeText(userId)
 }
+
+export const  convertStringToDate = (dateString: string): Date => {
+  const [year, month, day] = dateString.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}

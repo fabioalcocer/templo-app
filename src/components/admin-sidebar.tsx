@@ -70,7 +70,7 @@ function AdminSidebar({
 
 	return (
 		<div className="grid min-h-[calc(100vh_-_80px)] w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-			<div className="hidden border-r bg-muted/40 md:block">
+			<div className="hidden border-r bg-background md:block">
 				<div className="flex h-full max-h-screen flex-col gap-2">
 					<div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
 						<div className="flex items-center gap-2 text-lg font-semibold">
@@ -102,8 +102,8 @@ function AdminSidebar({
 					</div>
 				</div>
 			</div>
-			<div className="flex flex-col  bg-muted/40">
-				<header className="flex h-14 items-center gap-4 border-b bg-muted/40 px-4 md:hidden lg:h-[60px] lg:px-6">
+			<div className="flex flex-col">
+				<header className="flex h-14 items-center gap-4 border-b px-4 md:hidden lg:h-[60px] lg:px-6">
 					<Sheet>
 						<SheetTrigger asChild>
 							<Button

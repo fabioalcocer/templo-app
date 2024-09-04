@@ -1,15 +1,6 @@
 'use client'
-import LogoWhite from '@/assets/logo-white.png'
 import Logo from '@/assets/logo-black.png'
-import { UserIcon } from 'lucide-react'
-import { signOut, useSession } from 'next-auth/react'
-import { useTheme } from 'next-themes'
-import Image from 'next/image'
-import Link from 'next/link'
-import { ModeToggle } from './mode-toggle'
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
-import { Button } from './ui/button'
-import { useEffect, useState } from 'react'
+import LogoWhite from '@/assets/logo-white.png'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +9,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { UserIcon } from 'lucide-react'
+import { signOut, useSession } from 'next-auth/react'
+import { useTheme } from 'next-themes'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { ModeToggle } from './mode-toggle'
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
+import { Button } from './ui/button'
 
 function Header() {
   const [isDarkTheme, setIsDarkTheme] = useState(false)
@@ -66,7 +66,7 @@ function Header() {
                     <Link href='/admin/dashboards'>Dashboard</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={() => signOut()} className='text-destructive'>
+                  <DropdownMenuItem onClick={() => signOut()} className='text-red-500'>
                     Cerrar sesión
                   </DropdownMenuItem>
                 </DropdownMenuContent>
