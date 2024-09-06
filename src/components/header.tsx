@@ -30,7 +30,7 @@ function Header() {
   }, [resolvedTheme])
 
   return (
-    <header className='sticky top-0 z-50 flex w-full bg-background px-0 py-3 shadow-sm md:p-5'>
+    <header className='sticky top-0 z-50 flex w-full bg-background px-0 py-3 shadow-md rounded-lg md:p-5 md:py-4'>
       <div className='mx-auto flex w-full max-w-[1450px] items-center justify-between px-3'>
         <Link href='/' className='flex items-center gap-3'>
           <Image

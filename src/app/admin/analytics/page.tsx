@@ -28,7 +28,7 @@ export default function SalesPage() {
 			</h2>
 
 			<AreaChartComponent />
-			<section className="mt-3 grid grid-cols-3 gap-5 md:gap-4">
+			<section className="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 				<div className="w-full max-w-none">
 					<PieChartComponent />
 				</div>

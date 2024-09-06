@@ -17,7 +17,7 @@ async function Categories() {
 
 	return (
 		<main className="flex flex-col gap-10 py-6 px-8 w-full max-w-7xl mx-auto">
-			<div className="flex items-center justify-center gap-3 text-center text-primary md:gap-5">
+			<div className="flex items-center justify-center gap-3 text-center text-card-foreground dark:text-primary md:gap-5">
 				<StoreIcon className="h-9 w-9 md:h-10 md:w-10" />
 				<h2 className="text-center text-xl font-bold md:text-3xl">
 					Punto de venta

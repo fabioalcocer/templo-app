@@ -21,6 +21,14 @@ import {
 	ChartTooltipContent,
 } from '@/components/ui/chart'
 
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from '@/components/ui/select'
+
 const chartConfig = {
 	calistenia: {
 		label: 'Calistenia',
@@ -48,6 +56,7 @@ type ChartData = {
 
 export function PieChartComponent() {
 	const [chartData, setChartData] = React.useState<ChartData[]>([])
+	const [timeRange, setTimeRange] = React.useState('90d')
 
 	function getDisciplineChartData(users: User[]) {
 		const disciplineCounts: Record<string, number> = {}
@@ -95,6 +104,30 @@ export function PieChartComponent() {
 				<CardTitle>Usuarios - Disciplinas</CardTitle>
 				<CardDescription>Enero - Agosto 2024</CardDescription>
 			</CardHeader>
+
+			<Select value={timeRange} onValueChange={setTimeRange}>
+				<SelectTrigger
+					className="w-[160px] rounded-lg mt-5 ml-2"
+					aria-label="Select a value"
+				>
+					<SelectValue placeholder="Last 3 months" />
+				</SelectTrigger>
+				<SelectContent className="rounded-xl">
+					<SelectItem value="180d" className="rounded-lg">
+						Últimos 6 meses
+					</SelectItem>
+					<SelectItem value="90d" className="rounded-lg">
+						Últimos 3 meses
+					</SelectItem>
+					<SelectItem value="30d" className="rounded-lg">
+						Últimos 30 días
+					</SelectItem>
+					<SelectItem value="7d" className="rounded-lg">
+						Últimos 7 días
+					</SelectItem>
+				</SelectContent>
+			</Select>
+
 			<CardContent className="flex-1 pb-0">
 				<ChartContainer
 					config={chartConfig}
