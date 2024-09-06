@@ -1,6 +1,6 @@
 'use client'
 
-import { TrendingUp } from 'lucide-react'
+import { AlertCircle, HelpCircleIcon, TrendingUp } from 'lucide-react'
 import * as React from 'react'
 import { Label, Pie, PieChart } from 'recharts'
 
@@ -28,6 +28,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
+import { parsedTimestampDate } from '@/lib/utils'
 
 const chartConfig = {
 	calistenia: {
@@ -56,14 +57,39 @@ type ChartData = {
 
 export function PieChartComponent() {
 	const [chartData, setChartData] = React.useState<ChartData[]>([])
-	const [timeRange, setTimeRange] = React.useState('90d')
+	const [monthToFilter, setMonthToFilter] = React.useState('180d')
 
 	function getDisciplineChartData(users: User[]) {
-		const disciplineCounts: Record<string, number> = {}
+		const disciplineCounts: Record<string, { count: number }[]> = {}
 
-		for (const user of users) {
+		const isWithinLast6Months = (dateString: string) => {
+			const [month, day, year] = dateString.split('/').map(Number)
+			const date = new Date(year, month - 1, day)
+			const sixMonthsAgo = new Date()
+			sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6)
+			return date >= sixMonthsAgo
+		}
+
+		// Filter users based on monthToFilter
+		const filteredUsers = users.filter((user) => {
+			const userDateString = parsedTimestampDate(user.dateEntry as Date)
+
+			if (monthToFilter === '180d') {
+				return isWithinLast6Months(userDateString)
+			}
+			const [userMonth, _, userYear] = userDateString.split('/').map(Number)
+			const [filterYear, filterMonth] = monthToFilter.split('-').map(Number)
+			return userYear === filterYear && userMonth === filterMonth
+		})
+
+		for (const user of filteredUsers) {
 			const discipline = user.discipline || 'other'
-			disciplineCounts[discipline] = (disciplineCounts[discipline] || 0) + 1
+			if (!disciplineCounts[discipline]) {
+				disciplineCounts[discipline] = []
+			}
+			disciplineCounts[discipline].push({
+				count: 1,
+			})
 		}
 
 		const colors = {
@@ -74,9 +100,9 @@ export function PieChartComponent() {
 		}
 
 		const chartData = Object.entries(disciplineCounts).map(
-			([discipline, count]) => ({
+			([discipline, entries]) => ({
 				discipline,
-				users: count,
+				users: entries.length,
 				fill: colors[discipline as keyof typeof colors] || colors.other,
 			}),
 		)
@@ -96,7 +122,7 @@ export function PieChartComponent() {
 
 	React.useEffect(() => {
 		fetchData()
-	}, [])
+	}, [monthToFilter])
 
 	return (
 		<Card className="flex flex-col h-full" id="onborda-step6">
@@ -105,25 +131,43 @@ export function PieChartComponent() {
 				<CardDescription>Enero - Agosto 2024</CardDescription>
 			</CardHeader>
 
-			<Select value={timeRange} onValueChange={setTimeRange}>
+			<Select value={monthToFilter} onValueChange={setMonthToFilter}>
 				<SelectTrigger
 					className="w-[160px] rounded-lg mt-5 ml-2"
-					aria-label="Select a value"
+					aria-label="Selecciona un mes"
 				>
-					<SelectValue placeholder="Last 3 months" />
+					<SelectValue placeholder="Últimos 6 meses" defaultValue="180d" />
 				</SelectTrigger>
 				<SelectContent className="rounded-xl">
 					<SelectItem value="180d" className="rounded-lg">
 						Últimos 6 meses
 					</SelectItem>
-					<SelectItem value="90d" className="rounded-lg">
-						Últimos 3 meses
+					<SelectItem value="2024-01" className="rounded-lg">
+						Enero
 					</SelectItem>
-					<SelectItem value="30d" className="rounded-lg">
-						Últimos 30 días
+					<SelectItem value="2024-02" className="rounded-lg">
+						Febrero
 					</SelectItem>
-					<SelectItem value="7d" className="rounded-lg">
-						Últimos 7 días
+					<SelectItem value="2024-03" className="rounded-lg">
+						Marzo
+					</SelectItem>
+					<SelectItem value="2024-04" className="rounded-lg">
+						Abril
+					</SelectItem>
+					<SelectItem value="2024-05" className="rounded-lg">
+						Mayo
+					</SelectItem>
+					<SelectItem value="2024-06" className="rounded-lg">
+						Junio
+					</SelectItem>
+					<SelectItem value="2024-07" className="rounded-lg">
+						Julio
+					</SelectItem>
+					<SelectItem value="2024-08" className="rounded-lg">
+						Agosto
+					</SelectItem>
+					<SelectItem value="2024-09" className="rounded-lg">
+						Septiembre
 					</SelectItem>
 				</SelectContent>
 			</Select>
@@ -133,49 +177,60 @@ export function PieChartComponent() {
 					config={chartConfig}
 					className="mx-auto aspect-square max-h-[250px]"
 				>
-					<PieChart>
-						<ChartTooltip
-							cursor={false}
-							content={<ChartTooltipContent hideLabel />}
-						/>
-						<Pie
-							data={chartData}
-							dataKey="users"
-							nameKey="discipline"
-							innerRadius={60}
-							strokeWidth={5}
-						>
-							<Label
-								content={({ viewBox }) => {
-									if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
-										return (
-											<text
-												x={viewBox.cx}
-												y={viewBox.cy}
-												textAnchor="middle"
-												dominantBaseline="middle"
-											>
-												<tspan
+					{chartData.length > 0 ? (
+						<PieChart>
+							<ChartTooltip
+								cursor={false}
+								content={<ChartTooltipContent hideLabel />}
+							/>
+							<Pie
+								data={chartData}
+								dataKey="users"
+								nameKey="discipline"
+								innerRadius={60}
+								strokeWidth={5}
+							>
+								<Label
+									content={({ viewBox }) => {
+										if (viewBox && 'cx' in viewBox && 'cy' in viewBox) {
+											return (
+												<text
 													x={viewBox.cx}
 													y={viewBox.cy}
-													className="fill-foreground text-3xl font-bold"
+													textAnchor="middle"
+													dominantBaseline="middle"
 												>
-													{totalVisitors.toLocaleString()}
-												</tspan>
-												<tspan
-													x={viewBox.cx}
-													y={(viewBox.cy || 0) + 24}
-													className="fill-muted-foreground"
-												>
-													Usuarios
-												</tspan>
-											</text>
-										)
-									}
-								}}
-							/>
-						</Pie>
-					</PieChart>
+													<tspan
+														x={viewBox.cx}
+														y={viewBox.cy}
+														className="fill-foreground text-3xl font-bold"
+													>
+														{totalVisitors.toLocaleString()}
+													</tspan>
+													<tspan
+														x={viewBox.cx}
+														y={(viewBox.cy || 0) + 24}
+														className="fill-muted-foreground"
+													>
+														Usuarios
+													</tspan>
+												</text>
+											)
+										}
+									}}
+								/>
+							</Pie>
+						</PieChart>
+					) : (
+						<div className="grid place-items-center h-full m-auto">
+							<div className="flex items-center justify-center gap-3 text-center text-3xl font-semibold">
+								<AlertCircle className="h-12 w-12 text-muted-foreground" />
+								<p className="text-muted-foreground">
+									No hay datos disponibles
+								</p>
+							</div>
+						</div>
+					)}
 				</ChartContainer>
 			</CardContent>
 			<CardFooter className="flex-col gap-2 text-sm">
