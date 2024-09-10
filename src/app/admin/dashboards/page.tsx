@@ -225,7 +225,7 @@ function DashboardsPage() {
 							</div>
 							<Button asChild size="sm" className="ml-auto gap-1">
 								<Link href="/admin/sales">
-									Ver detalles
+									Ver más
 									<ArrowUpRight className="h-4 w-4" />
 								</Link>
 							</Button>
@@ -270,7 +270,15 @@ function DashboardsPage() {
 					</Card>
 					<Card className="w-full" id="onborda-step3">
 						<CardHeader>
-							<CardTitle>Inscripciones recientes</CardTitle>
+							<CardTitle className="flex items-center justify-between gap-2">
+								Inscripciones
+								<Button asChild size="sm" className="ml-auto gap-1">
+									<Link href="/admin/payments">
+										Ver más
+										<ArrowUpRight className="h-4 w-4" />
+									</Link>
+								</Button>
+							</CardTitle>
 						</CardHeader>
 						{payments?.slice(0, 6).map((payment) => (
 							<PaymentCards payment={payment} key={payment.id} />

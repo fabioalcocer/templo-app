@@ -28,7 +28,7 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from '@/components/ui/select'
-import { parsedTimestampDate } from '@/lib/utils'
+import { getDynamicMonths, parsedTimestampDate } from '@/lib/utils'
 
 const chartConfig = {
 	calistenia: {
@@ -58,6 +58,7 @@ type ChartData = {
 export function PieChartComponent() {
 	const [chartData, setChartData] = React.useState<ChartData[]>([])
 	const [monthToFilter, setMonthToFilter] = React.useState('180d')
+	const monthOptions = getDynamicMonths(8)
 
 	function getDisciplineChartData(users: User[]) {
 		const disciplineCounts: Record<string, { count: number }[]> = {}
@@ -142,33 +143,15 @@ export function PieChartComponent() {
 					<SelectItem value="180d" className="rounded-lg">
 						Últimos 6 meses
 					</SelectItem>
-					<SelectItem value="2024-01" className="rounded-lg">
-						Enero
-					</SelectItem>
-					<SelectItem value="2024-02" className="rounded-lg">
-						Febrero
-					</SelectItem>
-					<SelectItem value="2024-03" className="rounded-lg">
-						Marzo
-					</SelectItem>
-					<SelectItem value="2024-04" className="rounded-lg">
-						Abril
-					</SelectItem>
-					<SelectItem value="2024-05" className="rounded-lg">
-						Mayo
-					</SelectItem>
-					<SelectItem value="2024-06" className="rounded-lg">
-						Junio
-					</SelectItem>
-					<SelectItem value="2024-07" className="rounded-lg">
-						Julio
-					</SelectItem>
-					<SelectItem value="2024-08" className="rounded-lg">
-						Agosto
-					</SelectItem>
-					<SelectItem value="2024-09" className="rounded-lg">
-						Septiembre
-					</SelectItem>
+					{monthOptions.map((option) => (
+						<SelectItem
+							key={option.value}
+							value={option.value}
+							className="rounded-lg"
+						>
+							{option.label}
+						</SelectItem>
+					))}
 				</SelectContent>
 			</Select>
 

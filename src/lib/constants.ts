@@ -92,7 +92,6 @@ export const PAYMENT_TYPES = [
   },
 ]
 
-
 export const CALISTENIA_PLANS = [
   {
     label: 'Calistenia',
@@ -106,4 +105,19 @@ export const CALISTENIA_PLANS = [
     label: 'Calistenia personalizada',
     value: 'custom-calistenia',
   },
+]
+
+export const monthOrder = [
+  'Enero',
+  'Febrero',
+  'Marzo',
+  'Abril',
+  'Mayo',
+  'Junio',
+  'Julio',
+  'Agosto',
+  'Septiembre',
+  'Octubre',
+  'Noviembre',
+  'Diciembre',
 ]

@@ -27,6 +27,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { convertStringToDate } from '@/lib/utils'
+import { AlertCircle } from 'lucide-react'
 
 type NumberKey = keyof typeof filtersDateObj
 
@@ -187,79 +188,90 @@ export function AreaChartComponent() {
 					config={chartConfig}
 					className="aspect-auto h-[250px] w-full"
 				>
-					<AreaChart data={filteredData}>
-						<defs>
-							<linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
-								<stop
-									offset="5%"
-									stopColor="var(--color-expenses)"
-									stopOpacity={0.8}
-								/>
-								<stop
-									offset="95%"
-									stopColor="var(--color-expenses)"
-									stopOpacity={0.1}
-								/>
-							</linearGradient>
-							<linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
-								<stop
-									offset="5%"
-									stopColor="var(--color-revenues)"
-									stopOpacity={0.8}
-								/>
-								<stop
-									offset="95%"
-									stopColor="var(--color-revenues)"
-									stopOpacity={0.1}
-								/>
-							</linearGradient>
-						</defs>
-						<CartesianGrid vertical={false} />
-						<XAxis
-							dataKey="date"
-							tickLine={false}
-							axisLine={false}
-							tickMargin={8}
-							minTickGap={32}
-							tickFormatter={(value) => {
-								const date = convertStringToDate(value)
-								return date.toLocaleDateString('en-US', {
-									month: 'short',
-									day: 'numeric',
-								})
-							}}
-						/>
-						<ChartTooltip
-							cursor={false}
-							content={
-								<ChartTooltipContent
-									labelFormatter={(value) => {
-                    const date = convertStringToDate(value)
-										return date.toLocaleDateString('en-US', {
-											month: 'short',
-											day: 'numeric',
-										})
-									}}
-									indicator="line"
-								/>
-							}
-						/>
-						<Area
-							dataKey="revenues"
-							type="natural"
-							fill="url(#fillMobile)"
-							stroke="var(--color-revenues)"
-							stackId="a"
-						/>
-						<Area
-							dataKey="expenses"
-							type="natural"
-							fill="url(#fillDesktop)"
-							stroke="var(--color-expenses)"
-							stackId="a"
-						/>
-						<ChartLegend content={<ChartLegendContent />} />
-					</AreaChart>
+					{filteredData?.length > 0 ? (
+						<AreaChart data={filteredData}>
+							<defs>
+								<linearGradient id="fillDesktop" x1="0" y1="0" x2="0" y2="1">
+									<stop
+										offset="5%"
+										stopColor="var(--color-expenses)"
+										stopOpacity={0.8}
+									/>
+									<stop
+										offset="95%"
+										stopColor="var(--color-expenses)"
+										stopOpacity={0.1}
+									/>
+								</linearGradient>
+								<linearGradient id="fillMobile" x1="0" y1="0" x2="0" y2="1">
+									<stop
+										offset="5%"
+										stopColor="var(--color-revenues)"
+										stopOpacity={0.8}
+									/>
+									<stop
+										offset="95%"
+										stopColor="var(--color-revenues)"
+										stopOpacity={0.1}
+									/>
+								</linearGradient>
+							</defs>
+							<CartesianGrid vertical={false} />
+							<XAxis
+								dataKey="date"
+								tickLine={false}
+								axisLine={false}
+								tickMargin={8}
+								minTickGap={32}
+								tickFormatter={(value) => {
+									const date = convertStringToDate(value)
+									return date.toLocaleDateString('en-US', {
+										month: 'short',
+										day: 'numeric',
+									})
+								}}
+							/>
+							<ChartTooltip
+								cursor={false}
+								content={
+									<ChartTooltipContent
+										labelFormatter={(value) => {
+											const date = convertStringToDate(value)
+											return date.toLocaleDateString('en-US', {
+												month: 'short',
+												day: 'numeric',
+											})
+										}}
+										indicator="line"
+									/>
+								}
+							/>
+							<Area
+								dataKey="revenues"
+								type="natural"
+								fill="url(#fillMobile)"
+								stroke="var(--color-revenues)"
+								stackId="a"
+							/>
+							<Area
+								dataKey="expenses"
+								type="natural"
+								fill="url(#fillDesktop)"
+								stroke="var(--color-expenses)"
+								stackId="a"
+							/>
+							<ChartLegend content={<ChartLegendContent />} />
+						</AreaChart>
+					) : (
+						<div className="grid place-items-center h-full m-auto">
+							<div className="flex items-center justify-center gap-3 text-center text-3xl font-semibold">
+								<AlertCircle className="h-12 w-12 text-muted-foreground" />
+								<p className="text-muted-foreground">
+									No hay datos disponibles
+								</p>
+							</div>
+						</div>
+					)}
 				</ChartContainer>
 			</CardContent>
 		</Card>

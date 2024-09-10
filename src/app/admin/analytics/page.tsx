@@ -2,6 +2,7 @@
 // import { BarsChartComponent } from '@/components/bar-chart'
 import { AreaChartComponent } from '@/components/area-chart'
 import { LineChartComponent } from '@/components/line-chart'
+import { MultiBarsChart } from '@/components/multi-bars-chart'
 import { PieChartComponent } from '@/components/pie-chart'
 import { MultipleRadarChart } from '@/components/radar-chart'
 import { LineChart } from 'lucide-react'
@@ -40,6 +41,9 @@ export default function SalesPage() {
 					<MultipleRadarChart />
 				</div>
 			</section>
+			<div className="w-full max-w-none">
+				<MultiBarsChart />
+			</div>
 		</div>
 	)
 }

@@ -1,6 +1,7 @@
 import { toast } from '@/components/ui/use-toast'
 import { type ClassValue, clsx } from 'clsx'
-import { format } from 'date-fns'
+import { format, subMonths } from 'date-fns'
+import { es } from 'date-fns/locale/es'
 import { Timestamp } from 'firebase/firestore'
 import { twMerge } from 'tailwind-merge'
 import { CATEGORIES, DISCIPLINES } from './constants'
@@ -110,4 +111,36 @@ export function parsedTimestampDate(date: Date) {
   const parsedDate = (date as unknown as Timestamp)?.toDate()
 
   return format(parsedDate, 'P')
+}
+
+export function parsedMonthFromTimestamp(date: Date) {
+  const parsedDate = (date as unknown as Timestamp)?.toDate()
+
+  return capitalizeFirstLetter(
+    format(parsedDate, 'MMMM', {
+      locale: es,
+    }),
+  )
+}
+
+function capitalizeFirstLetter(string: string) {
+  return string.charAt(0).toUpperCase() + string.slice(1)
+}
+
+export const getDynamicMonths = (monthsQuantity = 10) => {
+  const months = []
+  const currentDate = new Date()
+  for (let i = 0; i < monthsQuantity; i++) {
+    const date = subMonths(currentDate, i)
+    const month = capitalizeFirstLetter(
+      format(date, 'MMMM', {
+        locale: es,
+      }),
+    )
+
+    const year = format(date, 'yyyy')
+    const value = format(date, 'yyyy-MM')
+    months.push({ label: `${month} ${year}`, value })
+  }
+  return months
 }
