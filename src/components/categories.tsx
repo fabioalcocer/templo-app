@@ -1,6 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import { getCategories, getProductsByCategoryId } from '@/api'
-import { StoreIcon } from 'lucide-react'
+import { StoreIcon, ZapIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 import {
@@ -17,11 +17,16 @@ async function Categories() {
 
 	return (
 		<main className="flex flex-col gap-10 py-6 px-8 w-full max-w-7xl mx-auto">
-			<div className="flex items-center justify-center gap-3 text-center text-card-foreground dark:text-primary md:gap-5">
-				<StoreIcon className="h-9 w-9 md:h-10 md:w-10" />
-				<h2 className="text-center text-xl font-bold md:text-3xl">
-					Punto de venta
-				</h2>
+			<div className="flex flex-col items-center justify-center text-center text-card-foreground gap-2">
+				<div className="flex items-center gap-2">
+					<h2 className="text-center text-xl font-bold md:text-3xl">
+						Punto de venta
+					</h2>
+					<ZapIcon className="h-8 w-8 text-primary" />
+				</div>
+				<p className="dark:text-zinc-200 text-card-foreground">
+					Selecciona una categoría para ver los productos disponibles
+				</p>
 			</div>
 
 			<section className="flex w-full flex-wrap justify-center gap-8">
@@ -40,7 +45,7 @@ async function Categories() {
 									className="transition-all duration-300 ease-in-out group-hover:scale-110 absolute object-cover"
 								/>
 							</div>
-							<div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent opacity-50 transition-opacity duration-300 ease-in-out group-hover:opacity-0" />
+							<div className="absolute inset-0 bg-gradient-to-t dark:from-black/90 from-black/80 to-transparent opacity-50 transition-opacity duration-300 ease-in-out group-hover:opacity-0" />
 							<CardContent className="absolute inset-0 p-4 flex flex-col justify-end transition-opacity duration-300 ease-in-out group-hover:opacity-0">
 								<CardTitle className="text-xl font-semibold text-white mb-2">
 									{category.name}{' '}

@@ -37,7 +37,7 @@ import {
 } from '@/components/ui/dropdown-menu'
 
 import { Button } from './ui/button'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 
 type ChartData = {
 	month: string
@@ -107,7 +107,7 @@ const disciplines = [
 	'calistenia-personalizada',
 ] as const
 
-const chartConfig = {
+const initialChartConfig: ChartConfig = {
 	calistenia: {
 		label: 'Calistenia',
 		color: 'hsl(var(--chart-1))',
@@ -128,7 +128,7 @@ const chartConfig = {
 		label: 'Calistenia Personalizada',
 		color: 'hsl(var(--chart-5))',
 	},
-} satisfies ChartConfig
+}
 
 export const description =
 	'A multiple bar chart showing various fitness activities'
@@ -142,10 +142,6 @@ export function MultiBarsChart() {
 			disciplines.slice(0, 3).map((discipline) => [discipline, true]),
 		),
 	)
-
-	const countVisibleDisciplines = Object.values(visibleDisciplines).filter(
-		(key) => key,
-	).length
 
 	const toggleDiscipline = (discipline: string) => {
 		setVisibleDisciplines((prev) => ({
@@ -165,6 +161,14 @@ export function MultiBarsChart() {
 
 		return filteredPoint
 	})
+
+	const activeChartConfig = useMemo(() => {
+		return Object.fromEntries(
+			Object.entries(initialChartConfig).filter(
+				([key]) => visibleDisciplines[key],
+			),
+		) as ChartConfig
+	}, [visibleDisciplines])
 
 	useEffect(() => {
 		setChartData(filteredChartData as unknown as ChartData[])
@@ -197,7 +201,7 @@ export function MultiBarsChart() {
 					</DropdownMenuContent>
 				</DropdownMenu>
 
-				<ChartContainer config={chartConfig}>
+				<ChartContainer config={activeChartConfig}>
 					<BarChart accessibilityLayer data={chartData}>
 						<CartesianGrid vertical={false} />
 						<XAxis
@@ -216,16 +220,14 @@ export function MultiBarsChart() {
 							cursor={{ fill: 'rgba(0, 0, 0, 0.1)' }}
 							content={<ChartTooltipContent indicator="line" />}
 						/>
-						{Object.keys(chartConfig)
-							.slice(0, countVisibleDisciplines)
-							.map((key, index) => (
-								<Bar
-									key={key}
-									dataKey={key}
-									fill={`var(--color-${key})`}
-									radius={[4, 4, 0, 0]}
-								/>
-							))}
+						{Object.entries(activeChartConfig).map(([key, config]) => (
+							<Bar
+								key={key}
+								dataKey={key}
+								fill={config.color}
+								radius={[4, 4, 0, 0]}
+							/>
+						))}
 						<ChartLegend content={<ChartLegendContent />} />
 					</BarChart>
 				</ChartContainer>

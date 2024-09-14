@@ -70,8 +70,8 @@ function AdminSidebar({
 
 	return (
 		<div className="grid min-h-[calc(100vh_-_80px)] w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-			<div className="hidden border-r bg-background md:block">
-				<div className="flex h-full max-h-screen flex-col gap-2">
+			<div className="hidden border-r bg-background md:block relative">
+				<div className="flex h-full max-h-screen flex-col gap-2 sticky top-0">
 					<div className="flex h-14 items-center border-b px-4 lg:h-[60px] lg:px-6">
 						<div className="flex items-center gap-2 text-lg font-semibold">
 							<div className="flex items-center gap-3 text-base">
