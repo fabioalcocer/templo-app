@@ -102,7 +102,7 @@ export function AreaChartComponent() {
 
 		const dates = []
 		for (let date = startDate; date <= endDate; date += DAY_MS) {
-			dates.push(new Date(date))
+			dates.push(new Date(date + DAY_MS))
 		}
 
 		const result = dates.map((date) => {

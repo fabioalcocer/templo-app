@@ -41,7 +41,7 @@ export default function SalesPage() {
 					<MultipleRadarChart />
 				</div>
 			</section>
-			<div className="w-full max-w-none">
+			<div className="">
 				<MultiBarsChart />
 			</div>
 		</div>

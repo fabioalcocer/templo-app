@@ -1,9 +1,10 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { TrendingUp } from 'lucide-react'
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from 'recharts'
-
 import { getAllUsers } from '@/api'
+
 import {
 	Card,
 	CardContent,
@@ -12,13 +13,13 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/components/ui/card'
+
 import {
 	ChartConfig,
 	ChartContainer,
 	ChartTooltip,
 	ChartTooltipContent,
 } from '@/components/ui/chart'
-import { useEffect, useState } from 'react'
 
 const chartConfig = {
 	active: {
@@ -61,7 +62,6 @@ export function MultipleRadarChart() {
 		}
 
 		const chartDataLoaded = generateRadarChartData()
-		console.log(chartDataLoaded)
 		setChartData(chartDataLoaded)
 	}
 
@@ -70,7 +70,7 @@ export function MultipleRadarChart() {
 	}, [])
 
 	return (
-		<Card className="h-full">
+		<Card className="h-full flex flex-col">
 			<CardHeader className="items-center pb-4">
 				<CardTitle>Usuarios - Actividad</CardTitle>
 				<CardDescription>
@@ -98,7 +98,7 @@ export function MultipleRadarChart() {
 					</RadarChart>
 				</ChartContainer>
 			</CardContent>
-			<CardFooter className="flex-col gap-2 text-sm">
+			<CardFooter className="flex-col gap-2 text-sm mt-auto">
 				<div className="flex items-center gap-2 font-medium leading-none">
 					La tendencia sube un 45% este mes <TrendingUp className="h-4 w-4" />
 				</div>

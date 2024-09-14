@@ -43,7 +43,10 @@ async function Categories() {
 							<div className="absolute inset-0 bg-gradient-to-t from-black/90 to-transparent opacity-50 transition-opacity duration-300 ease-in-out group-hover:opacity-0" />
 							<CardContent className="absolute inset-0 p-4 flex flex-col justify-end transition-opacity duration-300 ease-in-out group-hover:opacity-0">
 								<CardTitle className="text-xl font-semibold text-white mb-2">
-									{category.name} <span className='text-base ml-2 text-primary'>({category?.productsLength} productos)</span>
+									{category.name}{' '}
+									<span className="text-base ml-2 text-primary">
+										({category?.productsLength} productos)
+									</span>
 								</CardTitle>
 								<CardDescription className="text-sm text-gray-100 dark:text-gray-200">
 									{category.description}
