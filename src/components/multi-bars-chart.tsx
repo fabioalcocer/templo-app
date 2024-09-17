@@ -1,13 +1,6 @@
 'use client'
 
-import {
-	Bar,
-	BarChart,
-	CartesianGrid,
-	ResponsiveContainer,
-	XAxis,
-	YAxis,
-} from 'recharts'
+import { Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts'
 
 import { ChevronDown, TrendingUp } from 'lucide-react'
 
