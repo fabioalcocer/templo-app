@@ -48,7 +48,6 @@ export default function RootLayout({
 									cardComponent={CustomCard}
 									shadowOpacity="0.8"
 									// shadowRgb="55,48,163"
-									// cardTransition={{ duration: 2, type: 'tween' }}
 								>
 									<main className="flex min-h-screen flex-col items-center">
 										<Header />
@@ -66,7 +65,7 @@ export default function RootLayout({
 					</SessionProvider>
 
 					<OpenPanelComponent
-						clientId="327ef2b5-99b1-499e-8af9-38b3cbcf55b2"
+						clientId="870c92d4-d23b-49c2-a77d-3aeffd830e98"
 						trackScreenViews={true}
 						trackAttributes={true}
 						trackOutgoingLinks={true}

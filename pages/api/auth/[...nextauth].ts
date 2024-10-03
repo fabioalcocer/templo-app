@@ -1,7 +1,13 @@
+import { auth } from '@/firebase/config'
+import { OpenPanel } from '@openpanel/nextjs'
+import { signInWithEmailAndPassword } from 'firebase/auth'
 import NextAuth from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import { signInWithEmailAndPassword } from 'firebase/auth'
-import { auth } from '@/firebase/config'
+
+export const op = new OpenPanel({
+  clientId: '870c92d4-d23b-49c2-a77d-3aeffd830e98',
+  clientSecret: process.env.OPEN_PANEL_SECRET,
+})
 
 export const authOptions = {
   // Configure one or more authentication providers
@@ -20,6 +26,10 @@ export const authOptions = {
         )
           .then((userCredential) => {
             if (userCredential.user) {
+              op.identify({
+                profileId: userCredential.user.uid,
+                email: userCredential.user.email || '',
+              })
               return userCredential.user
             }
             return null
