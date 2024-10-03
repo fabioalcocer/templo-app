@@ -8,6 +8,9 @@ dependencies:
   '@hookform/resolvers':
     specifier: ^3.3.4
     version: 3.3.4(react-hook-form@7.50.1)
+  '@openpanel/nextjs':
+    specifier: ^1.0.5
+    version: 1.0.5(next@14.1.0)(react-dom@18.0.0)(react@18.0.0)
   '@radix-ui/react-alert-dialog':
     specifier: ^1.0.5
     version: 1.0.5(@types/react-dom@18.0.0)(@types/react@18.2.8)(react-dom@18.0.0)(react@18.0.0)
@@ -939,6 +942,29 @@ packages:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.17.1
+
+  /@openpanel/nextjs@1.0.5(next@14.1.0)(react-dom@18.0.0)(react@18.0.0):
+    resolution: {integrity: sha512-+Zdrl5fC8Iczub/pVvX8Xp9q6mQvApNXGenCEkdiAZk9nT7xpaLfzkdHnwx7XHxp5H50zdwgqWDGiwLMqRWjKA==}
+    peerDependencies:
+      next: ^12.0.0 || ^13.0.0 || ^14.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      '@openpanel/web': 1.0.1
+      next: 14.1.0(react-dom@18.0.0)(react@18.0.0)
+      react: 18.0.0
+      react-dom: 18.0.0(react@18.0.0)
+    dev: false
+
+  /@openpanel/sdk@1.0.0:
+    resolution: {integrity: sha512-FNmmfjdXoC/VHEjA+WkrQ4lyM5lxEmV7xDd57uj4E+lIS0sU3DLG2mV/dpS8AscnZbUvuMn3kPhiLCqYzuv/gg==}
+    dev: false
+
+  /@openpanel/web@1.0.1:
+    resolution: {integrity: sha512-cVZ7Kr9SicczJ/RDIfEtZs8+1iGDzwkabVA/j3NqSl8VSucsC8m1+LVbjmCDzCJNnK4yVn6tEcc9PJRi2rtllw==}
+    dependencies:
+      '@openpanel/sdk': 1.0.0
+    dev: false
 
   /@panva/hkdf@1.1.1:
     resolution: {integrity: sha512-dhPeilub1NuIG0X5Kvhh9lH4iW3ZsHlnzwgwbOlgwQ2wG1IqFzsgHqmKPk3WzsdWAeaxKJxgM0+W433RmN45GA==}

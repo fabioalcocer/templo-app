@@ -7,6 +7,7 @@ import { Toaster } from '@/components/ui/toaster'
 import { fontSans } from '@/lib/fonts'
 import { steps } from '@/lib/steps'
 import { cn } from '@/lib/utils'
+import { OpenPanelComponent } from '@openpanel/nextjs'
 import type { Metadata } from 'next'
 import { ViewTransitions } from 'next-view-transitions'
 import Script from 'next/script'
@@ -63,6 +64,14 @@ export default function RootLayout({
 						</ThemeProvider>
 						<Toaster />
 					</SessionProvider>
+
+					<OpenPanelComponent
+						clientId="327ef2b5-99b1-499e-8af9-38b3cbcf55b2"
+						trackScreenViews={true}
+						trackAttributes={true}
+						trackOutgoingLinks={true}
+						profileId="admin"
+					/>
 				</body>
 			</html>
 		</ViewTransitions>
