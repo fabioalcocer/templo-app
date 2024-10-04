@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input'
 import { toast } from '@/components/ui/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useOpenPanel } from '@openpanel/nextjs'
+import * as seline from '@seline-analytics/web'
 import { User2Icon, UserIcon } from 'lucide-react'
 import { signIn, useSession } from 'next-auth/react'
 import { redirect } from 'next/navigation'
@@ -52,6 +53,9 @@ function LoginPage() {
 			callbackUrl: '/admin/dashboards',
 		}).then(() => {
 			op.track('success_login', { userEmail: data?.email })
+			seline.track('user: signed up', {
+				email: data?.email,
+			})
 		})
 		// toast({
 		//   title: 'You submitted the following values:',

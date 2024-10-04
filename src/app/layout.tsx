@@ -8,6 +8,7 @@ import { fontSans } from '@/lib/fonts'
 import { steps } from '@/lib/steps'
 import { cn } from '@/lib/utils'
 import { OpenPanelComponent } from '@openpanel/nextjs'
+import * as seline from '@seline-analytics/web'
 import type { Metadata } from 'next'
 import { ViewTransitions } from 'next-view-transitions'
 import Script from 'next/script'
@@ -24,10 +25,15 @@ export default function RootLayout({
 }: Readonly<{
 	children: React.ReactNode
 }>) {
+	seline.init({
+		token: 'b67035b36c8b0e5',
+		apiHost: '/_sln',
+	})
+
 	return (
 		<ViewTransitions>
 			<html lang="es">
-				<Script src="https://cdn.seline.so/seline.js" async />
+				<Script src="/sln.js" data-api-host="/_sln" async />
 				<body
 					suppressHydrationWarning
 					className={cn(

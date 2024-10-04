@@ -56,6 +56,9 @@ dependencies:
   '@radix-ui/react-toast':
     specifier: ^1.1.5
     version: 1.1.5(@types/react-dom@18.0.0)(@types/react@18.2.8)(react-dom@18.0.0)(react@18.0.0)
+  '@seline-analytics/web':
+    specifier: ^0.0.15
+    version: 0.0.15
   '@tanstack/react-table':
     specifier: ^8.12.0
     version: 8.12.0(react-dom@18.0.0)(react@18.0.0)
@@ -2030,6 +2033,10 @@ packages:
   /@rushstack/eslint-patch@1.7.2:
     resolution: {integrity: sha512-RbhOOTCNoCrbfkRyoXODZp75MlpiHMgbE5MEBZAnnnLyQNgrigEj4p0lzsMDyc1zVsJDLrivB58tgg3emX0eEA==}
     dev: true
+
+  /@seline-analytics/web@0.0.15:
+    resolution: {integrity: sha512-TnBWx+hpwvZS1B5SsCnW6xPqczEnpHJb5mK2XiIRqYxriJgmhWisx7qqeguE0A382Xbj1BWv+0bXOWtXuW5Amw==}
+    dev: false
 
   /@swc/helpers@0.5.2:
     resolution: {integrity: sha512-E4KcWTpoLHqwPHLxidpOqQbcrZVgi0rsmmZXUle1jXmJfuIf/UWpczUJ7MZZ5tlxytgJXyp0w4PGkkeLiuIdZw==}
