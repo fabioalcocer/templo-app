@@ -20,6 +20,8 @@ import { redirect } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
+seline.init()
+
 const FormSchema = z.object({
 	email: z
 		.string({
