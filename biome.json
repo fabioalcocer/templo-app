@@ -25,7 +25,8 @@
       },
       "style": {
         "useImportType": "off",
-        "useSelfClosingElements": "info"
+        "useSelfClosingElements": "info",
+        "noNonNullAssertion": "off"
       },
       "correctness": {
         "useExhaustiveDependencies": "info"
