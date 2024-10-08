@@ -1,4 +1,3 @@
-import './globals.css'
 import { CommandDialogMenu } from '@/components/command-menu'
 import CustomCard from '@/components/custom-card'
 import Header from '@/components/header'
@@ -13,7 +12,11 @@ import type { Metadata } from 'next'
 import { ViewTransitions } from 'next-view-transitions'
 import Script from 'next/script'
 import { Onborda, OnbordaProvider } from 'onborda'
+import './globals.css'
 import SessionProvider from './SessionProvider'
+
+import { ClerkProvider } from '@clerk/nextjs'
+import { dark, neobrutalism } from '@clerk/themes'
 
 export const metadata: Metadata = {
 	title: 'Templo App',
@@ -31,54 +34,63 @@ export default function RootLayout({
 	})
 
 	return (
-		<ViewTransitions>
-			<html lang="es">
-				<Script src="/sln.js" data-api-host="/_sln" async />
-				<body
-					suppressHydrationWarning
-					className={cn(
-						'min-h-screen bg-background font-sans antialiased',
-						fontSans.variable,
-					)}
-				>
-					<SessionProvider>
-						<ThemeProvider
-							attribute="class"
-							defaultTheme="system"
-							enableSystem
-							disableTransitionOnChange
-						>
-							<OnbordaProvider>
-								<Onborda
-									steps={steps}
-									cardComponent={CustomCard}
-									shadowOpacity="0.8"
-									// shadowRgb="55,48,163"
-								>
-									<main className="flex min-h-screen flex-col items-center">
-										<Header />
-										<div className="container flex w-full flex-col px-0">
-											{children}
-										</div>
-										<div className="mx-auto mt-auto w-full text-center">
-											<CommandDialogMenu />
-										</div>
-									</main>
-								</Onborda>
-							</OnbordaProvider>
-						</ThemeProvider>
-						<Toaster />
-					</SessionProvider>
+		<ClerkProvider
+			appearance={{
+				variables: {
+					colorPrimary: '#FACC14',
+				},
+				baseTheme: [dark],
+			}}
+		>
+			<ViewTransitions>
+				<html lang="es">
+					<Script src="/sln.js" data-api-host="/_sln" async />
+					<body
+						suppressHydrationWarning
+						className={cn(
+							'min-h-screen bg-background font-sans antialiased',
+							fontSans.variable,
+						)}
+					>
+						<SessionProvider>
+							<ThemeProvider
+								attribute="class"
+								defaultTheme="system"
+								enableSystem
+								disableTransitionOnChange
+							>
+								<OnbordaProvider>
+									<Onborda
+										steps={steps}
+										cardComponent={CustomCard}
+										shadowOpacity="0.8"
+										// shadowRgb="55,48,163"
+									>
+										<main className="flex min-h-screen flex-col items-center">
+											<Header />
+											<div className="container flex w-full flex-col px-0">
+												{children}
+											</div>
+											<div className="mx-auto mt-auto w-full text-center">
+												<CommandDialogMenu />
+											</div>
+										</main>
+									</Onborda>
+								</OnbordaProvider>
+							</ThemeProvider>
+							<Toaster />
+						</SessionProvider>
 
-					<OpenPanelComponent
-						clientId="870c92d4-d23b-49c2-a77d-3aeffd830e98"
-						trackScreenViews={true}
-						trackAttributes={true}
-						trackOutgoingLinks={true}
-						profileId="admin"
-					/>
-				</body>
-			</html>
-		</ViewTransitions>
+						<OpenPanelComponent
+							clientId="870c92d4-d23b-49c2-a77d-3aeffd830e98"
+							trackScreenViews={true}
+							trackAttributes={true}
+							trackOutgoingLinks={true}
+							profileId="admin"
+						/>
+					</body>
+				</html>
+			</ViewTransitions>
+		</ClerkProvider>
 	)
 }
