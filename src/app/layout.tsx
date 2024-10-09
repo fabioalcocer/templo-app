@@ -1,3 +1,4 @@
+import './globals.css'
 import { CommandDialogMenu } from '@/components/command-menu'
 import CustomCard from '@/components/custom-card'
 import Header from '@/components/header'
@@ -12,11 +13,9 @@ import type { Metadata } from 'next'
 import { ViewTransitions } from 'next-view-transitions'
 import Script from 'next/script'
 import { Onborda, OnbordaProvider } from 'onborda'
-import './globals.css'
 import SessionProvider from './SessionProvider'
 
 import { ClerkProvider } from '@clerk/nextjs'
-import { dark, neobrutalism } from '@clerk/themes'
 
 export const metadata: Metadata = {
 	title: 'Templo App',
@@ -39,7 +38,6 @@ export default function RootLayout({
 				variables: {
 					colorPrimary: '#FACC14',
 				},
-				baseTheme: [dark],
 			}}
 		>
 			<ViewTransitions>

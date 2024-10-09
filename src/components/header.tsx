@@ -26,14 +26,17 @@ import {
 	UserButton,
 	useAuth,
 	useOrganization,
+	useUser,
 } from '@clerk/nextjs'
 import { dark } from '@clerk/themes'
-import { signOut } from 'next-auth/react'
+import { Skeleton } from './ui/skeleton'
 
 function Header() {
+	const { isSignedIn, user } = useUser()
+	const { theme } = useTheme()
+
 	const authObj = useAuth()
 	const organization = useOrganization()
-	console.log(organization)
 
 	const [isDarkTheme, setIsDarkTheme] = useState(false)
 	const { resolvedTheme } = useTheme()
@@ -63,39 +66,56 @@ function Header() {
 					</SignInButton>
 				</SignedOut>
 
-				<SignedIn>
-					<OrganizationSwitcher>
-						<OrganizationSwitcher.OrganizationProfilePage
-							label="Custom Page"
-							url="custom"
-							labelIcon={<UserCog2Icon className="w-4 h-4" />}
+				<div className="space-x-5">
+					<SignedIn>
+						<OrganizationSwitcher
+							appearance={{
+								baseTheme: theme === 'dark' ? dark : undefined,
+								variables: {
+									colorPrimary: '#fff',
+								},
+								elements: {
+									avatarBox: 'w-8 h-8 rounded-full',
+									organizationPreview:
+										'text-slate-900 dark:text-muted-foreground',
+									organizationSwitcherTriggerIcon:
+										'text-slate-900 dark:text-muted-foreground',
+								},
+							}}
 						>
-							<CustomPage />
-						</OrganizationSwitcher.OrganizationProfilePage>
-					</OrganizationSwitcher>
-				</SignedIn>
-				<SignedIn>
-					<UserButton
-						appearance={{
-							elements: {
-								avatarBox: 'w-10 h-10',
-							},
-							baseTheme: dark,
-						}}
-					/>
-				</SignedIn>
+							<OrganizationSwitcher.OrganizationProfilePage
+								label="Custom Page"
+								url="custom"
+								labelIcon={<UserCog2Icon className="w-4 h-4" />}
+							>
+								<CustomPage />
+							</OrganizationSwitcher.OrganizationProfilePage>
+						</OrganizationSwitcher>
+					</SignedIn>
+					<SignedIn>
+						<UserButton
+							appearance={{
+								elements: {
+									avatarBox: 'w-10 h-10',
+								},
+								baseTheme: theme === 'dark' ? dark : undefined,
+							}}
+						/>
+					</SignedIn>
+				</div>
 
 				<div className="flex items-center gap-3">
 					<ModeToggle />
 					<DropdownMenu>
 						<DropdownMenuTrigger className="rounded-full">
-							<Avatar>
-								<AvatarImage
-									src="https://avatars.githubusercontent.com/u/88163765?v=4"
-									alt="@templo_admin"
-								/>
-								<AvatarFallback>AF</AvatarFallback>
-							</Avatar>
+							{isSignedIn ? (
+								<Avatar>
+									<AvatarImage src={user?.imageUrl} alt="@templo_admin" />
+									<AvatarFallback>AF</AvatarFallback>
+								</Avatar>
+							) : (
+								<Skeleton className="h-10 w-10 rounded-full" />
+							)}
 						</DropdownMenuTrigger>
 						<DropdownMenuContent align="end">
 							<DropdownMenuLabel>Mi cuenta</DropdownMenuLabel>
