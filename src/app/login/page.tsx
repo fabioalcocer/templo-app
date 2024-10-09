@@ -10,13 +10,11 @@ import {
 	FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
-import { toast } from '@/components/ui/use-toast'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useOpenPanel } from '@openpanel/nextjs'
 import * as seline from '@seline-analytics/web'
 import { User2Icon, UserIcon } from 'lucide-react'
-import { signIn, useSession } from 'next-auth/react'
-import { redirect } from 'next/navigation'
+import { signIn } from 'next-auth/react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
@@ -36,12 +34,7 @@ const FormSchema = z.object({
 })
 
 function LoginPage() {
-	const session = useSession()
 	const op = useOpenPanel()
-
-	if (session.status === 'authenticated') {
-		redirect('/admin/dashboards')
-	}
 
 	const form = useForm<z.infer<typeof FormSchema>>({
 		resolver: zodResolver(FormSchema),
