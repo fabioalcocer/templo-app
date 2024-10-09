@@ -31,12 +31,9 @@ import {
 import { dark } from '@clerk/themes'
 import { Skeleton } from './ui/skeleton'
 
-function Header() {
-	const { isSignedIn, user } = useUser()
+function Header({ hasOrganization }: { hasOrganization: boolean }) {
+	const { isLoaded, isSignedIn, user } = useUser()
 	const { theme } = useTheme()
-
-	const authObj = useAuth()
-	const organization = useOrganization()
 
 	const [isDarkTheme, setIsDarkTheme] = useState(false)
 	const { resolvedTheme } = useTheme()
@@ -68,30 +65,33 @@ function Header() {
 
 				<div className="space-x-5">
 					<SignedIn>
-						<OrganizationSwitcher
-							appearance={{
-								baseTheme: theme === 'dark' ? dark : undefined,
-								variables: {
-									colorPrimary: '#fff',
-								},
-								elements: {
-									avatarBox: 'w-8 h-8 rounded-full',
-									organizationPreview:
-										'text-slate-900 dark:text-muted-foreground',
-									organizationSwitcherTriggerIcon:
-										'text-slate-900 dark:text-muted-foreground',
-								},
-							}}
-						>
-							<OrganizationSwitcher.OrganizationProfilePage
-								label="Custom Page"
-								url="custom"
-								labelIcon={<UserCog2Icon className="w-4 h-4" />}
+						{hasOrganization && (
+							<OrganizationSwitcher
+								appearance={{
+									baseTheme: theme === 'dark' ? dark : undefined,
+									variables: {
+										colorPrimary: '#fff',
+									},
+									elements: {
+										avatarBox: 'w-8 h-8 rounded-full',
+										organizationPreview:
+											'text-slate-900 dark:text-muted-foreground',
+										organizationSwitcherTriggerIcon:
+											'text-slate-900 dark:text-muted-foreground',
+									},
+								}}
 							>
-								<CustomPage />
-							</OrganizationSwitcher.OrganizationProfilePage>
-						</OrganizationSwitcher>
+								<OrganizationSwitcher.OrganizationProfilePage
+									label="Custom Page"
+									url="custom"
+									labelIcon={<UserCog2Icon className="w-4 h-4" />}
+								>
+									<CustomPage />
+								</OrganizationSwitcher.OrganizationProfilePage>
+							</OrganizationSwitcher>
+						)}
 					</SignedIn>
+
 					<SignedIn>
 						<UserButton
 							appearance={{
@@ -107,16 +107,23 @@ function Header() {
 				<div className="flex items-center gap-3">
 					<ModeToggle />
 					<DropdownMenu>
-						<DropdownMenuTrigger className="rounded-full">
-							{isSignedIn ? (
+						{isLoaded && isSignedIn ? (
+							<DropdownMenuTrigger className="rounded-full">
 								<Avatar>
 									<AvatarImage src={user?.imageUrl} alt="@templo_admin" />
 									<AvatarFallback>AF</AvatarFallback>
 								</Avatar>
-							) : (
-								<Skeleton className="h-10 w-10 rounded-full" />
-							)}
-						</DropdownMenuTrigger>
+							</DropdownMenuTrigger>
+						) : (
+							<SignedOut>
+								<SignInButton>
+									<Button variant="outline" size="icon">
+										<UserIcon className="h-5 w-5" />
+									</Button>
+								</SignInButton>
+							</SignedOut>
+						)}
+						{!isLoaded && <Skeleton className="h-10 w-10 rounded-full" />}
 						<DropdownMenuContent align="end">
 							<DropdownMenuLabel>Mi cuenta</DropdownMenuLabel>
 							<DropdownMenuSeparator />

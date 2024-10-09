@@ -15,6 +15,7 @@ import Script from 'next/script'
 import { Onborda, OnbordaProvider } from 'onborda'
 import SessionProvider from './SessionProvider'
 
+import ClerkServerWrapper from '@/components/clerk-server-wrapper'
 import { ClerkProvider } from '@clerk/nextjs'
 
 export const metadata: Metadata = {
@@ -22,7 +23,7 @@ export const metadata: Metadata = {
 	description: 'Templo Gym App by Fabio Alcocer',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
 	children,
 }: Readonly<{
 	children: React.ReactNode
@@ -65,7 +66,7 @@ export default function RootLayout({
 										// shadowRgb="55,48,163"
 									>
 										<main className="flex min-h-screen flex-col items-center">
-											<Header />
+											<ClerkServerWrapper />
 											<div className="container flex w-full flex-col px-0">
 												{children}
 											</div>
