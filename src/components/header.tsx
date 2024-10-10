@@ -9,8 +9,7 @@ import {
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { UserIcon } from 'lucide-react'
-import { signOut, useSession } from 'next-auth/react'
+import { UserCog2Icon, UserIcon } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -19,11 +18,25 @@ import { ModeToggle } from './mode-toggle'
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
 import { Button } from './ui/button'
 
-function Header() {
+import {
+	OrganizationSwitcher,
+	SignInButton,
+	SignedIn,
+	SignedOut,
+	UserButton,
+	useAuth,
+	useOrganization,
+	useUser,
+} from '@clerk/nextjs'
+import { dark } from '@clerk/themes'
+import { Skeleton } from './ui/skeleton'
+
+function Header({ hasOrganization }: { hasOrganization: boolean }) {
+	const { isLoaded, isSignedIn, user } = useUser()
+	const { theme } = useTheme()
+
 	const [isDarkTheme, setIsDarkTheme] = useState(false)
 	const { resolvedTheme } = useTheme()
-	const session = useSession()
-	const isLogin = session.status === 'authenticated'
 
 	useEffect(() => {
 		setIsDarkTheme(resolvedTheme === 'dark')
@@ -42,46 +55,90 @@ function Header() {
 					{/* <h1 className='font-mono text-2xl font-semibold uppercase'>Templo</h1> */}
 				</Link>
 
+				<SignedOut>
+					<SignInButton>
+						<Button variant="outline" size="icon">
+							<UserIcon className="h-5 w-5" />
+						</Button>
+					</SignInButton>
+				</SignedOut>
+
+				<div className="space-x-5">
+					<SignedIn>
+						{hasOrganization && (
+							<OrganizationSwitcher
+								appearance={{
+									baseTheme: theme === 'dark' ? dark : undefined,
+									variables: {
+										colorPrimary: '#fff',
+									},
+									elements: {
+										avatarBox: 'w-8 h-8 rounded-full',
+										organizationPreview:
+											'text-slate-900 dark:text-muted-foreground',
+										organizationSwitcherTriggerIcon:
+											'text-slate-900 dark:text-muted-foreground',
+									},
+								}}
+							>
+								<OrganizationSwitcher.OrganizationProfilePage
+									label="Custom Page"
+									url="custom"
+									labelIcon={<UserCog2Icon className="w-4 h-4" />}
+								>
+									<CustomPage />
+								</OrganizationSwitcher.OrganizationProfilePage>
+							</OrganizationSwitcher>
+						)}
+					</SignedIn>
+
+					<SignedIn>
+						<UserButton
+							appearance={{
+								elements: {
+									avatarBox: 'w-10 h-10',
+								},
+								baseTheme: theme === 'dark' ? dark : undefined,
+							}}
+						/>
+					</SignedIn>
+				</div>
+
 				<div className="flex items-center gap-3">
 					<ModeToggle />
-					{isLogin ? (
-						<>
-							<DropdownMenu>
-								<DropdownMenuTrigger className="rounded-full">
-									<Avatar>
-										<AvatarImage
-											src="https://avatars.githubusercontent.com/u/88163765?v=4"
-											alt="@templo_admin"
-										/>
-										<AvatarFallback>AF</AvatarFallback>
-									</Avatar>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent align="end">
-									<DropdownMenuLabel>Mi cuenta</DropdownMenuLabel>
-									<DropdownMenuSeparator />
-									<DropdownMenuItem asChild>
-										<Link href="/">Punto de venta</Link>
-									</DropdownMenuItem>
-									<DropdownMenuItem asChild>
-										<Link href="/admin/dashboards">Dashboard</Link>
-									</DropdownMenuItem>
-									<DropdownMenuSeparator />
-									<DropdownMenuItem
-										onClick={() => signOut()}
-										className="text-red-500"
-									>
-										Cerrar sesión
-									</DropdownMenuItem>
-								</DropdownMenuContent>
-							</DropdownMenu>
-						</>
-					) : (
-						<Link href="/login">
-							<Button variant="outline" size="icon">
-								<UserIcon className="h-5 w-5" />
-							</Button>
-						</Link>
-					)}
+					<DropdownMenu>
+						{isLoaded && isSignedIn ? (
+							<DropdownMenuTrigger className="rounded-full">
+								<Avatar>
+									<AvatarImage src={user?.imageUrl} alt="@templo_admin" />
+									<AvatarFallback>AF</AvatarFallback>
+								</Avatar>
+							</DropdownMenuTrigger>
+						) : (
+							<SignedOut>
+								<SignInButton>
+									<Button variant="outline" size="icon">
+										<UserIcon className="h-5 w-5" />
+									</Button>
+								</SignInButton>
+							</SignedOut>
+						)}
+						{!isLoaded && <Skeleton className="h-10 w-10 rounded-full" />}
+						<DropdownMenuContent align="end">
+							<DropdownMenuLabel>Mi cuenta</DropdownMenuLabel>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem asChild>
+								<Link href="/">Punto de venta</Link>
+							</DropdownMenuItem>
+							<DropdownMenuItem asChild>
+								<Link href="/admin/dashboards">Dashboard</Link>
+							</DropdownMenuItem>
+							<DropdownMenuSeparator />
+							<DropdownMenuItem className="text-red-500">
+								Cerrar sesión
+							</DropdownMenuItem>
+						</DropdownMenuContent>
+					</DropdownMenu>
 				</div>
 			</div>
 		</header>
@@ -89,3 +146,12 @@ function Header() {
 }
 
 export default Header
+
+const CustomPage = () => {
+	return (
+		<div className="space-y-2">
+			<h1 className="text-base font-bold">Custom Organization Page</h1>
+			<p className="text-xs">This is the custom organization profile page</p>
+		</div>
+	)
+}

@@ -1,6 +1,5 @@
 'use client'
 import {
-	Activity,
 	ArrowUpRight,
 	CreditCard,
 	DollarSign,
@@ -41,9 +40,8 @@ import {
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import MotionNumber from 'motion-number'
-import { useSession } from 'next-auth/react'
-import { redirect } from 'next/navigation'
 import { useEffect, useState } from 'react'
+
 function DashboardsPage() {
 	const [payments, setPayments] = useState<Payment[]>([])
 	const [purchases, setPurchases] = useState<Purchase[]>([])
@@ -97,17 +95,6 @@ function DashboardsPage() {
 	useEffect(() => {
 		fetchData()
 	}, [])
-
-	const session = useSession({
-		required: true,
-		onUnauthenticated() {
-			redirect('/login')
-		},
-	})
-
-	if (!session) {
-		return null
-	}
 
 	return (
 		<div className="flex min-h-[calc(100vh_-_80px)] w-full flex-col">
