@@ -10,10 +10,9 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 
-import { getAllPayments, getAllPurchases, getSales, getUserById } from '@/api'
+import { getAllPayments, getAllPurchases, getSales } from '@/api'
 import { DatePickerWithRange } from '@/components/date-range-picker'
 import PaymentCards from '@/components/payments-card'
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
 	Card,
@@ -37,14 +36,17 @@ import {
 	calculateTotalFromSales,
 	parsedPriceFromNumber,
 } from '@/lib/utils'
-import { useUser } from '@stackframe/stack'
+import { Team, useUser } from '@stackframe/stack'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import MotionNumber from 'motion-number'
 import { useEffect, useState } from 'react'
 
 function DashboardsPage() {
-	const user = useUser()
+	const user = useUser({ or: 'redirect' })
+	const team = user?.useTeam('ccb7ef7e-eb60-4c79-b7cc-54f020b079f0')
+	const isAdmin = user?.usePermission(team as Team, 'admin')
+	console.log(isAdmin)
 
 	const [payments, setPayments] = useState<Payment[]>([])
 	const [purchases, setPurchases] = useState<Purchase[]>([])
