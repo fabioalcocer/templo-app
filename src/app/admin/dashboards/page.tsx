@@ -37,12 +37,15 @@ import {
 	calculateTotalFromSales,
 	parsedPriceFromNumber,
 } from '@/lib/utils'
+import { useUser } from '@stackframe/stack'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import MotionNumber from 'motion-number'
 import { useEffect, useState } from 'react'
 
 function DashboardsPage() {
+	const user = useUser()
+
 	const [payments, setPayments] = useState<Payment[]>([])
 	const [purchases, setPurchases] = useState<Purchase[]>([])
 	const [sales, setSales] = useState<Sale[]>([])
@@ -100,7 +103,9 @@ function DashboardsPage() {
 		<div className="flex min-h-[calc(100vh_-_80px)] w-full flex-col">
 			<main className="flex flex-1 flex-col gap-4 md:gap-8">
 				<header className="flex flex-wrap items-center justify-between gap-4 lg:gap-0">
-					<h1 className="dashboard text-3xl font-bold">Dashboard</h1>
+					<h1 className="dashboard text-3xl font-bold">
+						¡Bienvenido {user?.displayName}!
+					</h1>
 					<div className="flex flex-wrap items-center gap-4">
 						{/* <DatePickerWithRange /> */}
 						<Button

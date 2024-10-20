@@ -6,6 +6,7 @@ const nextConfig = {
 			'farmacorp.com',
 			'hebmx.vtexassets.com',
 			'www.rujamar.com',
+			'images.unsplash.com',
 		],
 	},
 	async rewrites() {

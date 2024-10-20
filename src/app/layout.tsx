@@ -7,16 +7,14 @@ import { Toaster } from '@/components/ui/toaster'
 import { fontSans } from '@/lib/fonts'
 import { steps } from '@/lib/steps'
 import { cn } from '@/lib/utils'
+import { stackServerApp } from '@/stack'
 import { OpenPanelComponent } from '@openpanel/nextjs'
 import * as seline from '@seline-analytics/web'
+import { StackProvider, StackTheme } from '@stackframe/stack'
 import type { Metadata } from 'next'
 import { ViewTransitions } from 'next-view-transitions'
 import Script from 'next/script'
 import { Onborda, OnbordaProvider } from 'onborda'
-import SessionProvider from './SessionProvider'
-
-import ClerkServerWrapper from '@/components/clerk-server-wrapper'
-import { ClerkProvider } from '@clerk/nextjs'
 
 export const metadata: Metadata = {
 	title: 'Templo App',
@@ -33,25 +31,29 @@ export default async function RootLayout({
 		apiHost: '/_sln',
 	})
 
+	const theme = {
+		radius: '0.6rem',
+		light: {
+			primary: '#facc14',
+		},
+		dark: {
+			primary: '#facc14',
+		},
+	}
+
 	return (
-		<ClerkProvider
-			appearance={{
-				variables: {
-					colorPrimary: '#FACC14',
-				},
-			}}
-		>
-			<ViewTransitions>
-				<html lang="es">
-					<Script src="/sln.js" data-api-host="/_sln" async />
-					<body
-						suppressHydrationWarning
-						className={cn(
-							'min-h-screen bg-background font-sans antialiased',
-							fontSans.variable,
-						)}
-					>
-						<SessionProvider>
+		<ViewTransitions>
+			<html lang="es">
+				<Script src="/sln.js" data-api-host="/_sln" async />
+				<body
+					suppressHydrationWarning
+					className={cn(
+						'min-h-screen bg-background font-sans antialiased',
+						fontSans.variable,
+					)}
+				>
+					<StackProvider app={stackServerApp} lang="es-ES">
+						<StackTheme theme={theme}>
 							<ThemeProvider
 								attribute="class"
 								defaultTheme="system"
@@ -66,7 +68,7 @@ export default async function RootLayout({
 										// shadowRgb="55,48,163"
 									>
 										<main className="flex min-h-screen flex-col items-center">
-											<ClerkServerWrapper />
+											<Header />
 											<div className="container flex w-full flex-col px-0">
 												{children}
 											</div>
@@ -78,18 +80,18 @@ export default async function RootLayout({
 								</OnbordaProvider>
 							</ThemeProvider>
 							<Toaster />
-						</SessionProvider>
 
-						<OpenPanelComponent
-							clientId="870c92d4-d23b-49c2-a77d-3aeffd830e98"
-							trackScreenViews={true}
-							trackAttributes={true}
-							trackOutgoingLinks={true}
-							profileId="admin"
-						/>
-					</body>
-				</html>
-			</ViewTransitions>
-		</ClerkProvider>
+							<OpenPanelComponent
+								clientId="870c92d4-d23b-49c2-a77d-3aeffd830e98"
+								trackScreenViews={true}
+								trackAttributes={true}
+								trackOutgoingLinks={true}
+								profileId="admin"
+							/>
+						</StackTheme>
+					</StackProvider>
+				</body>
+			</html>
+		</ViewTransitions>
 	)
 }
