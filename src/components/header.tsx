@@ -1,29 +1,20 @@
 'use client'
 import Logo from '@/assets/logo-black.png'
 import LogoWhite from '@/assets/logo-white.png'
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { UserIcon } from 'lucide-react'
-import { signOut, useSession } from 'next-auth/react'
+
+import { UserButton } from '@stackframe/stack'
+import { LayoutDashboard, StoreIcon } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { ModeToggle } from './mode-toggle'
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar'
-import { Button } from './ui/button'
 
 function Header() {
 	const [isDarkTheme, setIsDarkTheme] = useState(false)
 	const { resolvedTheme } = useTheme()
-	const session = useSession()
-	const isLogin = session.status === 'authenticated'
+	const router = useRouter()
 
 	useEffect(() => {
 		setIsDarkTheme(resolvedTheme === 'dark')
@@ -44,44 +35,23 @@ function Header() {
 
 				<div className="flex items-center gap-3">
 					<ModeToggle />
-					{isLogin ? (
-						<>
-							<DropdownMenu>
-								<DropdownMenuTrigger className="rounded-full">
-									<Avatar>
-										<AvatarImage
-											src="https://avatars.githubusercontent.com/u/88163765?v=4"
-											alt="@templo_admin"
-										/>
-										<AvatarFallback>AF</AvatarFallback>
-									</Avatar>
-								</DropdownMenuTrigger>
-								<DropdownMenuContent align="end">
-									<DropdownMenuLabel>Mi cuenta</DropdownMenuLabel>
-									<DropdownMenuSeparator />
-									<DropdownMenuItem asChild>
-										<Link href="/">Punto de venta</Link>
-									</DropdownMenuItem>
-									<DropdownMenuItem asChild>
-										<Link href="/admin/dashboards">Dashboard</Link>
-									</DropdownMenuItem>
-									<DropdownMenuSeparator />
-									<DropdownMenuItem
-										onClick={() => signOut()}
-										className="text-red-500"
-									>
-										Cerrar sesión
-									</DropdownMenuItem>
-								</DropdownMenuContent>
-							</DropdownMenu>
-						</>
-					) : (
-						<Link href="/login">
-							<Button variant="outline" size="icon">
-								<UserIcon className="h-5 w-5" />
-							</Button>
-						</Link>
-					)}
+
+					<div className="grid place-content-center rounded-full w-10 h-10">
+						<UserButton
+							extraItems={[
+								{
+									text: 'Punto de venta',
+									icon: <StoreIcon className="h-4 w-4" />,
+									onClick: () => router.push('/'),
+								},
+								{
+									text: 'Dashboard',
+									icon: <LayoutDashboard className="h-4 w-4" />,
+									onClick: () => router.push('/admin/dashboards'),
+								},
+							]}
+						/>
+					</div>
 				</div>
 			</div>
 		</header>

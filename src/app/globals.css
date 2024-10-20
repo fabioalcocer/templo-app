@@ -77,3 +77,8 @@
   view-transition-name: demo-title;
   width: fit-content;
 }
+
+.stack-scope.outline-none span:first-child {
+  width: 40px !important;
+  height: 40px !important;
+}

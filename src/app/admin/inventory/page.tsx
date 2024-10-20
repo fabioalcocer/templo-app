@@ -1,8 +1,6 @@
 'use client'
 import { Button } from '@/components/ui/button'
 import { BoxIcon, HopIcon, TagIcon } from 'lucide-react'
-import { useSession } from 'next-auth/react'
-import { redirect } from 'next/navigation'
 
 import { getAllProducts } from '@/api'
 import { CategoriesTable } from '@/components/categories-table'
@@ -23,17 +21,6 @@ export default function InventaryPage() {
 	useEffect(() => {
 		fetchProducts()
 	}, [])
-
-	const session = useSession({
-		required: true,
-		onUnauthenticated() {
-			redirect('/login')
-		},
-	})
-
-	if (!session) {
-		return null
-	}
 
 	return (
 		<Suspense fallback={<Loading />}>
@@ -80,5 +67,3 @@ export default function InventaryPage() {
 		</Suspense>
 	)
 }
-
-InventaryPage.requireAuth = true
