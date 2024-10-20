@@ -2,7 +2,6 @@
 import Logo from '@/assets/logo-black.png'
 import LogoWhite from '@/assets/logo-white.png'
 
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { UserButton } from '@stackframe/stack'
 import { LayoutDashboard, StoreIcon } from 'lucide-react'
 import { useTheme } from 'next-themes'
