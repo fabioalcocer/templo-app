@@ -3,7 +3,6 @@
 import { TrendingUp } from 'lucide-react'
 import { CartesianGrid, Line, LineChart, XAxis } from 'recharts'
 
-import { getAllUsers } from '@/api'
 import {
 	Card,
 	CardContent,
@@ -20,6 +19,7 @@ import {
 } from '@/components/ui/chart'
 import { monthOrder } from '@/lib/constants'
 import { parsedMonthFromTimestamp } from '@/lib/utils'
+import { getAllUsers } from '@/services'
 import { Suspense, useEffect, useState } from 'react'
 
 import {

@@ -2,10 +2,10 @@
 import { Button } from '@/components/ui/button'
 import { BoxIcon, HopIcon, TagIcon } from 'lucide-react'
 
-import { getAllProducts } from '@/api'
 import { CategoriesTable } from '@/components/categories-table'
 import ProductsTableInventory from '@/components/products-table-inventory'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { getAllProducts } from '@/services'
 import { Suspense, useEffect, useState } from 'react'
 import Loading from './loading'
 

@@ -1,10 +1,10 @@
+import { getObjBySlug } from '@/lib/utils'
 import {
 	decreaseSessionUserById,
 	desactiveUser,
 	getSessionLogsOnSnapshot,
 	getUserById,
-} from '@/api'
-import { getObjBySlug } from '@/lib/utils'
+} from '@/services'
 import { differenceInCalendarDays, format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import { Timestamp } from 'firebase/firestore'

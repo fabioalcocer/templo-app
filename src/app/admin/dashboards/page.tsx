@@ -10,7 +10,6 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 
-import { getAllPayments, getAllPurchases, getSales } from '@/api'
 import { DatePickerWithRange } from '@/components/date-range-picker'
 import PaymentCards from '@/components/payments-card'
 import { Button } from '@/components/ui/button'
@@ -36,6 +35,7 @@ import {
 	calculateTotalFromSales,
 	parsedPriceFromNumber,
 } from '@/lib/utils'
+import { getAllPayments, getAllPurchases, getSales } from '@/services'
 import { Team, useUser } from '@stackframe/stack'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'

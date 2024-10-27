@@ -1,5 +1,4 @@
 'use client'
-import { registerProductSale, updateInventoryItem } from '@/api'
 import QR from '@/assets/qr.jpg'
 import {
 	Dialog,
@@ -27,6 +26,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { toast } from '@/components/ui/use-toast'
+import { registerProductSale, updateInventoryItem } from '@/services'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Check, Loader2, Minus, Plus } from 'lucide-react'
 import Image from 'next/image'

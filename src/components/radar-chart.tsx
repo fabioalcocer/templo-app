@@ -1,9 +1,9 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { getAllUsers } from '@/services'
 import { TrendingUp } from 'lucide-react'
+import { useEffect, useState } from 'react'
 import { PolarAngleAxis, PolarGrid, Radar, RadarChart } from 'recharts'
-import { getAllUsers } from '@/api'
 
 import {
 	Card,

@@ -3,7 +3,6 @@
 import * as React from 'react'
 import { Area, AreaChart, CartesianGrid, XAxis } from 'recharts'
 
-import { getAllPayments, getAllPurchases, getSales } from '@/api'
 import {
 	Card,
 	CardContent,
@@ -27,6 +26,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { convertStringToDate } from '@/lib/utils'
+import { getAllPayments, getAllPurchases, getSales } from '@/services'
 import { AlertCircle } from 'lucide-react'
 
 type NumberKey = keyof typeof filtersDateObj

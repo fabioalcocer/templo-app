@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import { getCategories, getProductsByCategoryId } from '@/api'
+import { getCategories, getProductsByCategoryId } from '@/services'
 import { StoreIcon, ZapIcon } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
