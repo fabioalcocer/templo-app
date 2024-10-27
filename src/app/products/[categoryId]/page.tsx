@@ -1,5 +1,5 @@
-import { getProductsByCategoryId } from '@/api'
 import ProductsList from '@/components/products-list'
+import { getProductsByCategoryId } from '@/services'
 import { getProducts } from '@/utils/supabase/queries'
 import { Suspense } from 'react'
 import Loading from './loading'

@@ -1,15 +1,15 @@
 'use client'
-import {
-	createItem,
-	getProductById,
-	getUserById,
-	updateInventoryItem,
-} from '@/api'
 import { Button } from '@/components/ui/button'
 import { Form } from '@/components/ui/form'
 import { toast } from '@/components/ui/use-toast'
 import { DISCIPLINES, USER_DEFAULT_VALUES } from '@/lib/constants'
 import { calculateDiscount, getObjBySlug } from '@/lib/utils'
+import {
+	createItem,
+	getProductById,
+	getUserById,
+	updateInventoryItem,
+} from '@/services'
 import { DiscountType } from '@/types/discounts.types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addDays } from 'date-fns'

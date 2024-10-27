@@ -3,7 +3,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { File, ListFilter } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-import { desactiveUsers, getAllUsersBySnapshot } from '@/api'
 import { Button } from '@/components/ui/button'
 import {
 	DropdownMenu,
@@ -14,6 +13,7 @@ import {
 	DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { UsersTable } from '@/components/users-table'
+import { desactiveUsers, getAllUsersBySnapshot } from '@/services'
 import { DropdownMenuCheckboxItemProps } from '@radix-ui/react-dropdown-menu'
 import { isBefore } from 'date-fns'
 import { Timestamp } from 'firebase/firestore'
