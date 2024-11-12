@@ -1,5 +1,5 @@
-import { fontSans } from '@/lib/fonts'
 import { cn } from '@/lib/utils'
+import { GeistSans } from 'geist/font/sans'
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
@@ -18,7 +18,7 @@ export default function AuthLayout({
 				suppressHydrationWarning
 				className={cn(
 					'min-h-screen bg-background font-sans antialiased',
-					fontSans.variable,
+					GeistSans.variable,
 				)}
 			>
 				<div className="min-h-screen flex flex-col items-center justify-center">

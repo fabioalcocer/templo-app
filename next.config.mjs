@@ -1,5 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+	transpilePackages: ["geist"],
 	images: {
 		domains: [
 			'fsa.bo',

@@ -1,10 +1,8 @@
-import './globals.css'
 import { CommandDialogMenu } from '@/components/command-menu'
 import CustomCard from '@/components/custom-card'
 import Header from '@/components/header'
 import { ThemeProvider } from '@/components/theme-provider'
 import { Toaster } from '@/components/ui/toaster'
-import { fontSans } from '@/lib/fonts'
 import { steps } from '@/lib/steps'
 import { cn } from '@/lib/utils'
 import { stackServerApp } from '@/stack'
@@ -12,9 +10,14 @@ import { OpenPanelComponent } from '@openpanel/nextjs'
 import * as seline from '@seline-analytics/web'
 import { StackProvider, StackTheme } from '@stackframe/stack'
 import type { Metadata } from 'next'
+
 import { ViewTransitions } from 'next-view-transitions'
 import Script from 'next/script'
 import { Onborda, OnbordaProvider } from 'onborda'
+
+import { GeistMono } from 'geist/font/mono'
+import { GeistSans } from 'geist/font/sans'
+import './globals.css'
 
 export const metadata: Metadata = {
 	title: 'Templo App',
@@ -49,7 +52,8 @@ export default async function RootLayout({
 					suppressHydrationWarning
 					className={cn(
 						'min-h-screen bg-background font-sans antialiased',
-						fontSans.variable,
+						GeistSans.variable,
+						GeistMono.variable,
 					)}
 				>
 					<StackProvider app={stackServerApp} lang="es-ES">
