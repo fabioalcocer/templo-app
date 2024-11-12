@@ -22,7 +22,6 @@ import {
 } from 'lucide-react'
 import * as React from 'react'
 
-import { getAllPayments } from '@/api'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -51,6 +50,7 @@ import {
 	parsedPriceFromNumber,
 	showToastForCopyText,
 } from '@/lib/utils'
+import { getAllPayments } from '@/services'
 import { addDays, format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import { DateRange } from 'react-day-picker'

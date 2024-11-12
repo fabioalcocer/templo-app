@@ -21,7 +21,6 @@ import {
 } from 'lucide-react'
 import * as React from 'react'
 
-import { getCategories } from '@/api'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -44,6 +43,7 @@ import {
 	TableRow,
 } from '@/components/ui/table'
 import { showToastForCopyText } from '@/lib/utils'
+import { getCategories } from '@/services'
 import { CreateCategoryForm } from './create-category-form'
 import { AlertDialogConfirm } from './dialog-confirm'
 import { DataTablePagination } from './table-pagination'

@@ -20,8 +20,8 @@ import {
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { getUserById, updateInventoryItem } from '@/api'
 import { toast } from '@/components/ui/use-toast'
+import { getUserById, updateInventoryItem } from '@/services'
 import { useEffect, useState } from 'react'
 
 import {

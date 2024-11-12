@@ -21,7 +21,6 @@ import {
 } from 'lucide-react'
 import * as React from 'react'
 
-import { getAllProducts } from '@/api'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
@@ -47,6 +46,7 @@ import {
 	parsedPriceFromNumber,
 	showToastForCopyText,
 } from '@/lib/utils'
+import { getAllProducts } from '@/services'
 import { AddProductForm } from './add-product-form'
 import { AlertDialogConfirm } from './dialog-confirm'
 import { ReStockDialog } from './re-stock-dialog'

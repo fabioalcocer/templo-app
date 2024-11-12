@@ -13,9 +13,9 @@ import { Check, Loader2, PlusIcon } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { createItem, getCategoryById, updateInventoryItem } from '@/api'
 import { toast } from '@/components/ui/use-toast'
 import { CATEGORY_DEFAULT_VALUES } from '@/lib/constants'
+import { createItem, getCategoryById, updateInventoryItem } from '@/services'
 import { useEffect, useState } from 'react'
 import { Switch } from './ui/switch'
 

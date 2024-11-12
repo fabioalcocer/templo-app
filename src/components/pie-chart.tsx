@@ -13,13 +13,13 @@ import {
 	CardTitle,
 } from '@/components/ui/card'
 
-import { getAllUsers } from '@/api'
 import {
 	type ChartConfig,
 	ChartContainer,
 	ChartTooltip,
 	ChartTooltipContent,
 } from '@/components/ui/chart'
+import { getAllUsers } from '@/services'
 
 import {
 	Select,
