@@ -17,11 +17,11 @@ async function ProductsCategoryPage({ params: { categoryId } }: Props) {
 	console.log(productsSupabase)
 	const products = await getProductsByCategoryId(categoryId)
 
-	const productsWithSupabaseData = [...products, ...productsSupabase]
+	// const productsWithSupabaseData = [...products, ...productsSupabase]
 
 	return (
 		<Suspense fallback={<Loading />}>
-			<ProductsList products={productsWithSupabaseData} />
+			<ProductsList products={products} />
 		</Suspense>
 	)
 }
