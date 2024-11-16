@@ -78,8 +78,8 @@ const FormSchema = z.object({
 		.number({
 			required_error: 'Por favor, ingresa un monto.',
 		})
-		.min(1, {
-			message: 'Por favor, ingresa un monto mayor a 0.',
+		.min(0, {
+			message: 'Por favor, ingresa el stock',
 		}),
 	img: z
 		.string({

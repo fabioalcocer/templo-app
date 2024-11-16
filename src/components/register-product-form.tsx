@@ -1,4 +1,5 @@
 'use client'
+import { revalidateInventory } from '@/app/actions'
 import QR from '@/assets/qr.jpg'
 import {
 	Dialog,
@@ -86,6 +87,7 @@ function RegisterProductForm({ product }: { product: Product }) {
 			),
 		})
 		setLoading(false)
+		revalidateInventory()
 	}
 
 	function onClick(adjustment: number) {

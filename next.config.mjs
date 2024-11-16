@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-	transpilePackages: ["geist"],
+	transpilePackages: ['geist'],
 	images: {
 		domains: [
 			'fsa.bo',
@@ -8,6 +8,7 @@ const nextConfig = {
 			'hebmx.vtexassets.com',
 			'www.rujamar.com',
 			'images.unsplash.com',
+			'valenciacitrus.com',
 		],
 	},
 	async rewrites() {

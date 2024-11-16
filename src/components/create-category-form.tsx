@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { Button } from '@/components/ui/button'
 import {
 	Form,
@@ -29,6 +31,7 @@ import {
 	SheetTitle,
 	SheetTrigger,
 } from '@/components/ui/sheet'
+import { revalidatePath } from 'next/cache'
 import { Textarea } from './ui/textarea'
 
 interface Props {
@@ -65,6 +68,7 @@ const FormSchema = z.object({
 			message: 'Por favor, ingresa una URL válida.',
 		}),
 	available: z.boolean().default(false).optional(),
+	productsLength: z.number().optional(),
 })
 
 export function CreateCategoryForm({ categoryId, isEditing }: Props) {
@@ -198,6 +202,29 @@ export function CreateCategoryForm({ categoryId, isEditing }: Props) {
 												onCheckedChange={field.onChange}
 											/>
 										</FormControl>
+									</FormItem>
+								)}
+							/>
+
+							<FormField
+								control={form.control}
+								name="productsLength"
+								render={({ field }) => (
+									<FormItem className="mt-2">
+										<FormLabel>Cantidad de productos</FormLabel>
+										<FormControl>
+											<Input
+												placeholder="4"
+												{...field}
+												type="number"
+												defaultValue="0"
+												onChange={(event) => {
+													const value = Number.parseInt(event.target.value)
+													field.onChange(value <= 0 ? 0 : value)
+												}}
+											/>
+										</FormControl>
+										<FormMessage />
 									</FormItem>
 								)}
 							/>
