@@ -95,12 +95,11 @@ const FormSchema = z.object({
 			message: 'Ingresa un número mayor a 0',
 		}),
 	discount: z
-		.number({
-			required_error: 'Por favor, ingresa un monto.',
+		.number()
+		.min(0, {
+			message: 'Ingresa un número mayor o igual a 0',
 		})
-		.min(1, {
-			message: 'Ingresa un número mayor a 0',
-		}),
+		.optional(),
 	finalPrice: z
 		.number({
 			required_error: 'Por favor, ingresa un monto.',
@@ -115,7 +114,7 @@ const FormSchema = z.object({
 	sessions: z
 		.number()
 		.min(0, {
-			message: 'Ingresa unnúmero mayor o igual a 0',
+			message: 'Ingresa un número mayor o igual a 0',
 		})
 		.optional(),
 	injuries: z.string().optional(),
