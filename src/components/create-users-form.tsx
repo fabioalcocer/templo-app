@@ -98,8 +98,7 @@ const FormSchema = z.object({
 		.number()
 		.min(0, {
 			message: 'Ingresa un número mayor o igual a 0',
-		})
-		.optional(),
+		}),
 	finalPrice: z
 		.number({
 			required_error: 'Por favor, ingresa un monto.',
