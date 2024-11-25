@@ -193,7 +193,7 @@ function BasicUserForm({
 			/>
 
 			<div className="my-1 flex flex-wrap items-center justify-between gap-4">
-				{currentDisciplineOption?.value === 'calistenia' && (
+				{currentDisciplineOption?.value === 'gym' && (
 					<FormField
 						control={form.control}
 						name="plan"
@@ -294,7 +294,7 @@ function BasicUserForm({
 						</FormItem>
 					)}
 				/>
-				{currentDisciplineOption?.value === 'calistenia' ? (
+				{currentDisciplineOption?.value === 'gym' ? (
 					<FormField
 						control={form.control}
 						name="finalDate"

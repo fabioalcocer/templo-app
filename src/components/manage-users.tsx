@@ -26,7 +26,6 @@ import { useEffect, useState } from 'react'
 
 import {
 	Sheet,
-	SheetClose,
 	SheetContent,
 	SheetDescription,
 	SheetFooter,
@@ -156,7 +155,7 @@ function ManageUsers({ userId }: { userId: string }) {
 		const sessions = data.sessions ? data.sessions : 0
 
 		const isActive =
-			data?.discipline === 'calistenia'
+			data?.discipline === 'gym'
 				? checkIsFinalDateIsAfterNow(data)
 				: sessions > 0
 
@@ -373,7 +372,7 @@ function ManageUsers({ userId }: { userId: string }) {
 											)}
 										/>
 
-										{(watchDiscipline as unknown as string) === 'calistenia' ? (
+										{(watchDiscipline as unknown as string) === 'gym' ? (
 											<FormField
 												control={form.control}
 												name="finalDate"

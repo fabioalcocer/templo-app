@@ -1,17 +1,7 @@
 'use client'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { File, ListFilter } from 'lucide-react'
 import { useEffect, useState } from 'react'
 
-import { Button } from '@/components/ui/button'
-import {
-	DropdownMenu,
-	DropdownMenuCheckboxItem,
-	DropdownMenuContent,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
 import { UsersTable } from '@/components/users-table'
 import { desactiveUsers, getAllUsersBySnapshot } from '@/services'
 import { DropdownMenuCheckboxItemProps } from '@radix-ui/react-dropdown-menu'
@@ -30,7 +20,7 @@ export default function UsersPage() {
 		const today = new Date()
 
 		const activeUsersWithOverdueDate = users.filter(
-			(user) => user?.discipline === 'calistenia' && user?.active,
+			(user) => user?.discipline === 'gym' && user?.active,
 		)
 
 		const inactiveUsers = activeUsersWithOverdueDate.filter((user) => {

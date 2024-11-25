@@ -17,7 +17,6 @@ import {
 	ArrowUpDown,
 	ChevronDown,
 	Download,
-	MehIcon,
 	MoreHorizontal,
 } from 'lucide-react'
 import * as React from 'react'
@@ -56,7 +55,6 @@ import { es } from 'date-fns/locale/es'
 import { DateRange } from 'react-day-picker'
 import { DatePickerWithRange } from './date-range-picker'
 import { DataTablePagination } from './table-pagination'
-import { toast } from './ui/use-toast'
 
 const parsePaymentType = (paymentType: string) => {
 	type Payments = keyof typeof paymentTypes

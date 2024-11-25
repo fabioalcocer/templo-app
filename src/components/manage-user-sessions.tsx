@@ -87,7 +87,7 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
 		(a, b) => (b.createdAt as never) - (a.createdAt as never),
 	)
 
-	const isCalisteniaUser = userData?.discipline === 'calistenia'
+	const isCalisteniaUser = userData?.discipline === 'gym'
 
 	return (
 		<div>

@@ -4,12 +4,7 @@ import { Form } from '@/components/ui/form'
 import { toast } from '@/components/ui/use-toast'
 import { DISCIPLINES, USER_DEFAULT_VALUES } from '@/lib/constants'
 import { calculateDiscount, getObjBySlug } from '@/lib/utils'
-import {
-	createItem,
-	getProductById,
-	getUserById,
-	updateInventoryItem,
-} from '@/services'
+import { createItem, getUserById, updateInventoryItem } from '@/services'
 import { DiscountType } from '@/types/discounts.types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { addDays } from 'date-fns'
@@ -244,11 +239,7 @@ function CreateUsersForm({ params }: Props) {
 	useEffect(() => {
 		form.setValue('discipline', currentDisciplineOption?.value as string)
 
-		if (
-			!userId &&
-			watchStartDate &&
-			currentDisciplineOption?.value === 'calistenia'
-		) {
+		if (!userId && watchStartDate && currentDisciplineOption?.value === 'gym') {
 			form.setValue('finalDate', addDays(watchStartDate, 30))
 		}
 
@@ -299,7 +290,7 @@ function CreateUsersForm({ params }: Props) {
 					</Button>
 				</Link>
 				<h3 className="text-2xl font-semibold">
-					{USER_TYPE === 'calistenia'
+					{USER_TYPE === 'gym'
 						? 'Planes mensuales'
 						: getObjBySlug(USER_TYPE)?.name}
 				</h3>

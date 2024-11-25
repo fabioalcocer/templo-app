@@ -40,8 +40,8 @@ export const DAY_IN_MILLISECONDS = 86400000
 
 export const DISCIPLINES: Record<string, Discipline> = {
 	CALISTENIA: {
-		slug: 'calistenia',
-		name: 'Calistenia',
+		slug: 'gym',
+		name: 'Gimnasio',
 	},
 	POWER_PLATE: {
 		slug: 'power-plate',
