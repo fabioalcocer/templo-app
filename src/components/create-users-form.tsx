@@ -241,6 +241,10 @@ function CreateUsersForm({ params }: Props) {
 			form.setValue('finalDate', addDays(watchStartDate, 30))
 		}
 
+		if (!userId && watchStartDate && currentDisciplineOption?.value !== 'gym') {
+			form.setValue('finalDate', addDays(watchStartDate, 25))
+		}
+
 		if (userId) {
 			const finalDate = userData?.finalDate
 				? (userData?.finalDate as unknown as Timestamp)?.toDate()
