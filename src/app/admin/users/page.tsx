@@ -19,9 +19,7 @@ export default function UsersPage() {
 	const checkInactiveUsersAndUpdate = async (users: User[]) => {
 		const today = new Date()
 
-		const activeUsersWithOverdueDate = users.filter(
-			(user) => user?.discipline === 'gym' && user?.active,
-		)
+		const activeUsersWithOverdueDate = users.filter((user) => user?.active)
 
 		const inactiveUsers = activeUsersWithOverdueDate.filter((user) => {
 			const finalDate = user?.finalDate as Date
