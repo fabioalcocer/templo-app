@@ -119,7 +119,7 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
 						</div>
 					) : (
 						<div className="flex flex-col items-center justify-center gap-1">
-							<span className="text-lg">Sesiones</span>
+							<span className="text-lg">Sesiones restantes</span>
 							<p className="text-7xl font-bold">{userData?.sessions || 0}</p>
 							<Button
 								type="button"

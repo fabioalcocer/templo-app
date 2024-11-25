@@ -21,7 +21,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
 import { toast } from '@/components/ui/use-toast'
-import { getUserById, updateInventoryItem } from '@/services'
+import { createItem, getUserById, updateInventoryItem } from '@/services'
 import { useEffect, useState } from 'react'
 
 import {
@@ -127,6 +127,7 @@ const FormSchema = z.object({
 })
 
 function ManageUsers({ userId }: { userId: string }) {
+	const [userExistingData, setUserExistingData] = useState<User | null>()
 	const [isReinscription, setIsReinscription] = useState(false)
 	const [loading, setLoading] = useState(false)
 	const [discountType, setDiscountType] = useState<DiscountType>(
@@ -150,6 +151,23 @@ function ManageUsers({ userId }: { userId: string }) {
 		return data?.finalDate && isAfter(finalDate, today)
 	}
 
+	const createPayment = async (userData: Payment) => {
+		const paymentData = {
+			userId: userId,
+			unitPrice: userData?.unitPrice,
+			discount: userData?.discount,
+			discountType: userData?.discountType,
+			finalPrice: userData?.finalPrice,
+			paymentType: userData?.paymentType,
+			plan: userData?.plan,
+			discipline: userData?.discipline,
+			sessions: userData?.sessions,
+			email: userData?.email,
+		}
+
+		await createItem({ data: paymentData, collectionName: 'payments' })
+	}
+
 	async function onSubmit(data: z.infer<typeof FormSchema>) {
 		setLoading(true)
 		const sessions = data.sessions ? data.sessions : 0
@@ -167,6 +185,13 @@ function ManageUsers({ userId }: { userId: string }) {
 		}
 
 		await updateInventoryItem({ id: userId, ...userData }, 'users')
+		await createPayment({
+			...userData,
+			userId: userId,
+			email: userExistingData?.email || '',
+			paymentType: userExistingData?.paymentType || '',
+			plan: userExistingData?.plan || '',
+		} as unknown as Payment)
 
 		toast({
 			title: (
@@ -185,6 +210,7 @@ function ManageUsers({ userId }: { userId: string }) {
 			try {
 				const user = await getUserById(userId)
 				setDiscountType(user?.discountType as DiscountType)
+				setUserExistingData(user)
 
 				const parsedDate = (user?.dateEntry as unknown as Timestamp)?.toDate()
 				const finalDate = user?.finalDate

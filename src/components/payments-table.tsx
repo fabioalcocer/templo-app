@@ -45,6 +45,7 @@ import { CALISTENIA_PLANS, DAY_IN_MILLISECONDS } from '@/lib/constants'
 import { exportTableToCSV } from '@/lib/export'
 import {
 	calculateTotalFromPayments,
+	cn,
 	getObjBySlug,
 	parsedPriceFromNumber,
 	showToastForCopyText,
@@ -93,7 +94,7 @@ export const columns: ColumnDef<Payment>[] = [
 		enableHiding: false,
 	},
 	{
-		accessorKey: 'userId',
+		accessorKey: 'email',
 		header: ({ column }) => {
 			return (
 				<Button
@@ -101,13 +102,13 @@ export const columns: ColumnDef<Payment>[] = [
 					className="p-0"
 					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
 				>
-					ID Usuario
+					Correo electrónico
 					<ArrowUpDown className="ml-2 h-4 w-4" />
 				</Button>
 			)
 		},
 		cell: ({ row }) => {
-			return <div className="">{row.getValue('userId')}</div>
+			return <div className="">{row.getValue('email')}</div>
 		},
 	},
 	{
@@ -179,6 +180,32 @@ export const columns: ColumnDef<Payment>[] = [
 			const planName = parsedPlanName?.label
 
 			return <div>{planName || planValue}</div>
+		},
+	},
+	{
+		accessorKey: 'sessions',
+		header: ({ column }) => {
+			return (
+				<Button
+					variant="ghost"
+					className="p-0"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					Sesiones
+					<ArrowUpDown className="ml-2 h-4 w-4" />
+				</Button>
+			)
+		},
+		cell: ({ row }) => {
+			const discipline = row.getValue('discipline')
+
+			return (
+				<div
+					className={cn(discipline !== 'gym' ? '' : 'text-muted-foreground')}
+				>
+					{discipline !== 'gym' ? row.getValue('sessions') : 'No aplica'}
+				</div>
+			)
 		},
 	},
 	{
