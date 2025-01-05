@@ -4,6 +4,7 @@ interface Payment {
 	unitPrice: number
 	discount: number
 	discountType: string
+	paymentStatus: string
 	finalPrice: number
 	paymentType: string
 	plan: string

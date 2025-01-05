@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { CardContent } from '@/components/ui/card'
 import { parsedPriceFromNumber } from '@/lib/utils'
 import { getUserById } from '@/services'
+import { User } from '@/types/users.types'
 import { useEffect, useState } from 'react'
 
 function PaymentCards({ payment }: { payment: Payment }) {

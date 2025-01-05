@@ -38,6 +38,7 @@ import {
 import { CALISTENIA_PLANS } from '@/lib/constants'
 import { exportTableToCSV } from '@/lib/export'
 import { cn, getObjBySlug, showToastForCopyText } from '@/lib/utils'
+import { User } from '@/types/users.types'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import { Timestamp } from 'firebase/firestore'

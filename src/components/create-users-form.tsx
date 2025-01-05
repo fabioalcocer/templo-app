@@ -6,6 +6,7 @@ import { DISCIPLINES, USER_DEFAULT_VALUES } from '@/lib/constants'
 import { calculateDiscount, getObjBySlug } from '@/lib/utils'
 import { createItem, getUserById, updateInventoryItem } from '@/services'
 import { DiscountType } from '@/types/discounts.types'
+import { User } from '@/types/users.types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Timestamp } from 'firebase/firestore'
 import { Check, ChevronLeft } from 'lucide-react'
@@ -101,6 +102,12 @@ const FormSchema = z.object({
 	paymentType: z.string({
 		required_error: 'Por favor, selecciona un método de pago.',
 	}),
+	paymentStatus: z.enum(
+		['full-payment', 'half-paid', 'receivable', 'sponsorship'],
+		{
+			required_error: 'Por favor, selecciona el estado del pago.',
+		},
+	),
 	finalDate: z.date().optional(),
 	sessions: z
 		.number()
@@ -137,6 +144,8 @@ const FormSchema = z.object({
 	physicalCondition: z.string().optional(),
 })
 
+export type FormDataType = z.infer<typeof FormSchema>
+
 function CreateUsersForm({ params }: Props) {
 	const USER_TYPE = params?.type
 	const userId = params?.id
@@ -172,6 +181,7 @@ function CreateUsersForm({ params }: Props) {
 			discipline: userData?.discipline,
 			sessions: userData?.sessions,
 			email: userData?.email,
+			paymentStatus: userData?.paymentStatus,
 		}
 
 		await createItem({ data: paymentData, collectionName: 'payments' })

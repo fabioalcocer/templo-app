@@ -41,7 +41,11 @@ import {
 	TableHeader,
 	TableRow,
 } from '@/components/ui/table'
-import { CALISTENIA_PLANS, DAY_IN_MILLISECONDS } from '@/lib/constants'
+import {
+	CALISTENIA_PLANS,
+	DAY_IN_MILLISECONDS,
+	PAYMENT_STATUS,
+} from '@/lib/constants'
 import { exportTableToCSV } from '@/lib/export'
 import {
 	calculateTotalFromPayments,
@@ -56,6 +60,7 @@ import { es } from 'date-fns/locale/es'
 import { DateRange } from 'react-day-picker'
 import { DatePickerWithRange } from './date-range-picker'
 import { DataTablePagination } from './table-pagination'
+import { Input } from './ui/input'
 
 const parsePaymentType = (paymentType: string) => {
 	type Payments = keyof typeof paymentTypes
@@ -66,6 +71,11 @@ const parsePaymentType = (paymentType: string) => {
 	} as const
 
 	return paymentTypes[paymentType as Payments] ?? ''
+}
+
+const parsePaymentStatus = (status: string): string => {
+	const findObj = PAYMENT_STATUS.find((obj) => obj.value === status)
+	return findObj?.label ?? ''
 }
 
 export const columns: ColumnDef<Payment>[] = [
@@ -108,7 +118,9 @@ export const columns: ColumnDef<Payment>[] = [
 			)
 		},
 		cell: ({ row }) => {
-			return <div className="">{row.getValue('email')}</div>
+			return (
+				<div className="max-w-[160px] truncate">{row.getValue('email')}</div>
+			)
 		},
 	},
 	{
@@ -130,7 +142,7 @@ export const columns: ColumnDef<Payment>[] = [
 			return (
 				<div>
 					{date
-						? format(date, 'PPP', {
+						? format(date, 'PP', {
 								locale: es,
 							})
 						: 'Sin fecha'}
@@ -219,7 +231,7 @@ export const columns: ColumnDef<Payment>[] = [
 					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
 				>
 					<div className="text-left">
-						Método de pago
+						Método
 						<ArrowUpDown className="ml-2 h-4 w-4" />
 					</div>
 				</Button>
@@ -231,6 +243,28 @@ export const columns: ColumnDef<Payment>[] = [
 					{parsePaymentType(row.getValue('paymentType'))}
 				</div>
 			)
+		},
+	},
+	{
+		accessorKey: 'paymentStatus',
+		header: ({ column }) => {
+			return (
+				<Button
+					asChild
+					variant="ghost"
+					className="ml-auto w-full justify-start p-0"
+					onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+				>
+					<div className="text-left">
+						Estado
+						<ArrowUpDown className="ml-2 h-4 w-4" />
+					</div>
+				</Button>
+			)
+		},
+		cell: ({ row }) => {
+			const status = row.getValue('paymentStatus') as string
+			return <div className="font-medium">{parsePaymentStatus(status)}</div>
 		},
 	},
 	{
@@ -346,6 +380,16 @@ export function PaymentsTable() {
 		<div className="w-full">
 			<div className="flex flex-wrap items-center justify-between gap-5 py-4 md:gap-0">
 				<DatePickerWithRange numberOfMonths={1} setDate={setDate} date={date} />
+
+				<Input
+					placeholder="Buscar inscripción por correo..."
+					value={(table.getColumn('email')?.getFilterValue() as string) ?? ''}
+					onChange={(event) =>
+						table.getColumn('email')?.setFilterValue(event.target.value)
+					}
+					className="w-full max-w-sm"
+				/>
+
 				<div className="flex items-center gap-4">
 					<Button
 						onClick={() =>

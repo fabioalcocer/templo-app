@@ -30,12 +30,17 @@ import {
 	PopoverContent,
 	PopoverTrigger,
 } from '@/components/ui/popover'
-import { CALISTENIA_PLANS, PAYMENT_TYPES } from '@/lib/constants'
+import {
+	CALISTENIA_PLANS,
+	PAYMENT_STATUS,
+	PAYMENT_TYPES,
+} from '@/lib/constants'
 import { cn, validateDiscountValue } from '@/lib/utils'
 import { DiscountType } from '@/types/discounts.types'
 import { format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import { Dispatch, SetStateAction } from 'react'
+import { FormDataType } from './create-users-form'
 import {
 	Collapsible,
 	CollapsibleContent,
@@ -43,58 +48,7 @@ import {
 } from './ui/collapsible'
 
 type Props = {
-	form: UseFormReturn<
-		{
-			name: string
-			lastName: string
-			ci: string
-			email: string
-			phone: string
-			discipline: string
-			plan: string
-			dateEntry: Date
-			unitPrice: number
-			discount: number
-			finalPrice: number
-			paymentType: string
-			finalDate?: Date | undefined
-			sessions?: number | undefined
-			injuries?: string | undefined
-			diseases?: string | undefined
-			operations?: string | undefined
-			allergies?: string | undefined
-			impediments?: string | undefined
-			age: number
-			weight: number
-			height: number
-		},
-		any,
-		{
-			name: string
-			lastName: string
-			ci: string
-			email: string
-			phone: string
-			discipline: string
-			plan: string
-			dateEntry: Date
-			unitPrice: number
-			discount: number
-			finalPrice: number
-			paymentType: string
-			finalDate?: Date | undefined
-			sessions?: number | undefined
-			injuries?: string | undefined
-			diseases?: string | undefined
-			operations?: string | undefined
-			allergies?: string | undefined
-			impediments?: string | undefined
-			age: number
-			weight: number
-			height: number
-		}
-	>
-
+	form: UseFormReturn<FormDataType>
 	disciplineOptions: {
 		value: string
 		label: string
@@ -470,34 +424,65 @@ function BasicUserForm({
 				/>
 			</div>
 
-			<FormField
-				control={form.control}
-				name="paymentType"
-				render={({ field }) => (
-					<FormItem>
-						<FormLabel>Método de pago:</FormLabel>
-						<Select
-							onValueChange={field.onChange}
-							defaultValue={field.value}
-							value={field.value}
-						>
-							<FormControl>
-								<SelectTrigger>
-									<SelectValue placeholder="Selecciona un método de pago" />
-								</SelectTrigger>
-							</FormControl>
-							<SelectContent>
-								{PAYMENT_TYPES.map((option) => (
-									<SelectItem key={option.value} value={option.value}>
-										{option.label}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
-						<FormMessage />
-					</FormItem>
-				)}
-			/>
+			<div className="flex items-center justify-between gap-4 w-full">
+				<FormField
+					control={form.control}
+					name="paymentType"
+					render={({ field }) => (
+						<FormItem className="flex-1">
+							<FormLabel>Método de pago:</FormLabel>
+							<Select
+								onValueChange={field.onChange}
+								defaultValue={field.value}
+								value={field.value}
+							>
+								<FormControl>
+									<SelectTrigger>
+										<SelectValue placeholder="Selecciona un método de pago" />
+									</SelectTrigger>
+								</FormControl>
+								<SelectContent>
+									{PAYMENT_TYPES.map((option) => (
+										<SelectItem key={option.value} value={option.value}>
+											{option.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="paymentStatus"
+					render={({ field }) => (
+						<FormItem className="flex-1">
+							<FormLabel>Estado de pago:</FormLabel>
+							<Select
+								onValueChange={field.onChange}
+								defaultValue={field.value}
+								value={field.value}
+							>
+								<FormControl>
+									<SelectTrigger>
+										<SelectValue placeholder="Selecciona el estado del pago" />
+									</SelectTrigger>
+								</FormControl>
+								<SelectContent>
+									{PAYMENT_STATUS.map((option) => (
+										<SelectItem key={option.value} value={option.value}>
+											{option.label}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+							<FormMessage />
+						</FormItem>
+					)}
+				/>
+			</div>
 
 			<div className="my-4 flex justify-end gap-2">
 				<Button

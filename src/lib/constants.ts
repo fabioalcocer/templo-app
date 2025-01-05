@@ -92,6 +92,25 @@ export const PAYMENT_TYPES = [
 	},
 ]
 
+export const PAYMENT_STATUS = [
+	{
+		label: 'Pagado al 100%',
+		value: 'full-payment',
+	},
+	{
+		label: 'Pagado al 50%',
+		value: 'half-paid',
+	},
+	{
+		label: 'Por cobrar',
+		value: 'receivable',
+	},
+	{
+		label: 'Auspiciado',
+		value: 'sponsorship',
+	},
+]
+
 export const CALISTENIA_PLANS = [
 	{
 		label: 'Calistenia',
