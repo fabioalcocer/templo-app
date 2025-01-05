@@ -102,13 +102,9 @@ const FormSchema = z.object({
 		.min(1, {
 			message: 'Ingresa un número mayor a 0',
 		}),
-	discount: z
-		.number({
-			required_error: 'Por favor, ingresa un monto.',
-		})
-		.min(1, {
-			message: 'Ingresa un número mayor a 0',
-		}),
+	discount: z.number().min(0, {
+		message: 'Ingresa un número mayor o igual a 0',
+	}),
 	finalPrice: z
 		.number({
 			required_error: 'Por favor, ingresa un monto.',
@@ -202,6 +198,7 @@ function ManageUsers({ userId }: { userId: string }) {
 			),
 		})
 		setLoading(false)
+		setIsReinscription(false)
 	}
 
 	useEffect(() => {

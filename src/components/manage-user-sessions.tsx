@@ -109,17 +109,17 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
 					</div>
 				</div>
 			) : (
-				<div className="my-5 mt-10 flex items-center justify-between px-5">
+				<div className="my-5 mt-10 grid grid-cols-[auto_1fr] gap-4 items-center justify-between px-5">
 					{isCalisteniaUser ? (
 						<div className="flex flex-col items-center justify-center gap-5 p-7">
-							<span className="text-lg">Días restantes</span>
+							<span className="text-lg min-w-max">Días restantes</span>
 							<p className="text-7xl font-bold">
 								{remaingDays <= 0 ? 0 : remaingDays}
 							</p>
 						</div>
 					) : (
-						<div className="flex flex-col items-center justify-center gap-1">
-							<span className="text-lg">Sesiones restantes</span>
+						<div className="flex flex-col items-center justify-between gap-1">
+							<span className="text-lg min-w-max">Sesiones restantes</span>
 							<p className="text-7xl font-bold">{userData?.sessions || 0}</p>
 							<Button
 								type="button"
@@ -136,21 +136,34 @@ function ManageUserSessions({ userId, setIsReinscription }: Props) {
 						</div>
 					)}
 
-					<div className="p-4">
+					<div className="px-4">
 						<p className="text-lg text-secondary-foreground">
 							{userData?.name} {userData?.lastName}
 						</p>
-						<p className="text-base text-muted-foreground">{userData?.email}</p>
+						<p className="text-base text-muted-foreground max-w-[180px] truncate">
+							{userData?.email}
+						</p>
 						<p className="text-muted-foreground">{userData?.phone}</p>
 						<p className="mt-4 text-lg">
 							{getObjBySlug(userData?.discipline as string)?.name}
 						</p>
-						<div className="text-muted-foreground">
-							{parsedDate
-								? format(parsedDate, 'PPP', {
-										locale: es,
-									})
-								: 'Sin fecha'}
+						<div className="text-muted-foreground text-sm flex flex-col">
+							<p>
+								Desde{' '}
+								{parsedDate
+									? format(parsedDate, 'PPP', {
+											locale: es,
+										})
+									: 'Sin fecha'}
+							</p>
+							<p>
+								hasta{' '}
+								{finalParsedDate
+									? format(finalParsedDate, 'PPP', {
+											locale: es,
+										})
+									: 'Sin fecha'}
+							</p>
 						</div>
 					</div>
 				</div>

@@ -7,7 +7,6 @@ import { calculateDiscount, getObjBySlug } from '@/lib/utils'
 import { createItem, getUserById, updateInventoryItem } from '@/services'
 import { DiscountType } from '@/types/discounts.types'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { addDays } from 'date-fns'
 import { Timestamp } from 'firebase/firestore'
 import { Check, ChevronLeft } from 'lucide-react'
 import Link from 'next/link'
@@ -236,23 +235,7 @@ function CreateUsersForm({ params }: Props) {
 
 	useEffect(() => {
 		form.setValue('discipline', currentDisciplineOption?.value as string)
-
-		if (!userId && watchStartDate && currentDisciplineOption?.value === 'gym') {
-			form.setValue('finalDate', addDays(watchStartDate, 30))
-		}
-
-		if (!userId && watchStartDate && currentDisciplineOption?.value !== 'gym') {
-			form.setValue('finalDate', addDays(watchStartDate, 25))
-		}
-
-		if (userId) {
-			const finalDate = userData?.finalDate
-				? (userData?.finalDate as unknown as Timestamp)?.toDate()
-				: undefined
-
-			form.setValue('finalDate', finalDate)
-		}
-	}, [form, watchStartDate, currentDisciplineOption])
+	}, [form, currentDisciplineOption])
 
 	useEffect(() => {
 		if (!userId) return

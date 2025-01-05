@@ -100,6 +100,8 @@ function DashboardsPage() {
 		fetchData()
 	}, [])
 
+	console.log(payments)
+
 	return (
 		<div className="flex min-h-[calc(100vh_-_80px)] w-full flex-col">
 			<main className="flex flex-1 flex-col gap-4 md:gap-8">
