@@ -36,6 +36,7 @@ import {
 import { DISCIPLINES } from '@/lib/constants'
 import { calculateDiscount, cn, validateDiscountValue } from '@/lib/utils'
 import { DiscountType } from '@/types/discounts.types'
+import { User } from '@/types/users.types'
 import { format, isAfter } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import { Timestamp } from 'firebase/firestore'
