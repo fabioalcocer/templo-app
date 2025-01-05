@@ -1,6 +1,6 @@
 'use client'
 
-import { AlertCircle, HelpCircleIcon, TrendingUp } from 'lucide-react'
+import { AlertCircle, TrendingUp } from 'lucide-react'
 import * as React from 'react'
 import { Label, Pie, PieChart } from 'recharts'
 
@@ -29,6 +29,7 @@ import {
 	SelectValue,
 } from '@/components/ui/select'
 import { getDynamicMonths, parsedTimestampDate } from '@/lib/utils'
+import { User } from '@/types/users.types'
 
 const chartConfig = {
 	calistenia: {

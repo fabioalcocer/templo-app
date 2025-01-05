@@ -1,4 +1,5 @@
 import { database } from '@/firebase/config'
+import { User } from '@/types/users.types'
 import {
 	addDoc,
 	collection,

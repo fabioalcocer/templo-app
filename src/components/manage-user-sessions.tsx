@@ -5,6 +5,7 @@ import {
 	getSessionLogsOnSnapshot,
 	getUserById,
 } from '@/services'
+import { User } from '@/types/users.types'
 import { differenceInCalendarDays, format } from 'date-fns'
 import { es } from 'date-fns/locale/es'
 import { Timestamp } from 'firebase/firestore'
