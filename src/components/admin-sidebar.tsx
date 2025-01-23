@@ -65,7 +65,7 @@ function AdminSidebar({
 	const path = usePathname()
 
 	const handleStartOnborda = () => {
-		startOnborda()
+		startOnborda('admin')
 	}
 
 	return (
